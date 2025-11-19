@@ -37,6 +37,7 @@
     "test": "vitest --project=storybook",
     "test:coverage": "vitest --project=storybook --coverage",
     "prepare": "husky",
+    "prepublishOnly": "npm run build",
     "release": "semantic-release"
   },
   "peerDependencies": {
@@ -89,21 +90,7 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
-      [
-        "@semantic-release/github",
-        {
-          "assets": [
-            {
-              "path": "dist/**",
-              "label": "Distribution files"
-            },
-            {
-              "path": "package.json",
-              "label": "package.json"
-            }
-          ]
-        }
-      ]
+      "@semantic-release/github"
     ]
   }
 }
