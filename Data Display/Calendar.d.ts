@@ -10,5 +10,12 @@ interface CalendarProps {
     actionLabel?: string;
     initialView?: 'month' | 'week';
 }
-export default function Calendar({ year, month, title, onPrev, onNext, onAction, onEventClick, eventsByDate, actionLabel, initialView, }: Readonly<CalendarProps>): import("react/jsx-runtime").JSX.Element;
+export type EventObject = {
+    id?: string;
+    title?: string;
+    name?: string;
+    items?: unknown[];
+    events?: unknown[];
+};
+export declare function Calendar({ year, month, title, onPrev, onNext, onAction, onEventClick, eventsByDate, actionLabel, initialView, }: Readonly<CalendarProps>): import("react/jsx-runtime").JSX.Element;
 export {};

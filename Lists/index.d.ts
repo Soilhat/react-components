@@ -1,2 +1,1 @@
-import { StackedList } from './StackedList';
-export { StackedList };
+export { StackedList } from './StackedList';
