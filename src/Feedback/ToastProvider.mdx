@@ -1,0 +1,58 @@
+import { Meta, Story, ArgTypes } from '@storybook/addon-docs/blocks';
+import { ToastProvider, useToast } from '../../lib/Feedback';
+import * as ToastProviderStories from './ToastProvider.stories';
+
+<Meta title="Feedback/ToastProvider" component={ToastProvider} />
+
+# ToastProvider
+
+`ToastProvider` is a React context provider that enables global toast notifications in your app. Wrap your app with `ToastProvider` to allow any component to show toasts using the `useToast` hook.
+
+## Usage
+
+```tsx
+import { ToastProvider } from '@soilhat/react-components/Feedback';
+
+function App() {
+  return <ToastProvider>{/* your app */}</ToastProvider>;
+}
+```
+
+## Showing Toasts
+
+Use the `useToast` hook inside your components to show toasts:
+
+```tsx
+import { useToast } from '@soilhat/react-components/Feedback';
+
+function Example() {
+  const toast = useToast();
+  return <button onClick={() => toast.success('Saved!')}>Show Toast</button>;
+}
+```
+
+## Examples
+
+<Story of={ToastProviderStories.BasicUsage} />
+<Story of={ToastProviderStories.CustomDurationAndType} />
+
+## API
+
+### ToastProvider Props
+
+<ArgTypes of={ToastProvider} />
+
+### useToast API
+
+- `showToast(message, options?)`: Show a toast with custom message and options.
+- `success(message, duration?)`: Show a success toast.
+- `error(message, duration?)`: Show an error toast.
+- `info(message, duration?)`: Show an info toast.
+- `dismiss(id?)`: Dismiss a toast by id or all toasts.
+
+## Best Practices
+
+- Place `ToastProvider` at the root of your app.
+- Use concise, actionable messages.
+- Use the correct toast type for the context.
+- Avoid overusing toasts to prevent user fatigue.

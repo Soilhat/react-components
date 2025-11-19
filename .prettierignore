@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+coverage
+.next
+out
+storybook-static
+.DS_Store
+*.env
+*.lock

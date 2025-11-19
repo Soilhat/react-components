@@ -1,0 +1,47 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks';
+import { ArgTypes } from '@storybook/addon-docs/blocks';
+import { Toast } from '../../lib/Feedback/Toast';
+import * as ToastStories from './Toast.stories';
+
+<Meta title="Feedback/Toast" of={ToastStories} />
+
+# Toast
+
+The `Toast` component displays brief messages to the user. It is typically used for feedback such as success, error, or informational messages. Toasts are usually triggered by user actions or system events and disappear automatically after a short duration.
+
+## Usage
+
+```tsx
+import { Toast } from 'lib/Feedback/Toast';
+
+<Toast
+  message="Your changes have been saved!"
+  type="success"
+  onClose={() => {
+    /* handle close */
+  }}
+/>;
+```
+
+## Types
+
+- `success`: Indicates a successful or positive action.
+- `error`: Indicates an error or something went wrong.
+- `info`: Provides neutral information.
+
+## Examples
+
+<Story of={ToastStories.Success} />
+<Story of={ToastStories.Error} />
+<Story of={ToastStories.Info} />
+
+## Props
+
+<ArgTypes of={Toast} />
+
+## Best Practices
+
+- Use concise and clear messages.
+- Use the appropriate type for the context.
+- Toasts should not interrupt the user’s workflow.
+- Use with a provider (see `ToastProvider`) for global toasts.

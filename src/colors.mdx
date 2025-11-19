@@ -1,0 +1,21 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import ColorBox from './ColorBox';
+
+<Meta title="Color Palette" component={ColorBox} />
+
+# Color Palette
+
+Here are listed colors used.
+Feel free to override colors as per [Tailwind CSS theme set up](https://tailwindcss.com/docs/theme)
+
+## Primary
+
+<div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+  <ColorBox colorName="primary" className="bg-primary" />
+  <ColorBox colorName="secondary" className="bg-secondary" />
+  <ColorBox colorName="accent" className="bg-accent" />
+  <ColorBox colorName="success" className="bg-success" />
+  <ColorBox colorName="danger" className="bg-danger" />
+  <ColorBox colorName="warning" className="bg-warning" />
+  <ColorBox colorName="info" className="bg-info" />
+</div>

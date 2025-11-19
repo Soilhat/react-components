@@ -1,0 +1,47 @@
+import { Meta, Story, ArgTypes } from '@storybook/addon-docs/blocks';
+import { Navbar as NavbarEl } from '../../lib/Navigation/Navbar';
+import * as NavbarStories from './Navbar.stories';
+
+<Meta title="Navigation/Navbar" component={NavbarEl} />
+
+# Navbar
+
+A responsive navigation bar component for React applications, supporting branding, navigation links, and custom actions. Designed for use with React Router.
+
+## Usage
+
+```tsx
+import { Navbar } from '@soilhat/react-components/Navigation';
+
+<Navbar
+  logoURl="https://soilhat.github.io/logo192.png"
+  brandName="BrandName"
+  links={[
+    { label: 'Home', href: '/' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ]}
+  actions={<button className="px-4 py-2 bg-accent text-white rounded">Action</button>}
+/>;
+```
+
+## Props
+
+<ArgTypes of={NavbarEl} />
+
+## Example
+
+<Story of={NavbarStories.Navbar} />
+
+## Accessibility
+
+- Uses semantic HTML elements (`<header>`, `<nav>`, `<ul>`, `<li>`)
+- All interactive elements have accessible labels
+- Mobile menu button uses `aria-label` and `aria-expanded`
+- Keyboard and screen reader friendly
+
+## Best Practices
+
+- Use with React Router for navigation (`NavLink` is used internally)
+- Provide descriptive `brandName` and `logoURl` for branding
+- Pass custom actions as React elements for flexibility
