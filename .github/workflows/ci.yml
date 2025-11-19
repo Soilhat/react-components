@@ -34,9 +34,29 @@ jobs:
       - run: npm ci
       - run: npx playwright install
       - run: npm run test:coverage
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v3
         with:
-          file: ./coverage/coverage-final.json
-          flags: unittests
-          fail_ci_if_error: false
+          name: coverage-report
+          path: coverage/
+
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Download a single artifact
+        uses: actions/download-artifact@v5
+      - name: SonarQubeScan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=Soilhat_react-components
+            -Dsonar.organization=soilhat
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info

@@ -53,6 +53,9 @@ export default defineConfig({
     },
   },
   test: {
+    coverage: {
+      reporter: ['lcov', 'html'],
+    },
     projects: [
       {
         extends: true,
