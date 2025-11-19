@@ -22,7 +22,7 @@ export const Success: Story = {
   },
 };
 
-export const Error: Story = {
+export const ErrorToast: Story = {
   args: {
     type: 'error',
     message: 'Something went wrong!',

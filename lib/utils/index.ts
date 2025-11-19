@@ -18,4 +18,8 @@ const getChildrenExcludingDisplayName = (children: React.ReactNode, displayNames
     return child;
   });
 
-export { getChildrenOnDisplayName, getChildrenExcludingDisplayName };
+function genId(): string {
+  return globalThis.crypto.randomUUID();
+}
+
+export { getChildrenOnDisplayName, getChildrenExcludingDisplayName, genId };

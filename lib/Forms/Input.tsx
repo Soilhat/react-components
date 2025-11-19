@@ -1,4 +1,5 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
+import { genId } from '../utils';
 
 type InputSize = 'sm' | 'md' | 'lg';
 type InputVariant = 'outline' | 'soft' | 'underline';
@@ -34,7 +35,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref
 ) {
-  const inputId = id || props.name || `input-${Math.random().toString(36).slice(2, 8)}`;
+  const inputId = id || props.name || `input-${genId()}`;
   const hintId = hint ? `${inputId}-hint` : undefined;
   const errorId = error ? `${inputId}-error` : undefined;
 
@@ -58,7 +59,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       'border-0 border-b border-gray-300 dark:border-gray-700 rounded-none bg-transparent focus:border-accent focus:ring-0',
   };
 
-  const basePX = variant !== 'underline' ? sizePaddingX[size] : 'px-0';
+  const basePX = variant === 'underline' ? 'px-0' : sizePaddingX[size];
   const basePY = sizePaddingY[size];
 
   const iconPaddingLeft = leftIcon ? 'pl-9' : '';

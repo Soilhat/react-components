@@ -3,7 +3,7 @@
 A collection of reusable, accessible React components built with TypeScript and Tailwind CSS. Designed for backend developers who need a consistent, well-styled component library for rapid UI development.
 
 [![CI](https://github.com/Soilhat/react-components/actions/workflows/ci.yml/badge.svg)](https://github.com/Soilhat/react-components/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/@soilhat/react-components.svg)](https://www.npmjs.com/package/@soilhat/react-components)
+[![release](https://img.shields.io/github/v/release/Soilhat/react_components)](https://github.com/Soilhat/react-components/releases)
 
 ## 🎨 Features
 

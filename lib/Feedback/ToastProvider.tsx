@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Toast, type ToastType } from './Toast';
 import { ToastContext, type ToastContextValue } from './useToastContext';
+import { genId } from '../utils';
 
 interface ToastItem {
   id: string;
@@ -15,13 +16,6 @@ export interface ShowOptions {
 }
 
 const DEFAULT_DURATION = 3000;
-
-function genId(): string {
-  // crypto.randomUUID() if available, else fallback
-  return typeof crypto !== 'undefined' && 'randomUUID' in crypto
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
 
 export function ToastProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);

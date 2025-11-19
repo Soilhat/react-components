@@ -37,7 +37,7 @@ function buildWeeks(year: number, month: number) {
 // Small helper to render events for a day. Normalize all supported shapes and render
 // each logical event as an independent button so multiple events are clearly separated.
 // Normalize many possible event shapes into a flat list of entries
-type EventObject = {
+export type EventObject = {
   id?: string;
   title?: string;
   name?: string;
@@ -169,7 +169,7 @@ const DayCard = ({
   );
 };
 
-export default function Calendar({
+export function Calendar({
   year,
   month,
   title,

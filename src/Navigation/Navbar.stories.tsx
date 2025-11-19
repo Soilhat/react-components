@@ -44,7 +44,7 @@ export const Navbar = (args: Meta<typeof NavbarEl>['args'] = {}) => {
         args.actions ?? (
           <button
             onClick={handleAction}
-            className="px-4 py-2 bg-accent text-white rounded hover:bg-accent/100 focus:ring"
+            className="px-4 py-2 bg-accent text-white rounded hover:bg-accent focus:ring"
             data-testid="action-btn"
           >
             Action

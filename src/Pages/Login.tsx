@@ -4,12 +4,12 @@ import { Form, Input } from '../../lib/Forms';
 import { Card } from '../../lib/Layout';
 
 type loginInfo = {
-  username: string;
-  password: string;
+  username: string | undefined;
+  password: string | undefined;
 };
 
 export default function Login({ onSubmit }: { onSubmit?: (login: loginInfo) => void }) {
-  const [input, setInput] = useState({ username: ' ', password: ' ' });
+  const [input, setInput] = useState({ username: undefined, password: undefined } as loginInfo);
 
   const handleSubmitEvent = (e: FormEvent) => {
     e.preventDefault();
@@ -55,7 +55,7 @@ export default function Login({ onSubmit }: { onSubmit?: (login: loginInfo) => v
         <Button type="submit">Login</Button>
       </Form>
       <p className="text-center text-sm">
-        <a className="text-accent/100 dark:text-accent/100 hover:underline" href="/auth/register">
+        <a className="text-accent hover:underline" href="/auth/register">
           Create Account
         </a>
       </p>
