@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import React from 'react';
-import Calendar from '../../lib/Data Display/Calendar';
+import { Calendar } from '../../lib/Data Display/Calendar';
 
 const meta: Meta = {
   title: 'Data Display/Calendar',
