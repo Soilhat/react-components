@@ -38,7 +38,7 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: coverage-report
-          path: coverage/
+          path: coverage/lcov.info
 
   sonarqube:
     name: SonarQube
@@ -50,6 +50,8 @@ jobs:
           fetch-depth: 0
       - name: Download a single artifact
         uses: actions/download-artifact@v5
+        with:
+          name: coverage-report
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
@@ -60,4 +62,4 @@ jobs:
             -Dsonar.projectKey=Soilhat_react-components
             -Dsonar.organization=soilhat
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=lcov.info

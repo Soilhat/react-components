@@ -92,7 +92,16 @@
       [
         "@semantic-release/github",
         {
-          "assets": "dist/**"
+          "assets": [
+            {
+              "path": "dist/**",
+              "label": "Distribution files"
+            },
+            {
+              "path": "package.json",
+              "label": "package.json"
+            }
+          ]
         }
       ]
     ]
