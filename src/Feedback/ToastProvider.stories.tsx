@@ -1,5 +1,4 @@
-import { Button } from '../../lib/Elements';
-import { ToastProvider, useToast } from '../../lib/Feedback';
+import { Button, ToastProvider, useToast } from '../../lib/main';
 
 export default {
   title: 'Feedback/ToastProvider',

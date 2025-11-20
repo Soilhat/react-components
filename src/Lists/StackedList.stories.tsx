@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { StackedList } from '../../lib/Lists/StackedList';
-import { Card } from '../../lib/Layout/Card';
+import { StackedList, Card } from '../../lib/main';
 
 const meta: Meta = {
   title: 'Lists/StackedList',

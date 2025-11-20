@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Toast } from '../../lib/Feedback';
+import { Toast } from '../../lib/main';
 
 const meta: Meta<typeof Toast> = {
   title: 'Feedback/Toast',

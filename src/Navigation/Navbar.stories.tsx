@@ -1,4 +1,4 @@
-import { Navbar as NavbarEl } from '../../lib/Navigation/Navbar';
+import { Navbar as NavbarEl } from '../../lib/main';
 
 import type { Meta } from '@storybook/react-vite';
 

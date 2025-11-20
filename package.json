@@ -12,6 +12,9 @@
   "exports": "./dist/main.js",
   "module": "./dist/main.js",
   "types": "./dist/main.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Soilhat/react-components.git"

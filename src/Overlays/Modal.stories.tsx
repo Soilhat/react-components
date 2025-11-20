@@ -1,6 +1,5 @@
 import type { Meta } from '@storybook/react-vite';
-import { Modal as ModalEl } from '../../lib/Overlays/Modal';
-import { Button } from '../../lib/Elements';
+import { Modal as ModalEl, Button } from '../../lib/main';
 import { useState } from 'react';
 
 const meta: Meta = {

@@ -1,0 +1,35 @@
+# Source files - npm only needs dist/
+src/
+lib/
+.storybook/
+storybook-static/
+coverage/
+
+# Dev files
+*.test.ts
+*.test.tsx
+*.stories.tsx
+*.stories.ts
+
+# Config files
+vite.config.ts
+tsconfig.json
+tsconfig.node.json
+tsconfig.app.json
+vitest.shims.d.ts
+.eslintignore
+eslint.config.js
+
+# CI/CD
+.github/
+.husky/
+
+# Docs
+CONTRIBUTING.md
+DEPLOYMENT_GUIDE.md
+NPM_SETUP_CHECKLIST.md
+GITHUB-SETUP.md
+
+# Other
+.gitignore
+.prettierrc.json

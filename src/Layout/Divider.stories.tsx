@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Divider } from '../../lib/Layout/Divider';
-import { Container } from '../../lib/Layout/Container';
-import { Heading } from '../../lib/Layout/Heading';
+import { Divider, Container, Heading } from '../../lib/main';
 
 const meta: Meta = {
   title: 'Layout/Divider',

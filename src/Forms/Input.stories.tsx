@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Input } from '../../lib/Forms/Input';
+import { Input } from '../../lib/main';
 
 const meta: Meta = {
   title: 'Forms/Input',

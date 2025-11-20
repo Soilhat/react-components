@@ -1,7 +1,5 @@
 import type { Meta } from '@storybook/react-vite';
-import { Container } from '../../lib/Layout/Container';
-import { Heading as HeadingEl } from '../../lib/Layout/Heading';
-import { Button } from '../../lib/Elements';
+import { Container, Heading as HeadingEl, Button } from '../../lib/main';
 import { fn } from 'storybook/test';
 
 const meta: Meta = {
