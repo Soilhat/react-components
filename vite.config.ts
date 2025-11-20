@@ -55,7 +55,7 @@ export default defineConfig({
   test: {
     coverage: {
       reporter: ['lcov', 'html'],
-      exclude: ['**/*.stories.tsx', 'tests/**', 'vite.config.ts'],
+      exclude: ['src/**/*.stories.tsx', 'tests/**', '**.config.{ts,js}'],
     },
     projects: [
       {
