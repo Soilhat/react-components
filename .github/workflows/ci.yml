@@ -63,3 +63,4 @@ jobs:
             -Dsonar.organization=soilhat
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.javascript.lcov.reportPaths=lcov.info
+            -Dsonar.coverage.exclusions=**/tests/**,**/stories/**,**/*.spec.tsx,**/*.spec.ts,**/*.config.ts
