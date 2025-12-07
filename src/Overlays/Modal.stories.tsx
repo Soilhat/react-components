@@ -49,7 +49,7 @@ export const Modal = () => {
             </svg>
           </div>
           <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 className="text-base font-semibold text-white">Testing Modal</h3>
+            <h3 className="text-base font-semibold dark:text-white">Testing Modal</h3>
             <div className="mt-2">
               <p className="text-sm text-gray-400">Some text to inform user about anything.</p>
             </div>
@@ -65,7 +65,7 @@ export const Modal = () => {
           <Button
             data-autofocus
             onClick={() => setOpen(false)}
-            className="mt-3 inline-flex justify-center bg-white/10 px-3 py-2 text-sm text-white inset-ring inset-ring-white/5 hover:bg-white/20 sm:mt-0 sm:w-auto"
+            className="mt-3 inline-flex justify-center bg-white/10 px-3 py-2 text-sm dark:text-white inset-ring inset-ring-white/5 hover:bg-white/20 sm:mt-0 sm:w-auto"
           >
             Cancel
           </Button>
