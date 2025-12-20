@@ -5,17 +5,184 @@ import ColorBox from './ColorBox';
 
 # Color Palette
 
-Here are listed colors used.
+Here are listed colors used. Refer only to colox box background colors.
 Feel free to override colors as per [Tailwind CSS theme set up](https://tailwindcss.com/docs/theme)
 
-## Primary
+## 🎨 Semantic Color System (Light & Dark Mode)
 
-<div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+This system is built around the role of the color, not its literal value (e.g., color-primary instead of color-blue-600).
+
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <h3 className="text-center m-0">Light</h3>
+  <h3 className="text-center m-0">Dark</h3>
+  <div className="col-span-4"></div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="brand" className="bg-brand" />
+  <ColorBox colorName="brand-dark" className="bg-brand-dark" />
+  <div className="col-span-4">
+    <h3>Brand color</h3>
+    <p>Usually remains the same (unless the brand must be subtle in dark mode).</p>
+    <p>
+      <b>Branding</b>: Used for the logo and non-interactive brand elements.
+    </p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
   <ColorBox colorName="primary" className="bg-primary" />
+  <ColorBox colorName="primary-dark" className="bg-primary-dark" />
+  <div className="col-span-4">
+    <h3>Primary</h3>
+    <p>Primary action buttons, active links, main icons.</p>
+    <p>
+      <b>Action/Focus</b>: The main focal point of the interface.
+    </p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
   <ColorBox colorName="secondary" className="bg-secondary" />
-  <ColorBox colorName="accent" className="bg-accent" />
-  <ColorBox colorName="success" className="bg-success" />
-  <ColorBox colorName="danger" className="bg-danger" />
-  <ColorBox colorName="warning" className="bg-warning" />
-  <ColorBox colorName="info" className="bg-info" />
+  <ColorBox colorName="secondary-dark" className="bg-secondary-dark" />
+  <div className="col-span-4">
+    <h3>Secondary</h3>
+    <p>Secondary action buttons, supporting navigation elements.</p>
+    <p>
+      <b>Support/Alternative</b>: Lower-priority actions.
+    </p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="tertiary" className="bg-tertiary" />
+  <ColorBox colorName="tertiary-dark" className="bg-tertiary-dark" />
+  <div className="col-span-4">
+    <h3>tertiary</h3>
+    <p>Divider lines, decorative icons, subtle hover states.</p>
+    <p>
+      <b>Decoration/Subtlety</b>: Background or structural elements.
+    </p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="light" className="bg-light" />
+  <ColorBox colorName="light-dark" className="bg-light-dark text-white" />
+  <div className="col-span-4">
+    <h3>Light (Tonal)</h3>
+    <p>
+      Low-emphasis buttons (e.g., "Cancel"), background highlights for active menu items, or ghost-style components.
+    </p>
+    <p>
+      <b>Tonal/Low Emphasis</b>: Used for tertiary actions that need to remain visible but should not distract from the
+      Primary or Secondary focal points.
+    </p>
+  </div>
+</div>
+
+## 📝 Text and Surface Colors (Dynamic Theme)
+
+These colors are critical for readability and must switch between light and dark modes.
+
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="surface-base" className="bg-surface-base text-black" />
+  <ColorBox colorName="surface-base-dark" className="bg-surface-base-dark text-white" />
+  <div className="col-span-4">
+    <h3>Surface base</h3>
+    <p>Page or main section background.</p>
+    <p>
+      <b>Canvas</b>: The broadest background color.
+    </p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="surface-panel" className="bg-surface-panel text-black" />
+  <ColorBox colorName="surface-panel-dark" className="bg-surface-panel-dark text-white" />
+  <div className="col-span-4">
+    <h3>Surface panel</h3>
+    <p>Background for cards, modals, side panels.</p>
+    <p>
+      <b>Elevation</b>: Should be slightly darker than surface-base in light mode, and slightly lighter in dark mode to
+      create a "floating" effect.
+    </p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="text-primary" className="bg-text-primary text-white" />
+  <ColorBox colorName="text-primary-dark" className="bg-text-primary-dark" />
+  <div className="col-span-4">
+    <h3>Text primary</h3>
+    <p>Main body text, H1/H2 headings.</p>
+    <p>
+      <b>Readability</b>: The darkest/lightest text color.
+    </p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="text-secondary" className="bg-text-secondary" />
+  <ColorBox colorName="text-secondary-dark" className="bg-text-secondary-dark" />
+  <div className="col-span-4">
+    <h3>Text secondary</h3>
+    <p>Captions, helper text, form field placeholders.</p>
+    <p>
+      <b>Details/Subtlety</b>: Lower contrast than primary text.
+    </p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="text-on-primary" className="bg-text-on-primary" />
+  <ColorBox colorName="text-on-primary-dark" className="bg-text-on-primary-dark text-white" />
+  <div className="col-span-4">
+    <h3>Text on primary</h3>
+    <p>Text or icon placed on a primary background (color-primary)</p>
+    <p>
+      <b>Contrast</b>: Must ensure AA or AAA contrast ratio with color-primary. Often white or black.
+    </p>
+  </div>
+</div>
+
+## 🚦 State Colors (Feedback and Validation)
+
+These colors indicate status and should have dark mode equivalents to ensure they remain legible on dark backgrounds.
+
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="state-success" className="bg-state-success" />
+  <ColorBox colorName="state-success-dark" className="bg-state-success-dark" />
+  <div className="col-span-4">
+    <h3>Success</h3>
+    <p>Successful notifications, OK status indicators.</p>
+    <p>Green (Good).</p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="state-warning" className="bg-state-warning" />
+  <ColorBox colorName="state-warning-dark" className="bg-state-warning-dark" />
+  <div className="col-span-4">
+    <h3>Warning</h3>
+    <p>Non-blocking alerts, unstable status indicators.</p>
+    <p>Yellow/Orange (Caution).</p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="state-danger" className="bg-state-danger" />
+  <ColorBox colorName="state-danger-dark" className="bg-state-danger-dark" />
+  <div className="col-span-4">
+    <h3>Danger</h3>
+    <p>Error messages, deletion, critical status indicators.</p>
+    <p>Red (Stop/Error).</p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="state-info" className="bg-state-info" />
+  <ColorBox colorName="state-info-dark" className="bg-state-info-dark" />
+  <div className="col-span-4">
+    <h3>Info</h3>
+    <p>Neutral informative messages, information banners.</p>
+    <p>Light Blue/Cyan (Information).</p>
+  </div>
+</div>
+<div className="grid grid-cols-6 pb-2 gap-4">
+  <ColorBox colorName="state-focus" className="bg-state-focus" />
+  <ColorBox colorName="state-focus-dark" className="bg-state-focus-dark" />
+  <div className="col-span-4">
+    <h3>Focus</h3>
+    <p>Focus rings for accessibility (a11y), active field outlines.</p>
+    <p>Typically a brand color with high opacity.</p>
+  </div>
 </div>

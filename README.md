@@ -20,18 +20,19 @@ A collection of reusable, accessible React components built with TypeScript and 
 
 ### From GitHub (Recommended)
 
-Install directly from GitHub:
+Add a `.npmrc` file conttaining your `GITHUB_TOKEN`:
 
-```bash
-npm install github:Soilhat/react-components
-# or with a specific version/tag
-npm install github:Soilhat/react-components#v1.0.0
+```
+@soilhat:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken={{GITHUB_TOKEN}}
 ```
 
-### From npm (When Published)
+Then you can install like any package
 
 ```bash
 npm install @soilhat/react-components
+# or with a specific version/tag
+npm install @soilhat/react-components#v1.0.0
 ```
 
 ### Local Development

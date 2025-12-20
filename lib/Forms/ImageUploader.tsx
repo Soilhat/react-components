@@ -12,7 +12,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   initialImageUrl,
   placeholderImageUrl,
   uploadImage,
-  isUploading,
+  isUploading = false,
 }) => {
   const [imageUrl, setImageUrl] = useState(initialImageUrl || placeholderImageUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -75,6 +75,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         className="hidden"
         accept="image/*"
         disabled={isUploading}
+        data-testid="inputImageUploader"
       />
     </div>
   );

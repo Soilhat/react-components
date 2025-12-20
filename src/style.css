@@ -3,12 +3,76 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: var(--color-yellow-500);
-  --color-secondary: var(--color-blue-600);
-  --color-primary: var(--color-yellow-500);
-  --color-accent: var(--color-purple-500);
-  --color-success: var(--color-green-500);
-  --color-danger: var(--color-red-500);
-  --color-warning: var(--color-orange-500);
-  --color-info: var(--color-cyan-500);
+  /* ================================================= */
+  /* Color Palette */
+  /* ================================================= */
+  --color-deep-blue: #1967d2;
+  --color-lime-green: #34a853;
+  --color-teal: #2b9b88;
+  --color-dark-navy: #0d1117;
+  --color-off-white: #f0f2f5;
+  --color-white: #ffffff;
+  --color-red: #ea4335;
+
+  /* ================================================= */
+  /* Light Mode */
+  /* ================================================= */
+
+  /* Brand and Core */
+  --color-brand: var(--color-deep-blue);
+  --color-primary: var(--color-deep-blue);
+  --color-primary-hover: #1656b3; /* Deep Blue Darkened by ~10% */
+  --color-secondary: var(--color-lime-green);
+  --color-secondary-hover: #2d9248; /* Lime Green Darkened by ~10% */
+  --color-tertiary: var(--color-teal);
+  --color-light: #e8f0fe;
+  --color-light-hover: #d2e3fc;
+
+  /* Surfaces and Text */
+  --color-surface-base: var(--color-off-white);
+  --color-surface-panel: var(--color-white);
+  --color-text-primary: var(--color-dark-navy);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-on-primary: var(--color-off-white);
+
+  /* States and Structure */
+  --color-state-success: var(--color-lime-green);
+  --color-state-warning: #fbbc05;
+  --color-state-danger: var(--color-red);
+  --color-text-on-danger: var(--color-off-white);
+  --color-state-info: #1967d2;
+  --color-state-focus: #4285f4;
+  --color-border: var(--color-gray-300);
+  --color-light-border: #d1d9e6;
+
+  /* ================================================= */
+  /* Dark Mode */
+  /* ================================================= */
+
+  /* Brand and Core */
+  --color-brand-dark: var(--color-deep-blue);
+  --color-primary-dark: #3388ff;
+  --color-primary-hover-dark: #4d9cff; /* Brightened Blue Lightened by ~10% */
+  --color-secondary-dark: #5cb979;
+  --color-secondary-hover-dark: #75c590; /* Brightened Green Lightened by ~10% */
+  --color-tertiary-dark: var(--color-teal);
+  --color-light-dark: #21262d;
+  --color-light-hover-dark: #30363d;
+
+  /* Surfaces and Text */
+  --color-surface-base-dark: var(--color-dark-navy);
+  --color-surface-panel-dark: #161b22;
+  --color-text-primary-dark: var(--color-off-white);
+  --color-text-secondary-dark: var(--color-gray-400);
+  --color-text-on-primary-dark: var(--color-dark-navy);
+
+  /* States and Structure */
+  --color-state-success-dark: #5cb979;
+  --color-state-warning-dark: #fdd752;
+  --color-state-danger-dark: #ff7a6e;
+  --color-text-on-danger-dark: var(--color-dark-navy);
+  --color-state-info-dark: #3388ff;
+  --color-state-focus-dark: #669df6;
+  --color-border-dark: var(--color-gray-700);
+  --color-light-border-dark: #30363d;
 }

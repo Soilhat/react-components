@@ -56,7 +56,7 @@ export const Modal: React.FC<ModalProps> & ModalSubComponents = ({ open, childre
                 if (typeof onClose === 'function') return onClose();
               }}
               aria-label="Close dialog"
-              className="absolute top-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 dark:focus:ring-indigo-400"
+              className="absolute top-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 dark:focus:ring-indigo-400 cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

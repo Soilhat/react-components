@@ -37,7 +37,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
             <button
               onClick={previewVisibility}
               disabled={!isPreview}
-              className="rounded-md border border-transparent dark:bg-gray-950 px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:dark:bg-gray-700 hover:text-black hover:dark:text-white aria-selected:bg-gray-100 aria-selected:dark:bg-gray-700 aria-selected:text-black aria-selected:dark:text-white"
+              className="rounded-md border border-transparent dark:bg-surface-dark bg-surface px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:dark:bg-gray-700 hover:text-black hover:dark:text-white aria-selected:bg-gray-100 aria-selected:dark:bg-gray-700 aria-selected:text-black aria-selected:dark:text-white"
               role="tab"
               aria-selected={!isPreview}
               tabIndex={0}
@@ -47,7 +47,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
             <button
               onClick={previewVisibility}
               disabled={isPreview}
-              className="rounded-md border border-transparent dark:bg-gray-950 px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:dark:bg-gray-700 hover:text-black hover:dark:text-white aria-selected:bg-gray-100 aria-selected:dark:bg-gray-700 aria-selected:text-black aria-selected:dark:text-white"
+              className="rounded-md border border-transparent dark:bg-surface-dark bg-surface px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:dark:bg-gray-700 hover:text-black hover:dark:text-white aria-selected:bg-gray-100 aria-selected:dark:bg-gray-700 aria-selected:text-black aria-selected:dark:text-white"
               role="tab"
               aria-selected={isPreview}
               tabIndex={-1}

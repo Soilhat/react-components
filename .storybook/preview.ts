@@ -16,7 +16,7 @@ const preview: Preview = {
 
     backgrounds: {
       options: {
-        dark: { name: 'Dark', value: '#030712' },
+        dark: { name: 'Dark', value: '#0D1117' },
         light: { name: 'Light', value: 'white' },
       },
     },
@@ -37,8 +37,8 @@ const preview: Preview = {
 export const decorators = [
   withThemeByClassName({
     themes: {
-      light: 'light',
-      dark: 'dark bg-gray-950',
+      light: 'light bg-surface-base text-text-primary',
+      dark: 'dark bg-surface-base-dark text-text-primary-dark',
     },
     defaultTheme: 'light',
   }),

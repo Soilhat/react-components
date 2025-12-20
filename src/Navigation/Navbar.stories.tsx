@@ -1,4 +1,4 @@
-import { Navbar as NavbarEl } from '../../lib/main';
+import { Navbar as NavbarEl, Button } from '../../lib/main';
 
 import type { Meta } from '@storybook/react-vite';
 
@@ -42,13 +42,9 @@ export const Navbar = (args: Meta<typeof NavbarEl>['args'] = {}) => {
       {...args}
       actions={
         args.actions ?? (
-          <button
-            onClick={handleAction}
-            className="px-4 py-2 bg-accent text-white rounded hover:bg-accent focus:ring"
-            data-testid="action-btn"
-          >
+          <Button onClick={handleAction} color_name="primary" data-testid="action-btn">
             Action
-          </button>
+          </Button>
         )
       }
     />

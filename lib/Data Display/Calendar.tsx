@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from '../Elements/Button';
 
 interface CalendarProps {
   year: number;
@@ -109,16 +110,16 @@ const EventList = ({ dayEvents, onEventClick }: { dayEvents: unknown[]; onEventC
   return (
     <div className="space-y-1">
       {entries.map((entry) => (
-        <button
+        <Button
           key={entry.key}
-          type="button"
           onClick={() => entry.id && onEventClick?.(entry.id)}
           title={entry.title}
           aria-label={entry.title}
-          className="w-full text-left text-xs py-1 px-2 rounded cursor-pointer bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          color_name="light"
+          className="text-left text-xs"
         >
           <div className="truncate">{entry.title}</div>
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -146,21 +147,17 @@ const DayCard = ({
   return (
     <div
       key={iso}
-      className={`${baseClass} border rounded-lg p-3 ${isCurrentMonth ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'} border-gray-200 dark:border-gray-700`}
+      className={`${baseClass} border rounded-lg p-3 ${isCurrentMonth ? 'bg-surface-panel dark:bg-surface-panel-dark' : 'bg-surface-base dark:bg-surface-base-dark'} border-border dark:border-border-dark`}
     >
       <div className="flex items-start justify-between">
         <div
-          className={`text-sm font-medium ${isCurrentMonth ? 'text-gray-800 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'}`}
+          className={`text-sm font-medium ${isCurrentMonth ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary dark:text-text-secondary-dark'}`}
         >
           {d.getDate()}
         </div>
-        <button
-          type="button"
-          onClick={() => onAction?.(d)}
-          className="text-xs px-2 py-1 rounded cursor-pointer bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 hover:bg-indigo-100"
-        >
+        <Button type="button" onClick={() => onAction?.(d)} color_name="primary" className="text-xs w-auto!">
           {actionLabel}
-        </button>
+        </Button>
       </div>
       <div className="mt-2 space-y-1">
         <EventList dayEvents={dayEvents} onEventClick={onEventClick} />
@@ -225,38 +222,42 @@ export function Calendar({
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-gray-600 dark:text-gray-300">
+            <h2 className="text-lg font-semibold">
               {title ?? `${currentDate.toLocaleString(undefined, { month: 'long', year: 'numeric' })}`}
             </h2>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <button
+            <Button
               onClick={() => setView('month')}
-              className={`px-2 py-1 rounded ${view === 'month' ? 'bg-blue-100 text-blue-700' : 'bg-transparent text-gray-600'}`}
+              variant={view === 'month' ? 'default' : 'border'}
+              color_name="light"
+              className="text-primary"
             >
               Month
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setView('week')}
-              className={`px-2 py-1 rounded ${view === 'week' ? 'bg-blue-100 text-blue-700' : 'bg-transparent text-gray-600'}`}
+              variant={view === 'week' ? 'default' : 'border'}
+              color_name="light"
+              className="text-primary"
             >
               Week
-            </button>
+            </Button>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={goPrev} className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-800">
+          <Button onClick={goPrev} color_name="light">
             Prev
-          </button>
-          <button onClick={goNext} className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-800">
+          </Button>
+          <Button onClick={goNext} color_name="light">
             Next
-          </button>
+          </Button>
         </div>
       </div>
 
       <div className="hidden sm:grid sm:grid-cols-7 gap-2 text-left">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-          <div key={d} className="font-semibold py-2 text-sm text-gray-600 dark:text-gray-300">
+          <div key={d} className="font-semibold py-2 text-sm text-text-secondary dark:text-text-secondary-dark">
             {d}
           </div>
         ))}
