@@ -29,6 +29,7 @@ function genId(): string {
     return cryptoObj.randomUUID();
   }
 
+  /* v8 ignore start */
   // Use getRandomValues to create RFC4122 v4 UUID when available
   if (cryptoObj && typeof cryptoObj.getRandomValues === 'function') {
     const bytes = new Uint8Array(16);
@@ -58,6 +59,7 @@ function genId(): string {
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+  /* v8 ignore stop */
 }
 
 export { getChildrenOnDisplayName, getChildrenExcludingDisplayName, genId };

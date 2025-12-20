@@ -7,5 +7,6 @@ export { Navbar } from './Navigation';
 export { useTheme } from './Theme';
 export { StackedList } from './Lists';
 export { Modal } from './Overlays';
+export { genId } from './utils';
 
 import './style.css';
