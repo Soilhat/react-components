@@ -8,5 +8,5 @@ type NavProps = {
     }[];
     actions?: ReactNode;
 };
-export declare const Navbar: ({ logoURl, brandName, links, actions }: NavProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Navbar: ({ logoURl, brandName, links, actions }: Readonly<NavProps>) => import("react/jsx-runtime").JSX.Element;
 export {};

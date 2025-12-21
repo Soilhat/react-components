@@ -1,5 +1,6 @@
 import { ReactNode } from '../../node_modules/react';
 export interface DropdownItem {
+    id?: string;
     label: string;
     icon?: ReactNode;
     onClick?: () => void;
@@ -7,6 +8,7 @@ export interface DropdownItem {
     disabled?: boolean;
 }
 export interface DropdownSection {
+    id?: string;
     items: DropdownItem[];
 }
 interface DropdownProps {
@@ -14,5 +16,5 @@ interface DropdownProps {
     sections: DropdownSection[];
     buttonVariant?: 'primary' | 'secondary' | 'light';
 }
-export declare function Dropdown({ label, sections, buttonVariant }: DropdownProps): import("react/jsx-runtime").JSX.Element;
+export declare function Dropdown({ label, sections, buttonVariant }: Readonly<DropdownProps>): import("react/jsx-runtime").JSX.Element;
 export {};
