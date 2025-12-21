@@ -8,14 +8,16 @@ interface CardSubComponents {
 export declare const Card: React.FC<React.HTMLAttributes<HTMLElement>> & CardSubComponents;
 declare const Header: React.FC<HeadingProps>;
 declare const Body: {
-    ({ children }: {
+    ({ children, className }: {
         children: ReactNode;
+        className?: string;
     }): import("react/jsx-runtime").JSX.Element;
     displayName: string;
 };
 declare const Footer: {
-    ({ children }: {
+    ({ children, className }: {
         children: ReactNode;
+        className?: string;
     }): import("react/jsx-runtime").JSX.Element;
     displayName: string;
 };

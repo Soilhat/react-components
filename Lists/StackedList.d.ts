@@ -1,6 +1,9 @@
 import { ReactNode } from '../../node_modules/react';
-export declare const StackedList: ({ children, onEmptyClick, emptyMessage, }: {
+interface StackedListProps {
     children?: ReactNode;
     onEmptyClick?: () => void;
     emptyMessage?: string;
-}) => import("react/jsx-runtime").JSX.Element;
+    gridCols?: string;
+}
+export declare const StackedList: ({ children, onEmptyClick, emptyMessage, gridCols, }: StackedListProps) => import("react/jsx-runtime").JSX.Element;
+export {};
