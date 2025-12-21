@@ -1,7 +1,7 @@
 export { Calendar } from './Data Display';
 export { Button, Dropdown } from './Elements';
 export { Card, Container, Heading, Divider } from './Layout';
-export { Form, Input, Textarea, ImageUploader, Select, Checkbox } from './Forms';
+export { Form, Input, Textarea, ImageUploader, Select, Checkbox, TagInput } from './Forms';
 export type { Option } from './Forms';
 export { Toast, type ToastType, ToastProvider, useToast, Progress } from './Feedback';
 export { Navbar } from './Navigation';
