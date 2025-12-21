@@ -1,14 +1,15 @@
 export interface Option {
-    id: string | number;
+    value: string | number;
     label: string;
-    [key: string]: unknown;
 }
-interface SelectProps<T extends Option> {
-    options: T[];
-    value?: T;
-    onChange: (value: T) => void;
+interface SelectProps {
     label?: string;
+    options: Option[];
+    value: string | number;
+    onChange: (value: string | number) => void;
     placeholder?: string;
+    className?: string;
+    disabled?: boolean;
 }
-export declare function Select<T extends Option>({ options, value, onChange, label, placeholder, }: Readonly<SelectProps<T>>): import("react/jsx-runtime").JSX.Element;
+export declare function Select({ label, options, value, onChange, placeholder, className, disabled, }: SelectProps): import("react/jsx-runtime").JSX.Element;
 export {};
