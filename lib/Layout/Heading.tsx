@@ -15,9 +15,7 @@ export type HeadingProps = {
 export const Heading = ({ title, variant = 'page', meta, filters, children }: HeadingProps) => {
   const isCard = variant === 'card';
 
-  const containerClasses = isCard
-    ? 'border-b border-border dark:border-border-dark py-3 px-0'
-    : 'py-6 bg-surface-base dark:bg-surface-base-dark';
+  const containerClasses = isCard ? 'border-b border-border dark:border-border-dark py-3 px-0' : 'py-6';
 
   const innerClasses = isCard ? 'w-full px-4 sm:px-6 lg:px-8' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8';
 
