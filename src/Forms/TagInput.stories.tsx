@@ -72,3 +72,41 @@ export const InteractionTest: Story = {
     });
   },
 };
+
+export const WithSuggestions: Story = {
+  args: {
+    label: 'Categorize Recipe',
+    placeholder: 'Type "ve" for suggestions...',
+    suggestions: ['Vegan', 'Vegetarian', 'Veggies', 'Meat', 'Fish', 'Dessert'],
+    tags: [],
+  },
+  render: (args) => <TagInputTemplate {...args} />,
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByLabelText('Categorize Recipe');
+
+    await step('Type to trigger suggestions', async () => {
+      await userEvent.type(input, 've');
+      const suggestion = await canvas.findByText('Vegan');
+      expect(suggestion).toBeInTheDocument();
+    });
+
+    await step('Navigate suggestions with keyboard', async () => {
+      await userEvent.keyboard('{ArrowDown}');
+
+      await userEvent.keyboard('{Enter}');
+
+      const badge = await canvas.findByText('Vegetarian');
+      expect(badge).toBeInTheDocument();
+
+      expect(input).toHaveValue('');
+    });
+
+    await step('Verify filtered suggestions', async () => {
+      await userEvent.type(input, 've');
+      const dropdownOptions = canvas.queryAllByRole('button');
+      const hasVegetarian = dropdownOptions.some((opt) => opt.textContent === 'Vegetarian');
+      expect(hasVegetarian).toBe(false);
+    });
+  },
+};
