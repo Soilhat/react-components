@@ -22,7 +22,7 @@ export function Select<T extends Option>({
   onChange,
   label,
   placeholder = 'Select an option',
-}: SelectProps<T>) {
+}: Readonly<SelectProps<T>>) {
   return (
     <div className="w-full">
       <Listbox value={value} onChange={onChange}>

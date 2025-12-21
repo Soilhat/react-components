@@ -8,7 +8,7 @@ type NavProps = {
   actions?: ReactNode;
 };
 
-export const Navbar = ({ logoURl, brandName, links, actions }: NavProps) => {
+export const Navbar = ({ logoURl, brandName, links, actions }: Readonly<NavProps>) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { toggleTheme } = useTheme();
 

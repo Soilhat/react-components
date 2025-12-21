@@ -1,16 +1,19 @@
-import { Menu, Transition } from '@headlessui/react';
-import { Fragment, type ReactNode } from 'react';
+import { Menu, Transition, MenuItem, MenuButton } from '@headlessui/react';
+import { Fragment, useMemo, type ReactNode } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { genId } from '../utils';
 
 export interface DropdownItem {
+  id?: string;
   label: string;
-  icon?: ReactNode; // Support for HeroIcons or any element
+  icon?: ReactNode;
   onClick?: () => void;
   isDanger?: boolean;
   disabled?: boolean;
 }
 
 export interface DropdownSection {
+  id?: string;
   items: DropdownItem[];
 }
 
@@ -20,24 +23,37 @@ interface DropdownProps {
   buttonVariant?: 'primary' | 'secondary' | 'light';
 }
 
-export function Dropdown({ label, sections, buttonVariant = 'primary' }: DropdownProps) {
-  // Map variant to your theme variables
+export function Dropdown({ label, sections, buttonVariant = 'primary' }: Readonly<DropdownProps>) {
+  const processedSections = useMemo(() => {
+    return sections.map((section) => ({
+      ...section,
+      id: section.id || genId(),
+      items: section.items.map((item) => ({
+        ...item,
+        id: item.id || genId(),
+      })),
+    }));
+  }, [sections]);
+
   const buttonStyles = {
-    primary: 'bg-primary text-text-on-primary hover:bg-primary-hover',
-    secondary: 'bg-secondary text-text-on-primary hover:bg-secondary-hover',
+    primary: 'bg-primary text-text-on-primary hover:bg-primary-hover data-[active]:bg-primary-hover',
+    secondary: 'bg-secondary text-text-on-primary hover:bg-secondary-hover data-[active]:bg-secondary-hover',
     light:
-      'bg-light text-primary hover:bg-light-hover border border-light-border dark:bg-light-dark dark:text-primary-dark dark:hover:bg-light-hover-dark dark:border-light-border-dark',
+      'bg-light text-primary border border-light-border hover:bg-light-hover data-[active]:bg-light-hover dark:bg-light-dark dark:text-primary-dark dark:border-light-border-dark',
   };
 
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button
-          className={`inline-flex w-full justify-center gap-x-1.5 rounded-md px-4 py-2 text-sm font-semibold shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-state-focus ${buttonStyles[buttonVariant]}`}
+        <MenuButton
+          className={`inline-flex w-full justify-center items-center gap-x-1.5 rounded-md px-4 py-2 text-sm font-semibold shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-state-focus ${buttonStyles[buttonVariant]}`}
         >
           {label}
-          <ChevronDownIcon className="-mr-1 h-5 w-5" aria-hidden="true" />
-        </Menu.Button>
+          <ChevronDownIcon
+            className="-mr-1 h-5 w-5 transition-transform duration-200 data-active:rotate-180"
+            aria-hidden="true"
+          />
+        </MenuButton>
       </div>
 
       <Transition
@@ -49,34 +65,29 @@ export function Dropdown({ label, sections, buttonVariant = 'primary' }: Dropdow
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-border dark:divide-border-dark rounded-md bg-surface-panel dark:bg-surface-panel-dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-border dark:border-border-dark">
-          {sections.map((section, sIdx) => (
-            <div key={sIdx} className="px-1 py-1">
-              {section.items.map((item, iIdx) => (
-                <Menu.Item key={iIdx} disabled={item.disabled}>
-                  {({ active, disabled }) => (
-                    <button
-                      onClick={item.onClick}
-                      className={`
-                        ${active && !item.isDanger ? 'bg-light text-primary dark:bg-light-dark dark:text-primary-dark' : ''}
-                        ${active && item.isDanger ? 'bg-state-danger text-text-on-danger dark:bg-state-danger-dark dark:text-text-on-danger-dark' : ''}
-                        ${!active && item.isDanger ? 'text-state-danger dark:text-state-danger-dark' : ''}
-                        ${!active && !item.isDanger ? 'text-text-primary dark:text-text-primary-dark' : ''}
-                        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                        group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors
-                      `}
-                    >
-                      {item.icon && (
-                        <span
-                          className={`mr-2 h-5 w-5 ${!active && !item.isDanger ? 'text-text-secondary' : 'text-current'}`}
-                        >
-                          {item.icon}
-                        </span>
-                      )}
-                      {item.label}
-                    </button>
-                  )}
-                </Menu.Item>
+        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-border dark:divide-border-dark rounded-md bg-surface-panel dark:bg-surface-panel-dark shadow-lg ring-1 ring-black/5 focus:outline-none border border-border dark:border-border-dark">
+          {processedSections.map((section) => (
+            <div key={section.id} className="px-1 py-1">
+              {section.items.map((item) => (
+                <MenuItem key={item.id} disabled={item.disabled}>
+                  <button
+                    type="button"
+                    onClick={item.onClick}
+                    className={`
+                      group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors
+                      text-text-primary dark:text-text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed
+                      data-focus:bg-light data-focus:text-primary dark:data-focus:bg-light-dark dark:data-focus:text-primary-dark
+                      ${item.isDanger ? 'text-state-danger dark:text-state-danger-dark data-focus:bg-state-danger data-focus:text-white' : ''}
+                    `}
+                  >
+                    {item.icon && (
+                      <span className="mr-2 h-5 w-5 text-text-secondary group-data-focus:text-current">
+                        {item.icon}
+                      </span>
+                    )}
+                    <span className="flex-1 text-left">{item.label}</span>
+                  </button>
+                </MenuItem>
               ))}
             </div>
           ))}

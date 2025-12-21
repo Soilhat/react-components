@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { Select, Option } from '../../lib/main';
+import { Select, type Option } from '../../lib/main';
 
-const categories = [
+const categories: Option[] = [
   { id: 1, label: 'Dessert' },
   { id: 2, label: 'Main Dish' },
   { id: 3, label: 'Starter' },
@@ -14,7 +14,6 @@ const meta: Meta<typeof Select> = {
   parameters: {
     layout: 'centered',
   },
-  // We define default tags here
   args: {
     label: 'Recipe Category',
     options: categories,
@@ -23,37 +22,32 @@ const meta: Meta<typeof Select> = {
 };
 
 export default meta;
-
 type Story = StoryObj<typeof Select>;
 
-export const Default: Story = {
-  render: (args) => {
-    // We use a "Template" approach to manage state inside the story
-    const [value, setValue] = useState<Option | undefined>(undefined);
+const SelectTemplate = (args) => {
+  const [value, setValue] = useState<Option | undefined>(undefined);
 
-    return (
-      <div className="w-72">
-        <Select
-          {...args}
-          value={value}
-          onChange={(val) => {
-            setValue(val);
-            args.onChange?.(val);
-          }}
-        />
-      </div>
-    );
-  },
+  return (
+    <div className="w-72">
+      <Select
+        {...args}
+        value={value}
+        onChange={(e) => {
+          setValue(e);
+          args.onChange?.(e);
+        }}
+      />
+    </div>
+  );
+};
+
+export const Default: Story = {
+  render: (args) => <SelectTemplate {...args} />,
 };
 
 export const Preselected: Story = {
-  render: (args) => {
-    const [value, setValue] = useState<Option | undefined>(categories[1]);
-
-    return (
-      <div className="w-72">
-        <Select {...args} value={value} onChange={setValue} />
-      </div>
-    );
+  args: {
+    value: { id: 2, label: 'Main Dish' },
   },
+  render: (args) => <SelectTemplate {...args} />,
 };

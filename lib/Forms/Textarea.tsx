@@ -53,7 +53,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
               type="button"
               onClick={(e) => togglePreview(e, false)}
               className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
-                !isPreview ? 'bg-primary text-text-on-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
+                isPreview ? 'text-text-secondary hover:text-text-primary' : 'bg-primary text-text-on-primary shadow-sm'
               }`}
               role="tab"
               aria-selected={!isPreview}
