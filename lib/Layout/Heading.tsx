@@ -13,42 +13,70 @@ export type HeadingProps = {
 };
 
 export const Heading = ({ title, variant = 'page', meta, filters, children }: HeadingProps) => {
-  const additionalClasses = variant === 'card' ? 'border-b border-gray-300 dark:border-gray-600' : '';
+  const isCard = variant === 'card';
+
+  const containerClasses = isCard
+    ? 'border-b border-border dark:border-border-dark py-3 px-0'
+    : 'py-6 bg-surface-base dark:bg-surface-base-dark';
+
+  const innerClasses = isCard ? 'w-full px-4 sm:px-6 lg:px-8' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8';
+
   return (
-    <div className={`py-4 text-gray-900 dark:text-gray-100 ${additionalClasses}`}>
-      <div className="text-2xl font-bold mb-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="md:justify-between md:items-center md:flex">
-          <div className="min-w-0">
-            <div className="flex gap-6 flex-wrap sm:flex-nowrap">
-              <h2 className="text-2xl font-bold text-black dark:text-white sm:truncate sm:text-3xl sm:tracking-wide">
+    <div className={`${containerClasses} transition-colors duration-200`}>
+      <div className={innerClasses}>
+        <div className="md:flex md:items-center md:justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-baseline gap-4 flex-wrap">
+              <h2
+                className={`
+                font-bold tracking-tight text-text-primary dark:text-text-primary-dark
+                ${isCard ? 'text-xl' : 'text-2xl sm:text-3xl'}
+              `}
+              >
                 {title}
               </h2>
+
               {filters && (
-                <div className="flex gap-2 text-sm sm:w-auto sm:border-l items-center sm:border-gray-300 sm:pl-6">
+                <nav
+                  className="flex items-center gap-4 text-sm border-l border-border dark:border-border-dark pl-4 ml-2"
+                  aria-label="Filters"
+                >
                   {filters.map((f) => (
                     <a
-                      {...f.props}
                       key={f.key}
-                      className={`cursor-pointer ${f.active ? 'text-accent' : 'hover:text-accent'}`}
+                      {...f.props}
+                      className={`
+                        transition-colors font-medium
+                        ${
+                          f.active
+                            ? 'text-primary dark:text-primary-dark underline underline-offset-8 decoration-2'
+                            : 'text-text-secondary hover:text-primary dark:hover:text-primary-dark'
+                        }
+                      `}
                     >
                       {f.value}
                     </a>
                   ))}
-                </div>
+                </nav>
               )}
             </div>
+
             {meta && (
-              <div className="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
+              <div className="mt-2 flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-6 gap-y-2">
                 {meta.map((m) => (
-                  <div key={m.key} className="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                    {m.svg && <span className="flex-shrink-0 mr-1.5">{m.svg}</span>}
+                  <div
+                    key={m.key}
+                    className="flex items-center text-sm text-text-secondary dark:text-text-secondary-dark"
+                  >
+                    {m.svg && <span className="shrink-0 mr-1.5 text-text-secondary/70">{m.svg}</span>}
                     <span>{m.value}</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
-          <div className="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">{children}</div>
+
+          <div className="mt-4 flex md:ml-4 md:mt-0 gap-3 items-center">{children}</div>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ const meta = {
     layout: 'fullscreen',
   },
   args: {
-    logoURl: 'https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600',
+    logoURl: 'https://soilhat.github.io/react-components/assets/soilhat-logo.png',
     brandName: 'BrandName',
     links: [
       { label: 'Home', element: 'a' },

@@ -1,81 +1,121 @@
-import { forwardRef, useState, type MouseEvent } from 'react';
+import { forwardRef, useState, type MouseEvent, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   markdown?: boolean;
+  error?: string;
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
-  { label, markdown = false, name, className, rows = 4, onChange, defaultValue, ...props },
+  { label, markdown = false, error, name, className, rows = 4, onChange, defaultValue, value, ...props },
   ref
 ) {
   const [isPreview, setIsPreview] = useState(false);
-  const [text, setText] = useState(defaultValue?.toString() || '');
+  const [text, setText] = useState(value?.toString() || defaultValue?.toString() || '');
 
-  const previewVisibility = (event: MouseEvent<HTMLButtonElement>) => {
+  useEffect(() => {
+    if (value !== undefined) setText(value.toString());
+  }, [value]);
+
+  const togglePreview = (event: MouseEvent<HTMLButtonElement>, showPreview: boolean) => {
     event.preventDefault();
-    setIsPreview(!isPreview);
+    setIsPreview(showPreview);
   };
+
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value);
-    if (onChange) {
-      onChange(event);
-    }
+    if (onChange) onChange(event);
   };
 
+  const panelClasses = `
+    w-full rounded-lg border transition-all duration-200 p-3 text-base sm:text-sm
+    ${error ? 'border-state-danger dark:border-state-danger-dark' : 'border-border dark:border-border-dark'}
+    bg-surface-panel dark:bg-surface-panel-dark
+    text-text-primary dark:text-text-primary-dark
+  `;
+
   return (
-    <div>
-      {label && (
-        <label className="label" htmlFor={name}>
-          {label}
-        </label>
-      )}
-      {markdown && (
-        <div className="flex items-center mt-2">
-          <div className="flex gap-2">
+    <div className="flex flex-col w-full space-y-2">
+      <div className="flex items-center justify-between">
+        {label && (
+          <label className="label" htmlFor={name}>
+            {label}
+          </label>
+        )}
+
+        {markdown && (
+          <div
+            className="flex bg-surface-base dark:bg-surface-base-dark p-1 rounded-lg border border-border dark:border-border-dark"
+            role="tablist"
+          >
             <button
-              onClick={previewVisibility}
-              disabled={!isPreview}
-              className="rounded-md border border-transparent dark:bg-surface-dark bg-surface px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:dark:bg-gray-700 hover:text-black hover:dark:text-white aria-selected:bg-gray-100 aria-selected:dark:bg-gray-700 aria-selected:text-black aria-selected:dark:text-white"
+              type="button"
+              onClick={(e) => togglePreview(e, false)}
+              className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+                !isPreview ? 'bg-primary text-text-on-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
+              }`}
               role="tab"
               aria-selected={!isPreview}
-              tabIndex={0}
             >
               Write
             </button>
             <button
-              onClick={previewVisibility}
-              disabled={isPreview}
-              className="rounded-md border border-transparent dark:bg-surface-dark bg-surface px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:dark:bg-gray-700 hover:text-black hover:dark:text-white aria-selected:bg-gray-100 aria-selected:dark:bg-gray-700 aria-selected:text-black aria-selected:dark:text-white"
+              type="button"
+              onClick={(e) => togglePreview(e, true)}
+              className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+                isPreview ? 'bg-primary text-text-on-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
+              }`}
               role="tab"
               aria-selected={isPreview}
-              tabIndex={-1}
             >
               Preview
             </button>
           </div>
+        )}
+      </div>
+
+      <div className="relative">
+        {/* Editor Panel */}
+        <div hidden={isPreview}>
+          <textarea
+            id={name}
+            name={name}
+            ref={ref}
+            rows={rows}
+            onChange={handleChange}
+            value={text}
+            className={`
+              ${panelClasses} 
+              focus:ring-4 focus:ring-state-focus/20 focus:border-state-focus focus:outline-none
+              placeholder:text-text-secondary/50
+              ${className}
+            `}
+            {...props}
+          />
         </div>
-      )}
-      <div className="mt-2" role="tabpanel" tabIndex={0} hidden={isPreview}>
-        <textarea
-          className={`${className} block w-full rounded-md outline -outline-offset-1 outline-transparent border-gray-300 shadow-sm focus:border-accent focus:ring-accent text-base sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white px-3 py-1.5`}
-          ref={ref}
-          rows={rows}
-          name={name}
-          onChange={handleChange}
-          defaultValue={defaultValue}
-          {...props}
-        />
+
+        {/* Preview Panel */}
+        {isPreview && (
+          <div
+            className={`
+              ${panelClasses} 
+              markdown min-h-[calc(${rows}*1.5rem+1.5rem)]
+              overflow-y-auto bg-surface-base/10
+              ${className}
+            `}
+            role="tabpanel"
+          >
+            {text ? (
+              <ReactMarkdown>{text}</ReactMarkdown>
+            ) : (
+              <span className="text-text-secondary italic">Nothing to preview</span>
+            )}
+          </div>
+        )}
       </div>
-      <div
-        role="tabpanel"
-        tabIndex={0}
-        hidden={!isPreview}
-        className={`${className} markdown mt-2 block w-full rounded-md outline -outline-offset-1 outline-transparent border-gray-300 shadow-sm text-base sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white px-3 py-1.5`}
-      >
-        <ReactMarkdown>{text}</ReactMarkdown>
-      </div>
+
+      {error && <p className="text-sm text-state-danger dark:text-state-danger-dark font-medium">{error}</p>}
     </div>
   );
 });

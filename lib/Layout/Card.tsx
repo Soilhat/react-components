@@ -1,5 +1,4 @@
 import React, { type ReactNode } from 'react';
-
 import { Heading, type HeadingProps } from './Heading';
 import { getChildrenOnDisplayName, getChildrenExcludingDisplayName } from '../utils';
 
@@ -11,7 +10,7 @@ interface CardSubComponents {
 
 export const Card: React.FC<React.HTMLAttributes<HTMLElement>> & CardSubComponents = ({
   children,
-  className,
+  className = '',
   ...props
 }) => {
   const header = getChildrenOnDisplayName(children, 'Card.Header');
@@ -21,14 +20,25 @@ export const Card: React.FC<React.HTMLAttributes<HTMLElement>> & CardSubComponen
 
   return (
     <div
-      className={`${className} border rounded-lg shadow transition-all duration-300 
-        bg-white text-gray-900 border-gray-300 
-        dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 
-        w-full`}
+      className={`
+        ${className} 
+        /* 1. Use Semantic Theme Variables */
+        bg-surface-panel dark:bg-surface-panel-dark
+        text-text-primary dark:text-text-primary-dark
+        border border-border dark:border-border-dark
+        
+        /* 2. Visual Polish */
+        rounded-xl shadow-sm transition-shadow duration-300 hover:shadow-md
+        
+        /* 3. Responsive Width Logic */
+        w-full mx-auto
+        sm:max-w-md    /* Tablet/Small screen */
+        lg:max-w-2xl   /* Large screen (wider) */
+        xl:max-w-4xl   /* Ultra wide screens */
+      `}
       {...props}
     >
       {header}
-      {/* Render Card.Body if present, otherwise render all non-header/footer children in a default body */}
       {bodyChildren && bodyChildren.length > 0
         ? bodyChildren
         : nonHeaderFooter && nonHeaderFooter.length > 0 && <Body>{nonHeaderFooter}</Body>}
@@ -45,12 +55,18 @@ const Header: React.FC<HeadingProps> = ({ title, children }) => (
 Header.displayName = 'Card.Header';
 Card.Header = Header;
 
-const Body = ({ children }: { children: ReactNode }) => <div className="p-4 sm:p-6 space-y-4">{children}</div>;
+const Body = ({ children, className = '' }: { children: ReactNode; className?: string }) => (
+  <div className={`p-4 sm:p-6 space-y-4 ${className}`}>{children}</div>
+);
 Body.displayName = 'Card.Body';
 Card.Body = Body;
 
-const Footer = ({ children }: { children: ReactNode }) => (
-  <div className="p-4 sm:p-6 border-t border-gray-300 dark:border-gray-600">{children}</div>
+const Footer = ({ children, className = '' }: { children: ReactNode; className?: string }) => (
+  <div
+    className={`p-4 sm:p-6 border-t border-border dark:border-border-dark bg-surface-base/50 dark:bg-surface-base-dark/50 ${className}`}
+  >
+    {children}
+  </div>
 );
 Footer.displayName = 'Card.Footer';
 Card.Footer = Footer;
