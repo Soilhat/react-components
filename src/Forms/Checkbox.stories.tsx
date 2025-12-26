@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Checkbox } from '../../lib/main';
+import { Checkbox, Text } from '../../lib/main';
 
 const meta: Meta<typeof Checkbox> = {
   title: 'Forms/Checkbox',
@@ -45,7 +45,7 @@ export const ComplexCard: Story = {
     label: 'Option Premium',
     description: (
       <div className="mt-2 p-2 bg-primary/10 rounded border border-primary/20 text-xs">
-        <p>Inclus : Recettes illimitées, mode hors-ligne et export PDF.</p>
+        <Text variant="small">Inclus : Recettes illimitées, mode hors-ligne et export PDF.</Text>
       </div>
     ),
     containerClassName: 'w-80 border-2 border-primary/20 shadow-sm',

@@ -1,7 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import type { ColorName } from '../utils/types';
 
 type ButtonVariant = 'default' | 'border';
-type ColorName = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark';
 type Size = 'small' | 'medium' | 'large';
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'size'> {
