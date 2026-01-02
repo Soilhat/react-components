@@ -1,3 +1,12 @@
+body {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-base);
+  transition: background-color 0.3s ease; /* Smooth toggle */
+}
+.dark body {
+  color: var(--color-text-primary-dark);
+  background-color: var(--color-surface-base-dark);
+}
 /* ================================================= */
 /* Labels & Typography */
 /* ================================================= */
