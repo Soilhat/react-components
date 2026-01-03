@@ -6,8 +6,15 @@ interface ModalProps {
 }
 interface ModalSubComponents {
     Footer: typeof Footer;
+    Body: typeof Body;
 }
 export declare const Modal: React.FC<ModalProps> & ModalSubComponents;
+declare const Body: {
+    ({ children }: {
+        children: ReactNode;
+    }): import("react/jsx-runtime").JSX.Element;
+    displayName: string;
+};
 declare const Footer: {
     ({ children }: {
         children: ReactNode;
