@@ -4,7 +4,7 @@ export { Card, Container, Heading, Divider, CategoryTree } from './Layout';
 export { Form, Input, Textarea, ImageUploader, Select, Checkbox, TagInput } from './Forms';
 export type { Option } from './Forms';
 export { Toast, type ToastType, ToastProvider, useToast, Progress } from './Feedback';
-export { Navbar } from './Navigation';
+export { Navbar, type NavLink } from './Navigation';
 export { useTheme } from './Theme';
 export { StackedList } from './Lists';
 export { Modal } from './Overlays';
