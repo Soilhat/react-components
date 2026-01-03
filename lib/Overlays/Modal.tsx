@@ -10,10 +10,12 @@ interface ModalProps {
 
 interface ModalSubComponents {
   Footer: typeof Footer;
+  Body: typeof Body;
 }
 
 export const Modal: React.FC<ModalProps> & ModalSubComponents = ({ open, children, onClose }) => {
   const footer = getChildrenOnDisplayName(children, 'Modal.Footer');
+  const bodyChildren = getChildrenOnDisplayName(children, 'Modal.Body');
   const nonFooter = getChildrenExcludingDisplayName(children, ['Modal.Header', 'Modal.Footer']);
 
   useEffect(() => {
@@ -67,7 +69,9 @@ export const Modal: React.FC<ModalProps> & ModalSubComponents = ({ open, childre
         </button>
 
         {/* Body */}
-        <div className="px-6 pt-8 pb-6 text-base">{nonFooter}</div>
+        {bodyChildren && bodyChildren.length > 0
+          ? bodyChildren
+          : nonFooter && nonFooter.length > 0 && <Body>{nonFooter}</Body>}
 
         {/* Footer */}
         {footer}
@@ -75,6 +79,10 @@ export const Modal: React.FC<ModalProps> & ModalSubComponents = ({ open, childre
     </div>
   );
 };
+
+const Body = ({ children }: { children: ReactNode }) => <div className="px-6 pt-8 pb-6">{children}</div>;
+Body.displayName = 'Modal.Body';
+Modal.Body = Body;
 
 const Footer = ({ children }: { children: ReactNode }) => (
   <div className="bg-surface-base/50 dark:bg-surface-base-dark/50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-border dark:border-border-dark">

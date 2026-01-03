@@ -11,12 +11,12 @@ interface TextProps<T extends React.ElementType> {
 }
 
 const variantStyles: Record<TextVariant, string> = {
-  h1: 'text-3xl font-bold tracking-tight',
-  h2: 'text-2xl font-semibold',
-  h3: 'text-xl font-medium',
-  body: 'text-base leading-relaxed',
-  small: 'text-sm',
-  detail: 'text-xs uppercase tracking-wider opacity-70',
+  h1: 'text-2xl sm:text-3xl font-black tracking-tight',
+  h2: 'text-xl sm:text-2xl font-bold',
+  h3: 'text-lg sm:text-xl font-bold',
+  body: 'text-sm sm:text-base leading-snug sm:leading-relaxed',
+  small: 'text-[13px] sm:text-sm',
+  detail: 'text-[10px] sm:text-xs uppercase tracking-widest font-bold opacity-60',
 };
 
 export const Text = <T extends React.ElementType = 'p'>({
@@ -35,7 +35,9 @@ export const Text = <T extends React.ElementType = 'p'>({
         ${variantStyles[variant]} 
         ${bold ? 'font-bold' : ''} 
         ${className}
-      `.trim()}
+      `
+        .trim()
+        .replace(/\s+/g, ' ')} // Cleans up double spaces
       {...props}
     >
       {children}
