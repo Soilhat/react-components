@@ -1,126 +1,122 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode } from 'react';
 import { useTheme } from '../Theme/useTheme';
+import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
 
-type NavProps = {
-  logoURl?: string;
-  brandName?: string;
-  links?: { label: string; element: ReactNode }[];
-  actions?: ReactNode;
+export type NavLink = {
+  label: string;
+  element: ReactNode;
+  icon?: ReactNode;
 };
 
-export const Navbar = ({ logoURl, brandName, links, actions }: Readonly<NavProps>) => {
-  const [mobileOpen, setMobileOpen] = useState(false);
+type NavProps = {
+  layout?: 'sidebar' | 'topbar';
+  logoURl?: string;
+  brandName?: string;
+  links?: NavLink[];
+  actions?: ReactNode;
+  mobileNav?: ReactNode;
+  children?: ReactNode;
+};
+
+export const Navbar = ({ layout = 'sidebar', logoURl, brandName, links, actions, mobileNav, children }: NavProps) => {
   const { toggleTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border dark:border-border-dark bg-surface-panel/80 dark:bg-surface-panel-dark/80 backdrop-blur-md transition-colors duration-300">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Left: Branding & Logo */}
-          <div className="flex items-center gap-4">
-            <a href="/" className="flex items-center gap-2 group">
-              {logoURl && (
-                <img
-                  src={logoURl}
-                  alt=""
-                  className="h-8 w-8 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform"
-                />
-              )}
-              {brandName && (
-                <span className="text-xl font-bold tracking-tight text-text-primary dark:text-text-primary-dark">
-                  {brandName}
-                </span>
-              )}
-            </a>
-
-            {/* Mobile Toggle Button */}
-            <button
-              className="md:hidden inline-flex items-center justify-center rounded-md p-2 text-text-secondary hover:bg-surface-base dark:hover:bg-surface-base-dark focus:outline-none focus:ring-2 focus:ring-state-focus"
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={mobileOpen}
-              onClick={() => setMobileOpen((o) => !o)}
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {mobileOpen ? (
-                  <path strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeWidth="2" strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-
-          {/* Center: Desktop Navigation */}
-          {links && (
-            <nav className="hidden md:block" aria-label="Main Navigation">
-              <NavLinks links={links} />
+    <div className="min-h-screen bg-surface-base dark:bg-surface-base-dark transition-colors duration-300">
+      {/* --- TOPBAR VIEW (Normal Header) --- */}
+      {layout === 'topbar' && (
+        <header className="sticky top-0 z-40 w-full border-b border-border dark:border-border-dark bg-surface-panel/80 dark:bg-surface-panel-dark/80 backdrop-blur-md transition-colors">
+          <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
+            <Branding logo={logoURl} name={brandName} />
+            <nav className="hidden md:flex items-center gap-1">
+              <NavLinks links={links} direction="horizontal" />
             </nav>
-          )}
-
-          {/* Right: Actions & Theme Toggle */}
-          <div className="flex items-center gap-2">
-            <div className="hidden md:flex items-center gap-3">{actions}</div>
-
-            <button
-              aria-label="Toggle color theme"
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-text-secondary hover:text-primary dark:hover:text-primary-dark hover:bg-surface-base dark:hover:bg-surface-base-dark transition-all"
-            >
-              {/* Sun Icon (Show in Dark) */}
-              <svg className="size-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z"
-                />
-              </svg>
-              {/* Moon Icon (Show in Light) */}
-              <svg className="size-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                />
-              </svg>
-            </button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle onToggle={toggleTheme} />
+              <div className="hidden md:block">{actions}</div>
+            </div>
           </div>
-        </div>
+        </header>
+      )}
 
-        {/* Mobile Menu Panel */}
-        {mobileOpen && (
-          <div className="md:hidden animate-in slide-in-from-top duration-200 border-t border-border dark:border-border-dark py-4 space-y-4">
-            {links && <NavLinks links={links} isMobile />}
-            {actions && (
-              <div className="flex flex-col gap-2 pt-2 border-t border-border dark:border-border-dark">{actions}</div>
-            )}
+      {/* --- SIDEBAR VIEW --- */}
+      {layout === 'sidebar' && (
+        <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col border-r border-border dark:border-border-dark bg-surface-panel dark:bg-surface-panel-dark">
+          <div className="flex flex-col grow pt-5 pb-4 overflow-y-auto">
+            <Branding logo={logoURl} name={brandName} />
+            <nav className="mt-8 flex-1 px-4">
+              <NavLinks links={links} direction="vertical" />
+            </nav>
+            <div className="px-4 py-4 border-t border-border dark:border-border-dark flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark uppercase">
+                  Theme
+                </span>
+                <ThemeToggle onToggle={toggleTheme} />
+              </div>
+              {actions}
+            </div>
           </div>
-        )}
-      </div>
-    </header>
+        </aside>
+      )}
+
+      {/* --- MOBILE COMPACT HEADER (Always on for Sidebar Layout) --- */}
+      {layout === 'sidebar' && (
+        <header className="lg:hidden sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border dark:border-border-dark bg-surface-panel/80 dark:bg-surface-panel-dark/80 backdrop-blur-md px-4">
+          <Branding logo={logoURl} name={brandName} />
+          <ThemeToggle onToggle={toggleTheme} />
+        </header>
+      )}
+
+      {/* --- MAIN CONTENT --- */}
+      <main className={`${layout === 'sidebar' ? 'lg:pl-64' : ''} transition-all`}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{children}</div>
+      </main>
+
+      {/* --- MOBILE NAV SLOT (App injects its own BottomBar here) --- */}
+      <div className="lg:hidden">{mobileNav}</div>
+    </div>
   );
 };
 
-function NavLinks({ links, isMobile = false }: { links?: NavProps['links']; isMobile?: boolean }) {
-  return (
-    <ul className={`flex ${isMobile ? 'flex-col gap-1' : 'flex-row items-center gap-1'}`}>
-      {links?.map((l) => (
-        <li key={l.label} className="w-full">
-          <div
-            className={`
-            text-sm font-medium transition-all rounded-md
-            ${
-              isMobile
-                ? 'px-3 py-2 text-text-primary hover:bg-surface-base dark:hover:bg-surface-base-dark'
-                : 'px-4 py-2 text-text-secondary hover:text-primary dark:text-text-secondary-dark dark:hover:text-primary-dark'
-            }
-          `}
-          >
-            {l.element}
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
+// --- INTERNAL HELPERS ---
+
+const Branding = ({ logo, name }: { logo?: string; name?: string }) => (
+  <div className="flex items-center gap-3">
+    {logo && <img src={logo} alt="" className="h-8 w-8 rounded-lg shadow-sm" />}
+    {name && (
+      <span className="text-xl font-black tracking-tight text-text-primary dark:text-text-primary-dark uppercase italic">
+        {name}
+      </span>
+    )}
+  </div>
+);
+
+const ThemeToggle = ({ onToggle }: { onToggle: () => void }) => (
+  <button
+    onClick={onToggle}
+    className="p-2 rounded-lg text-text-secondary dark:text-text-secondary-dark hover:bg-surface-base dark:hover:bg-surface-base-dark transition-all"
+  >
+    <SunIcon className="size-5 hidden dark:block" />
+    <MoonIcon className="size-5 block dark:hidden" />
+  </button>
+);
+
+const NavLinks = ({ links, direction }: { links?: NavLink[]; direction: 'vertical' | 'horizontal' }) => (
+  <ul className={`flex ${direction === 'vertical' ? 'flex-col gap-2' : 'flex-row gap-1'}`}>
+    {links?.map((l) => (
+      <li key={l.label}>
+        <div
+          className={`
+          group flex items-center gap-3 px-3 py-2 text-sm font-bold transition-all rounded-xl cursor-pointer
+          text-text-secondary hover:text-primary dark:text-text-secondary-dark dark:hover:text-primary-dark
+          hover:bg-surface-base dark:hover:bg-surface-base-dark
+        `}
+        >
+          {l.icon && <span className="size-5 shrink-0 opacity-70 group-hover:opacity-100">{l.icon}</span>}
+          {l.element}
+        </div>
+      </li>
+    ))}
+  </ul>
+);
