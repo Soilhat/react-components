@@ -6,12 +6,14 @@ import { genId } from '../utils';
 export interface Option {
   value: string | number;
   label: string;
+  description?: string;
 }
 
 interface SelectProps {
   label?: string;
   options: Option[];
-  value: string | number;
+  value?: string | number;
+  defaultValue?: string | number;
   onChange: (value: string | number) => void;
   placeholder?: string;
   className?: string;
@@ -22,56 +24,63 @@ export function Select({
   label,
   options,
   value,
+  defaultValue,
   onChange,
-  placeholder,
+  placeholder = 'Choose...',
   className = '',
   disabled = false,
-}: SelectProps) {
+}: Readonly<SelectProps>) {
   const selectId = useMemo(() => genId(), []);
-
-  const selectedOption = useMemo(() => options.find((opt) => opt.value === value), [options, value]);
+  const activeValue = value ?? defaultValue;
+  const selectedOption = useMemo(() => options.find((opt) => opt.value === activeValue), [options, activeValue]);
 
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
       {label && (
-        <label htmlFor={selectId} className="text-sm font-bold text-text-primary dark:text-text-primary-dark">
+        <label
+          htmlFor={selectId}
+          className="text-[10px] font-black uppercase tracking-widest text-text-secondary dark:text-text-secondary-dark ml-1"
+        >
           {label}
         </label>
       )}
 
-      <Listbox value={value} onChange={onChange} disabled={disabled}>
+      <Listbox value={activeValue} onChange={onChange} disabled={disabled}>
         <div className="relative">
           <ListboxButton
             id={selectId}
             className={`
-              relative w-full cursor-pointer rounded-lg border border-border dark:border-border-dark 
-              bg-surface-panel dark:bg-surface-panel-dark py-2 pl-3 pr-10 text-left text-sm
-              focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
-              disabled:opacity-50 disabled:cursor-not-allowed transition-all
+              relative w-full cursor-pointer rounded-xl border border-border dark:border-border-dark 
+              bg-surface-panel dark:bg-surface-panel-dark py-3 pl-4 pr-10 text-left text-sm
+              hover:border-primary/50 dark:hover:border-primary-dark/50 transition-all duration-200
+              focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:ring-primary-dark/90 dark:focus:border-primary-dark
+              disabled:opacity-50 disabled:cursor-not-allowed
             `}
           >
             <span
-              className={`block truncate ${!selectedOption ? 'text-text-secondary/50' : 'text-text-primary dark:text-text-primary-dark'}`}
+              className={`block truncate font-medium ${selectedOption ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary/60 dark:text-text-secondary-dark/40'}`}
             >
               {selectedOption ? selectedOption.label : placeholder}
             </span>
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronUpDownIcon className="h-5 w-5 text-text-secondary" aria-hidden="true" />
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+              <ChevronUpDownIcon
+                className="h-5 w-5 text-text-secondary dark:text-text-secondary-dark"
+                aria-hidden="true"
+              />
             </span>
           </ListboxButton>
 
+          {/* IMPORTANT: 'anchor="bottom start"' and 'z-[9999]' ensure visibility inside modals.
+              We use 'w-(--button-width)' to match the input's width.
+          */}
           <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-            {/* 
-              L'attribut 'anchor' est LA CLÉ :
-              - Il détache le menu du flux CSS de la modale (Portal).
-              - Il gère les collisions (si pas de place en bas, il s'ouvre en haut).
-            */}
             <ListboxOptions
               anchor="bottom start"
               className={`
-                z-9999 mt-1 max-h-60 w-(--button-width) overflow-auto rounded-md 
-                bg-surface-panel dark:bg-surface-panel-dark py-1 shadow-xl ring-1 ring-black/5 
+                z-9999 mt-2 max-h-60 w-(--button-width) overflow-auto rounded-xl 
+                bg-surface-panel dark:bg-surface-panel-dark py-1.5 shadow-2xl ring-1 ring-black/5 
                 focus:outline-none border border-border dark:border-border-dark
+                backdrop-blur-xl
                 [--anchor-gap:4px]
               `}
             >
@@ -79,16 +88,28 @@ export function Select({
                 <ListboxOption
                   key={option.value}
                   value={option.value}
-                  className="group relative cursor-pointer select-none py-2 pl-10 pr-4 text-sm data-focus:bg-primary data-focus:text-text-on-primary text-text-primary dark:text-text-primary-dark"
+                  className="group relative cursor-pointer select-none py-2.5 pl-10 pr-4 text-sm transition-colors data-focus:bg-primary/10 dark:data-focus:bg-primary-dark/90"
                 >
                   {({ selected }) => (
                     <>
-                      <span className={`block truncate ${selected ? 'font-bold' : 'font-normal'}`}>{option.label}</span>
-                      {selected ? (
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary group-data-focus:text-text-on-primary">
+                      <div className="flex flex-col">
+                        <span
+                          className={`block truncate ${selected ? 'font-bold text-primary dark:text-primary-dark' : 'text-text-primary dark:text-text-primary-dark'}`}
+                        >
+                          {option.label}
+                        </span>
+                        {option.description && (
+                          <span className="text-[10px] text-text-secondary dark:text-text-secondary-dark truncate">
+                            {option.description}
+                          </span>
+                        )}
+                      </div>
+
+                      {selected && (
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary dark:text-primary-dark">
                           <CheckIcon className="h-5 w-5" aria-hidden="true" />
                         </span>
-                      ) : null}
+                      )}
                     </>
                   )}
                 </ListboxOption>

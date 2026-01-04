@@ -29,3 +29,11 @@ export const Password: Story = {
     placeholder: 'Enter your password',
   },
 };
+
+export const Checkbox: Story = {
+  args: {
+    label: 'Checkbox',
+    type: 'checkbox',
+    placeholder: 'Click to select value',
+  },
+};

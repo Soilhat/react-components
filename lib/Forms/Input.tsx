@@ -31,11 +31,57 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     containerClassName = '',
     required,
     disabled,
+    type,
     ...props
   },
   ref
 ) {
   const inputId = id || props.name || `input-${genId()}`;
+  const isCheckbox = type === 'checkbox';
+
+  if (isCheckbox) {
+    return (
+      <div className={`flex flex-col gap-1 ${containerClassName}`}>
+        <label className="group flex items-start gap-3 cursor-pointer select-none">
+          <div className="relative flex items-center mt-0.5">
+            <input
+              id={inputId}
+              type="checkbox"
+              ref={ref}
+              disabled={disabled}
+              className={`
+                peer size-5 rounded-md border-border dark:border-border-dark 
+                bg-surface-panel dark:bg-surface-panel-dark
+                text-primary dark:text-primary-dark focus:ring-primary/20 dark:focus:ring-primary-dark/80 focus:ring-offset-0
+                transition-all duration-200 cursor-pointer
+                disabled:opacity-50 disabled:cursor-not-allowed
+                ${error ? 'border-state-danger dark:border-state-danger-dark' : 'hover:border-primary dark:hover:border-primary-dark'}
+                ${className}
+              `}
+              {...props}
+            />
+          </div>
+
+          <div className="flex flex-col">
+            {label && (
+              <span
+                className={`text-sm font-bold transition-colors ${disabled ? 'text-text-secondary/50 dark:text-text-secondary-dark/50' : 'text-text-primary dark:text-text-primary-dark'} ${error ? 'text-state-danger dark:text-state-danger-dark' : 'group-hover:text-primary dark:group-hover:text-primary-dark'}`}
+              >
+                {label} {required && <span className="text-state-danger dark:text-state-danger-dark">*</span>}
+              </span>
+            )}
+            {hint && !error && (
+              <span className="text-xs text-text-secondary dark:text-text-secondary-dark">{hint}</span>
+            )}
+            {error && (
+              <span className="text-xs text-state-danger dark:text-state-danger-dark font-medium">{error}</span>
+            )}
+          </div>
+        </label>
+      </div>
+    );
+  }
+
   const hintId = hint ? `${inputId}-hint` : undefined;
   const errorId = error ? `${inputId}-error` : undefined;
 
@@ -101,6 +147,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           required={required}
           disabled={disabled}
           className={inputClasses}
+          type={type}
           {...props}
         />
 
