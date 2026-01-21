@@ -35,7 +35,7 @@ type StoryEvent = {
 const sampleEvents: Record<string, StoryEvent[]> = {
   [iso(today)]: [
     { id: 'evt-today-1', title: 'Team Meeting' },
-    { id: 'evt-today-2', title: '1:1', items: [{ title: 'Discuss roadmap' }] },
+    { id: 'evt-today-2', title: '1:1', items: [{ title: 'Discuss roadmap for long text implementation' }] },
   ],
   [iso(tomorrow)]: [{ id: 'evt-tomorrow-1', title: 'Deploy' }],
   [iso(inThree)]: [

@@ -108,7 +108,7 @@ const EventList = ({ dayEvents, onEventClick }: { dayEvents: unknown[]; onEventC
   if (entries.length === 0) return null;
 
   return (
-    <div className="space-y-1">
+    <div className="flex flex-col gap-1.5 w-full">
       {entries.map((entry) => (
         <Button
           key={entry.key}
@@ -116,9 +116,9 @@ const EventList = ({ dayEvents, onEventClick }: { dayEvents: unknown[]; onEventC
           title={entry.title}
           aria-label={entry.title}
           color_name="light"
-          className="text-left text-xs"
+          className="text-left text-xs p-1.5 w-full h-auto min-h-fit leading-tight border-none bg-primary/10 hover:bg-primary/20 text-primary-dark dark:text-primary"
         >
-          <div className="truncate">{entry.title}</div>
+          <div className="line-clamp-2 break-words overflow-hidden">{entry.title}</div>
         </Button>
       ))}
     </div>
@@ -143,23 +143,40 @@ const DayCard = ({
   containerClass?: string;
 }) => {
   const iso = toISODate(d);
-  const baseClass = containerClass ?? 'min-h-[6rem]';
+  const dayName = d.toLocaleDateString(undefined, { weekday: 'short' });
+
+  // Use flex-col on mobile to prevent horizontal squishing
   return (
     <div
       key={iso}
-      className={`${baseClass} border rounded-lg p-3 ${isCurrentMonth ? 'bg-surface-panel dark:bg-surface-panel-dark' : 'bg-surface-base dark:bg-surface-base-dark'} border-border dark:border-border-dark`}
+      className={`${containerClass} border rounded-xl p-3 transition-all ${
+        isCurrentMonth
+          ? 'bg-surface-panel dark:bg-surface-panel-dark shadow-sm'
+          : 'bg-surface-base/50 dark:bg-surface-base-dark/50 opacity-60'
+      } border-border dark:border-border-dark flex flex-col gap-2`}
     >
-      <div className="flex items-start justify-between">
-        <div
-          className={`text-sm font-medium ${isCurrentMonth ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary dark:text-text-secondary-dark'}`}
-        >
-          {d.getDate()}
+      <div className="flex items-center justify-between">
+        <div className="flex items-baseline gap-2">
+          <span
+            className={`text-lg font-bold ${isCurrentMonth ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary'}`}
+          >
+            {d.getDate()}
+          </span>
+          {/* Show day name only on mobile list view */}
+          <span className="sm:hidden text-xs font-medium uppercase tracking-wider text-text-secondary">{dayName}</span>
         </div>
-        <Button type="button" onClick={() => onAction?.(d)} color_name="primary" className="text-xs w-auto!">
+
+        <Button
+          type="button"
+          onClick={() => onAction?.(d)}
+          color_name="primary"
+          className="py-1 px-3 text-[10px] h-7 w-auto!"
+        >
           {actionLabel}
         </Button>
       </div>
-      <div className="mt-2 space-y-1">
+
+      <div className="flex-1">
         <EventList dayEvents={dayEvents} onEventClick={onEventClick} />
       </div>
     </div>
@@ -178,11 +195,11 @@ export function Calendar({
   actionLabel = 'Plan',
   initialView,
 }: Readonly<CalendarProps>) {
-  // internal date keeps track of current focused month/week
   const [currentDate, setCurrentDate] = useState<Date>(new Date(year, month, 1));
   const [view, setView] = useState<'month' | 'week'>(initialView ?? 'month');
 
   const weeks = buildWeeks(currentDate.getFullYear(), currentDate.getMonth());
+  const allDays = weeks.flat();
 
   // build week days for currentDate (Sunday..Saturday)
   const weekStart = new Date(currentDate);
@@ -217,93 +234,93 @@ export function Calendar({
     onNext?.();
   };
 
+  const daysToDisplay = view === 'month' ? allDays : weekDays;
+
+  // Filter to only show the current month for a cleaner mobile list
+  const mobileDays =
+    view === 'month' ? daysToDisplay.filter((d) => d.getMonth() === currentDate.getMonth()) : daysToDisplay; // In week view, show all 7 days even on mobile
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div>
-            <h2 className="text-lg font-semibold">
-              {title ?? `${currentDate.toLocaleString(undefined, { month: 'long', year: 'numeric' })}`}
-            </h2>
-          </div>
-          <div className="hidden sm:flex items-center gap-2">
-            <Button
+    <div className="w-full max-w-full overflow-hidden">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h2 className="text-2xl font-bold tracking-tight">
+          {title ?? `${currentDate.toLocaleString(undefined, { month: 'long', year: 'numeric' })}`}
+        </h2>
+
+        <div className="flex items-center justify-between sm:justify-end gap-2">
+          <div className="flex bg-surface-panel dark:bg-surface-panel-dark p-1 rounded-lg border border-border dark:border-border-dark">
+            <button
               onClick={() => setView('month')}
-              variant={view === 'month' ? 'default' : 'border'}
-              color_name="light"
-              className="text-primary"
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${view === 'month' ? 'bg-primary text-white shadow-md' : 'text-text-secondary'}`}
             >
               Month
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={() => setView('week')}
-              variant={view === 'week' ? 'default' : 'border'}
-              color_name="light"
-              className="text-primary"
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${view === 'week' ? 'bg-primary text-white shadow-md' : 'text-text-secondary'}`}
             >
               Week
+            </button>
+          </div>
+
+          <div className="flex gap-1">
+            <Button onClick={goPrev} color_name="light" className="px-3">
+              Prev
+            </Button>
+            <Button onClick={goNext} color_name="light" className="px-3">
+              Next
             </Button>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button onClick={goPrev} color_name="light">
-            Prev
-          </Button>
-          <Button onClick={goNext} color_name="light">
-            Next
-          </Button>
         </div>
       </div>
 
-      <div className="hidden sm:grid sm:grid-cols-7 gap-2 text-left">
+      {/* Day Headers (Hidden on Mobile) */}
+      <div className="hidden sm:grid sm:grid-cols-7 gap-3 mb-2 px-1">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-          <div key={d} className="font-semibold py-2 text-sm text-text-secondary dark:text-text-secondary-dark">
+          <div
+            key={d}
+            className="text-xs font-bold uppercase tracking-widest text-text-secondary dark:text-text-secondary-dark opacity-70"
+          >
             {d}
           </div>
         ))}
       </div>
 
-      {view === 'month' ? (
-        <div className="grid sm:grid-cols-7 grid-cols-2 gap-3 mt-3">
-          {weeks.flat().map((d) => {
-            const iso = toISODate(d);
-            const isCurrentMonth = d.getMonth() === currentDate.getMonth();
-            const dayEvents = eventsByDate[iso] ?? [];
-            return (
-              <DayCard
-                key={iso}
-                d={d}
-                isCurrentMonth={isCurrentMonth}
-                dayEvents={dayEvents}
-                actionLabel={actionLabel}
-                onAction={onAction}
-                onEventClick={onEventClick}
-                containerClass="min-h-[6rem]"
-              />
-            );
-          })}
+      {/* Calendar Body */}
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-7">
+        {/* MOBILE VIEW: Only current month days */}
+        <div className="contents sm:hidden">
+          {mobileDays.map((d) => (
+            <DayCard
+              key={`mob-${toISODate(d)}`}
+              d={d}
+              isCurrentMonth={d.getMonth() === currentDate.getMonth()}
+              dayEvents={eventsByDate[toISODate(d)] ?? []}
+              actionLabel={actionLabel}
+              onAction={onAction}
+              onEventClick={onEventClick}
+              containerClass="min-h-[5rem]"
+            />
+          ))}
         </div>
-      ) : (
-        <div className="grid sm:grid-cols-7 grid-cols-1 gap-3 mt-3">
-          {weekDays.map((d) => {
-            const iso = toISODate(d);
-            const isCurrentMonth = d.getMonth() === currentDate.getMonth();
-            const dayEvents = eventsByDate[iso] ?? [];
-            return (
-              <DayCard
-                key={iso}
-                d={d}
-                isCurrentMonth={isCurrentMonth}
-                dayEvents={dayEvents}
-                actionLabel={actionLabel}
-                onAction={onAction}
-                onEventClick={onEventClick}
-                containerClass="min-h-[8rem]"
-              />
-            );
-          })}
+
+        {/* DESKTOP VIEW: Full 7-column grid with padding days */}
+        <div className="hidden sm:contents">
+          {daysToDisplay.map((d) => (
+            <DayCard
+              key={`dt-${toISODate(d)}`}
+              d={d}
+              isCurrentMonth={d.getMonth() === currentDate.getMonth()}
+              dayEvents={eventsByDate[toISODate(d)] ?? []}
+              actionLabel={actionLabel}
+              onAction={onAction}
+              onEventClick={onEventClick}
+              containerClass={view === 'week' ? 'min-h-[12rem]' : 'min-h-[8rem]'}
+            />
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }
