@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../Elements/Button';
 
 interface CalendarProps {
@@ -7,7 +7,7 @@ interface CalendarProps {
   title?: string;
   onPrev?: () => void;
   onNext?: () => void;
-  onAction?: (date: Date) => void; // generic action on a day (e.g. plan, add)
+  onAction?: (date: Date) => void;
   onEventClick?: (eventId: string) => void;
   eventsByDate?: Record<string, unknown[]>;
   actionLabel?: string;
@@ -17,6 +17,7 @@ interface CalendarProps {
 function pad(n: number) {
   return n < 10 ? `0${n}` : `${n}`;
 }
+
 function toISODate(d: Date) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
@@ -35,9 +36,6 @@ function buildWeeks(year: number, month: number) {
   return weeks;
 }
 
-// Small helper to render events for a day. Normalize all supported shapes and render
-// each logical event as an independent button so multiple events are clearly separated.
-// Normalize many possible event shapes into a flat list of entries
 export type EventObject = {
   id?: string;
   title?: string;
@@ -93,16 +91,12 @@ function normalizeDayEvents(dayEvents: unknown[]): NormalizedEntry[] {
       entries.push({ id, title, key: id });
       continue;
     }
-
-    // primitive value
     const key = `evt-${ei}`;
     entries.push({ id: key, title: getTitle(evt) ?? key, key });
   }
-
   return entries;
 }
 
-// Small helper to render events for a day. Render each normalized entry as an independent button
 const EventList = ({ dayEvents, onEventClick }: { dayEvents: unknown[]; onEventClick?: (id: string) => void }) => {
   const entries = normalizeDayEvents(dayEvents ?? []);
   if (entries.length === 0) return null;
@@ -133,6 +127,7 @@ const DayCard = ({
   onAction,
   onEventClick,
   containerClass,
+  id,
 }: {
   d: Date;
   isCurrentMonth: boolean;
@@ -141,29 +136,33 @@ const DayCard = ({
   onAction?: (date: Date) => void;
   onEventClick?: (id: string) => void;
   containerClass?: string;
+  id?: string;
 }) => {
   const iso = toISODate(d);
   const dayName = d.toLocaleDateString(undefined, { weekday: 'short' });
+  const isToday = toISODate(new Date()) === iso;
 
-  // Use flex-col on mobile to prevent horizontal squishing
   return (
     <div
+      id={id}
       key={iso}
       className={`${containerClass} border rounded-xl p-3 transition-all ${
-        isCurrentMonth
-          ? 'bg-surface-panel dark:bg-surface-panel-dark shadow-sm'
-          : 'bg-surface-base/50 dark:bg-surface-base-dark/50 opacity-60'
+        isToday
+          ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-md'
+          : isCurrentMonth
+            ? 'bg-surface-panel dark:bg-surface-panel-dark shadow-sm'
+            : 'bg-surface-base/50 dark:bg-surface-base-dark/50 opacity-60'
       } border-border dark:border-border-dark flex flex-col gap-2`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-baseline gap-2">
           <span
-            className={`text-lg font-bold ${isCurrentMonth ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary'}`}
+            className={`text-lg font-bold ${isToday ? 'text-primary' : isCurrentMonth ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary'}`}
           >
             {d.getDate()}
           </span>
-          {/* Show day name only on mobile list view */}
           <span className="sm:hidden text-xs font-medium uppercase tracking-wider text-text-secondary">{dayName}</span>
+          {isToday && <span className="text-[10px] font-bold text-primary uppercase ml-1">Today</span>}
         </div>
 
         <Button
@@ -197,23 +196,26 @@ export function Calendar({
 }: Readonly<CalendarProps>) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date(year, month, 1));
   const [view, setView] = useState<'month' | 'week'>(initialView ?? 'month');
+  const [showFloatingToday, setShowFloatingToday] = useState(false);
 
-  const weeks = buildWeeks(currentDate.getFullYear(), currentDate.getMonth());
-  const allDays = weeks.flat();
+  // Swipe gesture state
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 50;
 
-  // build week days for currentDate (Sunday..Saturday)
-  const weekStart = new Date(currentDate);
-  weekStart.setDate(currentDate.getDate() - currentDate.getDay());
-  const weekDays: Date[] = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(weekStart);
-    d.setDate(weekStart.getDate() + i);
-    weekDays.push(d);
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth < 640) {
+        setShowFloatingToday(window.scrollY > 300);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const goPrev = () => {
     if (view === 'month') {
-      const d = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-      setCurrentDate(d);
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
     } else {
       const d = new Date(currentDate);
       d.setDate(d.getDate() - 7);
@@ -224,8 +226,7 @@ export function Calendar({
 
   const goNext = () => {
     if (view === 'month') {
-      const d = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-      setCurrentDate(d);
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
     } else {
       const d = new Date(currentDate);
       d.setDate(d.getDate() + 7);
@@ -234,19 +235,90 @@ export function Calendar({
     onNext?.();
   };
 
-  const daysToDisplay = view === 'month' ? allDays : weekDays;
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
 
-  // Filter to only show the current month for a cleaner mobile list
+  const onTouchMove = (e: React.TouchEvent) => setTouchEnd(e.targetTouches[0].clientX);
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) goNext();
+    if (isRightSwipe) goPrev();
+  };
+
+  const goToToday = () => {
+    const today = new Date();
+    if (currentDate.getMonth() !== today.getMonth() || currentDate.getFullYear() !== today.getFullYear()) {
+      setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1));
+    }
+
+    setTimeout(() => {
+      const todayId = `mob-${toISODate(today)}`;
+      const element = document.getElementById(todayId);
+      if (element) {
+        const offset = 100;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const weeks = buildWeeks(currentDate.getFullYear(), currentDate.getMonth());
+  const allDays = weeks.flat();
+  const weekStart = new Date(currentDate);
+  weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+  const weekDays: Date[] = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    return d;
+  });
+
+  const daysToDisplay = view === 'month' ? allDays : weekDays;
   const mobileDays =
-    view === 'month' ? daysToDisplay.filter((d) => d.getMonth() === currentDate.getMonth()) : daysToDisplay; // In week view, show all 7 days even on mobile
+    view === 'month' ? daysToDisplay.filter((d) => d.getMonth() === currentDate.getMonth()) : daysToDisplay;
 
   return (
-    <div className="w-full max-w-full overflow-hidden">
-      {/* Header Section */}
+    <div
+      className="w-full max-w-full overflow-hidden relative touch-pan-y"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
+      {showFloatingToday && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 sm:hidden">
+          <Button
+            onClick={goToToday}
+            color_name="primary"
+            className="shadow-2xl px-6 py-3 rounded-full font-bold animate-in fade-in slide-in-from-bottom-4"
+          >
+            Go to Today
+          </Button>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-bold tracking-tight">
-          {title ?? `${currentDate.toLocaleString(undefined, { month: 'long', year: 'numeric' })}`}
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold tracking-tight">
+            {title ?? `${currentDate.toLocaleString(undefined, { month: 'long', year: 'numeric' })}`}
+          </h2>
+          <Button
+            onClick={goToToday}
+            color_name="light"
+            className="hidden sm:flex text-[10px] px-2 h-7 py-0 uppercase font-bold tracking-wider"
+          >
+            Today
+          </Button>
+        </div>
 
         <div className="flex items-center justify-between sm:justify-end gap-2">
           <div className="flex bg-surface-panel dark:bg-surface-panel-dark p-1 rounded-lg border border-border dark:border-border-dark">
@@ -275,24 +347,19 @@ export function Calendar({
         </div>
       </div>
 
-      {/* Day Headers (Hidden on Mobile) */}
-      <div className="hidden sm:grid sm:grid-cols-7 gap-3 mb-2 px-1">
+      <div className="hidden sm:grid sm:grid-cols-7 gap-3 mb-2 px-1 text-center">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-          <div
-            key={d}
-            className="text-xs font-bold uppercase tracking-widest text-text-secondary dark:text-text-secondary-dark opacity-70"
-          >
+          <div key={d} className="text-xs font-bold uppercase tracking-widest text-text-secondary opacity-70">
             {d}
           </div>
         ))}
       </div>
 
-      {/* Calendar Body */}
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-7">
-        {/* MOBILE VIEW: Only current month days */}
         <div className="contents sm:hidden">
           {mobileDays.map((d) => (
             <DayCard
+              id={`mob-${toISODate(d)}`}
               key={`mob-${toISODate(d)}`}
               d={d}
               isCurrentMonth={d.getMonth() === currentDate.getMonth()}
@@ -305,7 +372,6 @@ export function Calendar({
           ))}
         </div>
 
-        {/* DESKTOP VIEW: Full 7-column grid with padding days */}
         <div className="hidden sm:contents">
           {daysToDisplay.map((d) => (
             <DayCard
