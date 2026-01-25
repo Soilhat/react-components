@@ -69,7 +69,13 @@ export const Navbar = ({ layout = 'sidebar', logoURl, brandName, links, actions,
       )}
 
       {/* --- MAIN CONTENT --- */}
-      <main className={`${layout === 'sidebar' ? 'lg:pl-64' : ''} transition-all`}>
+      <main
+        className={`
+        ${layout === 'sidebar' ? 'lg:pl-64' : ''}
+        transition-all
+        pb-24 md:pb-8
+      `}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{children}</div>
       </main>
 
