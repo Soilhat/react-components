@@ -1,10 +1,11 @@
 import { type ReactNode } from 'react';
 import { useTheme } from '../Theme/useTheme';
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
+import { NavLink as RouterLink } from 'react-router-dom';
 
 export type NavLink = {
   label: string;
-  element: ReactNode;
+  to: string;
   icon?: ReactNode;
 };
 
@@ -112,16 +113,20 @@ const NavLinks = ({ links, direction }: { links?: NavLink[]; direction: 'vertica
   <ul className={`flex ${direction === 'vertical' ? 'flex-col gap-2' : 'flex-row gap-1'}`}>
     {links?.map((l) => (
       <li key={l.label}>
-        <div
-          className={`
-          group flex items-center gap-3 px-3 py-2 text-sm font-bold transition-all rounded-xl cursor-pointer
-          text-text-secondary hover:text-primary dark:text-text-secondary-dark dark:hover:text-primary-dark
-          hover:bg-surface-base dark:hover:bg-surface-base-dark
-        `}
+        <RouterLink
+          to={l.to}
+          className={({ isActive }) => `
+            group flex items-center gap-3 px-3 py-2.5 text-sm font-bold transition-all rounded-xl
+            ${
+              isActive
+                ? 'bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark'
+                : 'text-text-secondary hover:text-primary dark:text-text-secondary-dark dark:hover:text-primary-dark hover:bg-surface-base dark:hover:bg-surface-base-dark'
+            }
+          `}
         >
           {l.icon && <span className="size-5 shrink-0 opacity-70 group-hover:opacity-100">{l.icon}</span>}
-          {l.element}
-        </div>
+          <span>{l.label}</span>
+        </RouterLink>
       </li>
     ))}
   </ul>
