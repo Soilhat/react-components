@@ -29,7 +29,7 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'react-router-dom'],
       input: Object.fromEntries(
         globSync(['lib/**/index.tsx', 'lib/main.ts']).map((file) => {
           // This remove `lib/` as well as the file extension from each
