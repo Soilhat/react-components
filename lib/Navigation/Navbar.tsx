@@ -15,11 +15,19 @@ type NavProps = {
   brandName?: string;
   links?: NavLink[];
   actions?: ReactNode;
-  mobileNav?: ReactNode;
+  mobileNavLinks?: NavLink[];
   children?: ReactNode;
 };
 
-export const Navbar = ({ layout = 'sidebar', logoURl, brandName, links, actions, mobileNav, children }: NavProps) => {
+export const Navbar = ({
+  layout = 'sidebar',
+  logoURl,
+  brandName,
+  links,
+  actions,
+  mobileNavLinks,
+  children,
+}: NavProps) => {
   const { toggleTheme } = useTheme();
 
   return (
@@ -81,7 +89,9 @@ export const Navbar = ({ layout = 'sidebar', logoURl, brandName, links, actions,
       </main>
 
       {/* --- MOBILE NAV SLOT (App injects its own BottomBar here) --- */}
-      <div className="lg:hidden">{mobileNav}</div>
+      <div className="lg:hidden">
+        <StandardizedBottomBar links={mobileNavLinks ?? links} />
+      </div>
     </div>
   );
 };
@@ -130,4 +140,22 @@ const NavLinks = ({ links, direction }: { links?: NavLink[]; direction: 'vertica
       </li>
     ))}
   </ul>
+);
+
+const StandardizedBottomBar = ({ links }: { links?: NavLink[] }) => (
+  <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 pb-safe border-t border-border dark:border-border-dark bg-surface-panel/90 dark:bg-surface-panel-dark/90 backdrop-blur-xl flex items-center justify-around lg:hidden">
+    {links?.map((link) => (
+      <RouterLink
+        key={link.to}
+        to={link.to}
+        className={({ isActive }) => `
+          flex flex-col items-center gap-1 transition-all duration-300 min-w-[64px]
+          ${isActive ? 'text-primary dark:text-primary-dark scale-105' : 'text-text-secondary dark:text-text-secondary-dark'}
+        `}
+      >
+        {link.icon && <span className="size-5">{link.icon}</span>}
+        <span className="text-[10px] font-bold uppercase tracking-tighter">{link.label}</span>
+      </RouterLink>
+    ))}
+  </nav>
 );

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Text, Navbar, NavLink } from '../../lib/main';
+import { Button, Text, Navbar } from '../../lib/main';
 import { HomeIcon, ArrowsRightLeftIcon, UserIcon } from '@heroicons/react/24/outline';
+import { MemoryRouter } from 'react-router-dom';
 
 const meta: Meta<typeof Navbar> = {
   title: 'Navigation/Navbar',
@@ -9,15 +10,22 @@ const meta: Meta<typeof Navbar> = {
   argTypes: {
     layout: { control: 'radio', options: ['sidebar', 'topbar'] },
   },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 };
 
 export default meta;
 type Story = StoryObj<typeof Navbar>;
 
-const demoLinks: NavLink[] = [
-  { label: 'Dashboard', element: <span>Dashboard</span>, icon: <HomeIcon /> },
-  { label: 'Transactions', element: <span>Transactions</span>, icon: <ArrowsRightLeftIcon /> },
-  { label: 'Account', element: <span>Profile</span>, icon: <UserIcon /> },
+const demoLinks = [
+  { label: 'Dashboard', to: '/', icon: <HomeIcon className="size-5" /> },
+  { label: 'Transactions', to: '/transactions', icon: <ArrowsRightLeftIcon className="size-5" /> },
+  { label: 'Account', to: '/account', icon: <UserIcon className="size-5" /> },
 ];
 
 export const SidebarLayout: Story = {
@@ -40,14 +48,6 @@ export const SidebarLayout: Story = {
         </div>
       </div>
     ),
-    // Showing how to use the mobileNav slot
-    mobileNav: (
-      <div className="fixed bottom-0 left-0 right-0 h-16 bg-surface-panel dark:bg-surface-panel-dark border-t border-border dark:border-border-dark flex items-center justify-around px-6">
-        <HomeIcon className="size-6 text-primary dark:text-primary-dark" />
-        <ArrowsRightLeftIcon className="size-6 text-text-secondary dark:text-text-secondary-dark" />
-        <UserIcon className="size-6 text-text-secondary dark:text-text-secondary-dark" />
-      </div>
-    ),
   },
 };
 
@@ -55,12 +55,5 @@ export const TopbarLayout: Story = {
   args: {
     ...SidebarLayout.args,
     layout: 'topbar',
-    mobileNav: (
-      <div className="fixed bottom-0 left-0 right-0 h-16 bg-surface-panel dark:bg-surface-panel-dark border-t border-border dark:border-border-dark flex items-center justify-around px-6">
-        <HomeIcon className="size-6 text-primary dark:text-primary-dark" />
-        <ArrowsRightLeftIcon className="size-6 text-text-secondary dark:text-text-secondary-dark" />
-        <UserIcon className="size-6 text-text-secondary dark:text-text-secondary-dark" />
-      </div>
-    ), // Typical topbar layout might use a hamburger instead (not shown here)
   },
 };
