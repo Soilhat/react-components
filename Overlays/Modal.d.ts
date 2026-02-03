@@ -1,4 +1,4 @@
-import { ReactNode } from '../../node_modules/react';
+import { default as React, ReactNode } from '../../node_modules/react';
 interface ModalProps {
     open?: boolean;
     children?: ReactNode;

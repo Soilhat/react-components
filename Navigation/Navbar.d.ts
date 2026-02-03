@@ -1,7 +1,7 @@
 import { ReactNode } from '../../node_modules/react';
 export type NavLink = {
     label: string;
-    element: ReactNode;
+    to: string;
     icon?: ReactNode;
 };
 type NavProps = {
@@ -10,8 +10,8 @@ type NavProps = {
     brandName?: string;
     links?: NavLink[];
     actions?: ReactNode;
-    mobileNav?: ReactNode;
+    mobileNavLinks?: NavLink[];
     children?: ReactNode;
 };
-export declare const Navbar: ({ layout, logoURl, brandName, links, actions, mobileNav, children }: NavProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Navbar: ({ layout, logoURl, brandName, links, actions, mobileNavLinks, children, }: NavProps) => import("react/jsx-runtime").JSX.Element;
 export {};
