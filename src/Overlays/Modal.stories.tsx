@@ -1,14 +1,12 @@
 import type { Meta } from '@storybook/react-vite';
-import { Modal as ModalEl, Button } from '../../lib/main';
+import { Modal as ModalEl, Button, Text } from '../../lib/main';
 import { useState } from 'react';
 
-const meta: Meta = {
+const meta: Meta<typeof ModalEl> = {
   title: 'Overlays/Modal',
+  component: ModalEl,
   parameters: {
-    layout: 'centered',
-  },
-  play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Open modal' }));
+    layout: 'fullscreen',
   },
 };
 export default meta;
@@ -16,20 +14,49 @@ export default meta;
 export const Simple = () => {
   const [open, setOpen] = useState(false);
   return (
-    <div>
-      <Button onClick={() => setOpen(true)}>Open modal</Button>
+    <div className="p-8">
+      <Button onClick={() => setOpen(true)}>Open Simple Modal</Button>
       <ModalEl open={open} onClose={() => setOpen(false)}>
-        Simple text{' '}
+        <Text>Simple text content</Text>
       </ModalEl>
     </div>
   );
 };
 
-export const Modal = () => {
+export const LongContent = () => {
   const [open, setOpen] = useState(false);
   return (
-    <div>
-      <Button onClick={() => setOpen(true)}>Open modal</Button>
+    <div className="p-8">
+      <Button onClick={() => setOpen(true)}>Open Long Content Modal</Button>
+      <ModalEl open={open} onClose={() => setOpen(false)}>
+        <ModalEl.Body>
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold">Privacy Policy & Terms</h3>
+            {[...Array(15)].map((_, i) => (
+              <p key={i} className="text-text-secondary dark:text-text-secondary-dark">
+                Paragraph {i + 1}: This is a demonstration of how the modal handles a significant amount of content. On
+                mobile, this will behave like a bottom sheet, allowing you to scroll through this text while the action
+                buttons below stay pinned to the bottom.
+              </p>
+            ))}
+          </div>
+        </ModalEl.Body>
+        <ModalEl.Footer>
+          <Button onClick={() => setOpen(false)}>Accept All</Button>
+          <Button variant="ghost" onClick={() => setOpen(false)}>
+            Decline
+          </Button>
+        </ModalEl.Footer>
+      </ModalEl>
+    </div>
+  );
+};
+
+export const StandardModal = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="p-8">
+      <Button onClick={() => setOpen(true)}>Open Standard Modal</Button>
       <ModalEl open={open} onClose={() => setOpen(false)}>
         <div className="sm:flex sm:items-start">
           <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-500/10 sm:mx-0 sm:size-10">
@@ -49,24 +76,19 @@ export const Modal = () => {
             </svg>
           </div>
           <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 className="text-base font-semibold dark:text-white">Testing Modal</h3>
+            <h3 className="text-base font-semibold dark:text-white">Deactivate Account</h3>
             <div className="mt-2">
-              <p className="text-sm text-gray-400">Some text to inform user about anything.</p>
+              <p className="text-sm text-gray-400">
+                Are you sure you want to deactivate your account? All of your data will be permanently removed.
+              </p>
             </div>
           </div>
         </div>
         <ModalEl.Footer>
-          <Button
-            onClick={() => setOpen(false)}
-            className="inline-flex justify-center bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-400 sm:ml-3 sm:w-auto"
-          >
+          <Button onClick={() => setOpen(false)} className="bg-red-500 text-white hover:bg-red-400">
             Deactivate
           </Button>
-          <Button
-            data-autofocus
-            onClick={() => setOpen(false)}
-            className="mt-3 inline-flex justify-center bg-white/10 px-3 py-2 text-sm dark:text-white inset-ring inset-ring-white/5 hover:bg-white/20 sm:mt-0 sm:w-auto"
-          >
+          <Button variant="ghost" onClick={() => setOpen(false)}>
             Cancel
           </Button>
         </ModalEl.Footer>
