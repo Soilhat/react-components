@@ -32,10 +32,10 @@ export const Navbar = ({
 
   return (
     <div className="min-h-screen bg-surface-base dark:bg-surface-base-dark transition-colors duration-300">
-      {/* --- TOPBAR VIEW (Normal Header) --- */}
+      {/* --- TOPBAR VIEW --- */}
       {layout === 'topbar' && (
-        <header className="sticky top-0 z-40 w-full border-b border-border dark:border-border-dark bg-surface-panel/80 dark:bg-surface-panel-dark/80 backdrop-blur-md transition-colors">
-          <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
+        <header className="sticky top-0 z-40 w-full border-b border-border dark:border-border-dark bg-surface-panel/80 dark:bg-surface-panel-dark/80 backdrop-blur-md">
+          <div className="mx-auto max-w-[1600px] px-4 sm:px-8 h-16 flex items-center justify-between">
             <Branding logo={logoURl} name={brandName} />
             <nav className="hidden md:flex items-center gap-1">
               <NavLinks links={links} direction="horizontal" />
@@ -50,7 +50,7 @@ export const Navbar = ({
 
       {/* --- SIDEBAR VIEW --- */}
       {layout === 'sidebar' && (
-        <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col border-r border-border dark:border-border-dark bg-surface-panel dark:bg-surface-panel-dark">
+        <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col border-r border-border dark:border-border-dark bg-surface-panel dark:bg-surface-panel-dark">
           <div className="flex flex-col grow pt-5 pb-4 overflow-y-auto">
             <Branding logo={logoURl} name={brandName} />
             <nav className="mt-8 flex-1 px-4">
@@ -69,26 +69,18 @@ export const Navbar = ({
         </aside>
       )}
 
-      {/* --- MOBILE COMPACT HEADER (Always on for Sidebar Layout) --- */}
-      {layout === 'sidebar' && (
-        <header className="lg:hidden sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border dark:border-border-dark bg-surface-panel/80 dark:bg-surface-panel-dark/80 backdrop-blur-md px-4">
-          <Branding logo={logoURl} name={brandName} />
-          <ThemeToggle onToggle={toggleTheme} />
-        </header>
-      )}
-
       {/* --- MAIN CONTENT --- */}
       <main
         className={`
-        ${layout === 'sidebar' ? 'lg:pl-64' : ''}
-        transition-all
-        pb-24 md:pb-8
-      `}
+          ${layout === 'sidebar' ? 'lg:pl-72' : ''} 
+          transition-all
+          pb-24 md:pb-8
+        `}
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{children}</div>
+        <div className="mx-auto max-w-[1600px] w-full px-4 sm:px-10 lg:px-12 2xl:px-16 py-8">{children}</div>
       </main>
 
-      {/* --- MOBILE NAV SLOT (App injects its own BottomBar here) --- */}
+      {/* --- MOBILE NAV SLOT --- */}
       <div className="lg:hidden">
         <StandardizedBottomBar links={mobileNavLinks ?? links} />
       </div>
