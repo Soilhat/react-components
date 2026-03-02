@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import React, { type ReactNode, type ErrorInfo } from 'react';
 import { Card, Button } from '../main';
 
@@ -50,7 +52,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
       if (typeof fallback === 'function') return fallback(error!, this.resetError);
       if (fallback) return fallback;
 
-      const isDevelopment = import.meta.env.DEV;
+      const isDevelopment = !!(import.meta.env && import.meta.env.DEV);
 
       const supportLink = supportEmail
         ? `mailto:${supportEmail}?subject=App Error Report&body=Error: ${error?.message}%0A%0AStack: ${errorInfo?.componentStack?.slice(0, 500)}`
@@ -58,7 +60,11 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
       return (
         <div
-          className={`flex items-center justify-center p-5 ${fullPage ? 'min-h-screen bg-gradient-to-br from-primary/30 to-secondary/30 dark:from-primary/10 dark:to-secondary/10' : 'w-full py-10'}`}
+          className={`flex items-center justify-center p-5 ${
+            fullPage
+              ? 'min-h-screen bg-gradient-to-br from-primary/30 to-secondary/30 dark:from-primary-dark/10 dark:to-secondary-dark/10'
+              : 'w-full py-10'
+          }`}
         >
           <Card className="max-w-xl w-full">
             <Card.Header title="⚠️ Something Went Wrong" />
