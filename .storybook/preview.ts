@@ -6,6 +6,7 @@ import '../src/style.css';
 import '../lib/style.css';
 
 const preview: Preview = {
+  tags: ['autodocs'],
   parameters: {
     controls: {
       matchers: {

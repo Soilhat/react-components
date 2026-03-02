@@ -3,7 +3,7 @@ export { Button, Dropdown, Text, Pill } from './Elements';
 export { Card, Container, Heading, Divider, CategoryTree } from './Layout';
 export { Form, Input, Textarea, ImageUploader, Select, Checkbox, TagInput, SearchableCombobox } from './Forms';
 export type { Option } from './Forms';
-export { Toast, type ToastType, ToastProvider, useToast, Progress } from './Feedback';
+export { Toast, type ToastType, ToastProvider, useToast, Progress, ErrorBoundary } from './Feedback';
 export { Navbar, type NavLink, InfiniteScroll } from './Navigation';
 export { useTheme } from './Theme';
 export { StackedList } from './Lists';
