@@ -46,8 +46,9 @@ export default defineConfig({
         assetFileNames: 'assets/[name][extname]',
         globals: {
           react: 'React',
-          'react-dom': 'React-dom',
-          'react/jsx-runtime': 'react/jsx-runtime',
+          'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'jsxRuntime',
+          'react-router-dom': 'ReactRouterDOM',
         },
       },
     },
