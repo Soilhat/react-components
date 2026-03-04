@@ -21,7 +21,9 @@ export const Pill = ({
   className = '',
   disabled = false,
 }: PillProps) => {
-  // Styles based on active state and variant
+  const isInteractive = !!onClick;
+  const Component = isInteractive ? 'button' : 'div';
+
   const activeStyles: Record<PillVariant, string> = {
     primary:
       'bg-primary dark:bg-primary-dark text-text-on-primary dark:text-text-on-primary-dark border-primary dark:border-primary-dark shadow-lg shadow-primary/20 dark:shadow-primary-dark/40',
@@ -35,23 +37,23 @@ export const Pill = ({
       'bg-text-primary dark:bg-text-primary-dark text-text-on-primary dark:text-text-on-primary-dark border-text-primary dark:border-text-primary-dark',
   };
 
-  const inactiveStyles =
-    'bg-surface-panel dark:bg-surface-panel-dark text-text-secondary border-border hover:border-primary/50 hover:text-primary';
+  const inactiveStyles = isInteractive
+    ? 'bg-surface-panel dark:bg-surface-panel-dark text-text-secondary border-border hover:border-primary/50 hover:text-primary cursor-pointer'
+    : 'bg-surface-panel dark:bg-surface-panel-dark text-text-secondary border-border cursor-default';
 
   return (
-    <button
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
+    <Component
+      {...(isInteractive ? { onClick: disabled ? undefined : onClick, disabled } : {})}
       className={`
         flex-none inline-flex items-center justify-center gap-1.5 
         px-4 py-1.5 rounded-full text-xs font-bold transition-all border capitalize
-        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         ${active ? activeStyles[variant] : inactiveStyles}
         ${className}
       `.trim()}
     >
       {icon && <span className="h-3.5 w-3.5 shrink-0">{icon}</span>}
       {label.replaceAll('_', ' ')}
-    </button>
+    </Component>
   );
 };
