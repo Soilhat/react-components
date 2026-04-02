@@ -9,6 +9,7 @@ interface CalendarProps {
   onNext?: () => void;
   onAction?: (date: Date) => void;
   onEventClick?: (eventId: string) => void;
+  onEventDrop?: (eventId: string, date: Date) => void;
   eventsByDate?: Record<string, unknown[]>;
   actionLabel?: string;
   initialView?: 'month' | 'week';
@@ -101,19 +102,38 @@ const EventList = ({ dayEvents, onEventClick }: { dayEvents: unknown[]; onEventC
   const entries = normalizeDayEvents(dayEvents ?? []);
   if (entries.length === 0) return null;
 
+  const onDragStart = (e: React.DragEvent, eventId: string) => {
+    e.dataTransfer.setData('eventId', eventId);
+    e.dataTransfer.effectAllowed = 'move';
+
+    // Ghost image or styling
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '0.5';
+    }
+  };
+
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {entries.map((entry) => (
-        <Button
+        <div
           key={entry.key}
-          onClick={() => entry.id && onEventClick?.(entry.id)}
-          title={entry.title}
-          aria-label={entry.title}
-          color_name="light"
-          className="text-left text-xs p-1.5 w-full h-auto min-h-fit leading-tight border-none bg-primary/10 hover:bg-primary/20 text-primary-dark dark:text-primary"
+          draggable={true} // Make every entry draggable
+          onDragStart={(e) => onDragStart(e, entry.key)} // Use entry.key if entry.id is missing
+          onDragEnd={(e) => {
+            (e.currentTarget as HTMLElement).style.opacity = '1';
+          }}
+          className="cursor-grab active:cursor-grabbing"
         >
-          <div className="line-clamp-2 break-words overflow-hidden">{entry.title}</div>
-        </Button>
+          <Button
+            onClick={() => entry.id && onEventClick?.(entry.id)}
+            title={entry.title}
+            aria-label={entry.title}
+            color_name="light"
+            className="text-left text-xs p-1.5 w-full h-auto min-h-fit leading-tight border-none bg-primary/10 hover:bg-primary/20 text-primary-dark dark:text-primary pointer-events-none"
+          >
+            <div className="line-clamp-2 break-words overflow-hidden">{entry.title}</div>
+          </Button>
+        </div>
       ))}
     </div>
   );
@@ -126,6 +146,7 @@ const DayCard = ({
   actionLabel,
   onAction,
   onEventClick,
+  onEventDrop,
   containerClass,
   id,
 }: {
@@ -135,24 +156,44 @@ const DayCard = ({
   actionLabel: string;
   onAction?: (date: Date) => void;
   onEventClick?: (id: string) => void;
+  onEventDrop?: (eventId: string, date: Date) => void;
   containerClass?: string;
   id?: string;
 }) => {
+  const [isOver, setIsOver] = useState(false);
   const iso = toISODate(d);
   const dayName = d.toLocaleDateString(undefined, { weekday: 'short' });
   const isToday = toISODate(new Date()) === iso;
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsOver(true);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsOver(false);
+    const eventId = e.dataTransfer.getData('eventId');
+    if (eventId && onEventDrop) {
+      onEventDrop(eventId, d);
+    }
+  };
+
   return (
     <div
       id={id}
-      key={iso}
+      onDragOver={handleDragOver}
+      onDragLeave={() => setIsOver(false)}
+      onDrop={handleDrop}
       className={`${containerClass} border rounded-xl p-3 transition-all ${
+        isOver ? 'ring-4 ring-primary/30 border-primary bg-primary/10 scale-[1.02]' : ''
+      } ${
         isToday
           ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-md'
           : isCurrentMonth
             ? 'bg-surface-panel dark:bg-surface-panel-dark shadow-sm'
             : 'bg-surface-base/50 dark:bg-surface-base-dark/50 opacity-60'
-      } border-border dark:border-border-dark flex flex-col gap-2`}
+      } border-border dark:border-border-dark flex flex-col gap-2 relative z-0`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-baseline gap-2">
@@ -162,9 +203,7 @@ const DayCard = ({
             {d.getDate()}
           </span>
           <span className="sm:hidden text-xs font-medium uppercase tracking-wider text-text-secondary">{dayName}</span>
-          {isToday && <span className="text-[10px] font-bold text-primary uppercase ml-1">Today</span>}
         </div>
-
         <Button
           type="button"
           onClick={() => onAction?.(d)}
@@ -174,7 +213,6 @@ const DayCard = ({
           {actionLabel}
         </Button>
       </div>
-
       <div className="flex-1">
         <EventList dayEvents={dayEvents} onEventClick={onEventClick} />
       </div>
@@ -189,6 +227,7 @@ export function Calendar({
   onPrev,
   onNext,
   onAction,
+  onEventDrop,
   onEventClick,
   eventsByDate = {},
   actionLabel = 'Plan',
@@ -283,6 +322,22 @@ export function Calendar({
     return d;
   });
 
+  const renderDays = (days: Date[], isMobile = false) =>
+    days.map((d) => (
+      <DayCard
+        id={isMobile ? `mob-${toISODate(d)}` : `dt-${toISODate(d)}`}
+        key={`${isMobile ? 'mob' : 'dt'}-${toISODate(d)}`}
+        d={d}
+        isCurrentMonth={d.getMonth() === currentDate.getMonth()}
+        dayEvents={eventsByDate[toISODate(d)] ?? []}
+        actionLabel={actionLabel}
+        onAction={onAction}
+        onEventClick={onEventClick}
+        onEventDrop={onEventDrop}
+        containerClass={isMobile ? 'min-h-[5rem]' : view === 'week' ? 'min-h-[12rem]' : 'min-h-[8rem]'}
+      />
+    ));
+
   const daysToDisplay = view === 'month' ? allDays : weekDays;
   const mobileDays =
     view === 'month' ? daysToDisplay.filter((d) => d.getMonth() === currentDate.getMonth()) : daysToDisplay;
@@ -356,36 +411,8 @@ export function Calendar({
       </div>
 
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-7">
-        <div className="contents sm:hidden">
-          {mobileDays.map((d) => (
-            <DayCard
-              id={`mob-${toISODate(d)}`}
-              key={`mob-${toISODate(d)}`}
-              d={d}
-              isCurrentMonth={d.getMonth() === currentDate.getMonth()}
-              dayEvents={eventsByDate[toISODate(d)] ?? []}
-              actionLabel={actionLabel}
-              onAction={onAction}
-              onEventClick={onEventClick}
-              containerClass="min-h-[5rem]"
-            />
-          ))}
-        </div>
-
-        <div className="hidden sm:contents">
-          {daysToDisplay.map((d) => (
-            <DayCard
-              key={`dt-${toISODate(d)}`}
-              d={d}
-              isCurrentMonth={d.getMonth() === currentDate.getMonth()}
-              dayEvents={eventsByDate[toISODate(d)] ?? []}
-              actionLabel={actionLabel}
-              onAction={onAction}
-              onEventClick={onEventClick}
-              containerClass={view === 'week' ? 'min-h-[12rem]' : 'min-h-[8rem]'}
-            />
-          ))}
-        </div>
+        <div className="contents sm:hidden">{renderDays(mobileDays, true)}</div>
+        <div className="hidden sm:contents">{renderDays(daysToDisplay)}</div>
       </div>
     </div>
   );
