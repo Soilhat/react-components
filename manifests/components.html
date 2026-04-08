@@ -576,7 +576,7 @@
 <header>
   <div class="wrap">
     <h1>Manifest Debugger</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">26 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">23/26 infos</a><span class="filter-pill ok" aria-disabled="true">68 stories ok</span><a class="filter-pill ok" data-k="docs" href="#filter-docs">4 docs ok</a></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">26 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">23/26 infos</a><span class="filter-pill ok" aria-disabled="true">69 stories ok</span><a class="filter-pill ok" data-k="docs" href="#filter-docs">4 docs ok</a></div>
   </div>
 </header>
 <main>
@@ -697,7 +697,7 @@ variant?: &#39;default&#39; | &#39;border&#39; | &#39;ghost&#39; = &#39;default&
       <div class="badges">
         <label for="c-1-data-display-calendar-props" class="badge ok as-toggle">2 prop types</label>
         
-        <label for="c-1-data-display-calendar-stories" class="badge ok as-toggle">2 stories</label>
+        <label for="c-1-data-display-calendar-stories" class="badge ok as-toggle">3 stories</label>
         
       </div>
     </div>
@@ -746,12 +746,12 @@ eventsByDate?: any = {}</code></pre>
           
             <div class="note ok">
               <div class="row">
-                <span class="ex-name">Interaction Test</span>
+                <span class="ex-name">Drag And Drop Interaction Test</span>
                 <span class="badge ok">story ok</span>
               </div>
               
-              <div class="hint">## Interaction Test (Automated) * This story demonstrates the &quot;Real&quot; interaction flow. It uses a `play` function to simulate a user dragging an event from today to tomorrow. * **Technical Note on Testing:** Since the component renders two versions of the grid (Mobile/Desktop), the test specifically targets the `.sm:contents` container to avoid &quot;Multiple elements found&quot; errors.</div>
-              <pre><code>const InteractionTest = () =&gt; {
+              <div class="hint">## Drag and DropInteraction Test (Automated) * This story demonstrates the &quot;Real&quot; interaction flow. It uses a `play` function to simulate a user dragging an event from today to tomorrow. * **Technical Note on Testing:** Since the component renders two versions of the grid (Mobile/Desktop), the test specifically targets the `.sm:contents` container to avoid &quot;Multiple elements found&quot; errors.</div>
+              <pre><code>const DragAndDropInteractionTest = () =&gt; {
   const [events, setEvents] = useState&lt;Record&lt;string, unknown[]&gt;&gt;(initialEvents);
 
   const handleEventDrop = (eventId: string, targetDate: Date) =&gt; {
@@ -799,6 +799,21 @@ eventsByDate?: any = {}</code></pre>
     month={today.getMonth()}
     eventsByDate={initialEvents}
     initialView=&quot;month&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Click Interaction Test</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">## Click Interaction Test This test ensures that meal items are &quot;clickable&quot; and navigate correctly. It specifically checks that pointer-events are not blocked and that the onEventClick callback receives the clean ID (without the index suffix).</div>
+              <pre><code>const ClickInteractionTest = () =&gt; &lt;Calendar
+    year={today.getFullYear()}
+    month={today.getMonth()}
+    eventsByDate={{
+      [iso(today)]: [{ id: &#39;test-meal-123&#39;, title: &#39;Clickable Recipe&#39; }],
+    }}
+    onEventClick={fn()} /&gt;;</code></pre>
             </div>
         </div>
     
