@@ -102,13 +102,12 @@ const EventList = ({ dayEvents, onEventClick }: { dayEvents: unknown[]; onEventC
   const entries = normalizeDayEvents(dayEvents ?? []);
   if (entries.length === 0) return null;
 
-  const onDragStart = (e: React.DragEvent, eventId: string) => {
-    e.dataTransfer.setData('eventId', eventId);
+  const onDragStart = (e: React.DragEvent, eventKey: string) => {
+    e.dataTransfer.setData('eventId', eventKey);
     e.dataTransfer.effectAllowed = 'move';
 
-    // Ghost image or styling
     if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.style.opacity = '0.5';
+      e.currentTarget.style.opacity = '0.4';
     }
   };
 
@@ -117,21 +116,23 @@ const EventList = ({ dayEvents, onEventClick }: { dayEvents: unknown[]; onEventC
       {entries.map((entry) => (
         <div
           key={entry.key}
-          draggable={true} // Make every entry draggable
-          onDragStart={(e) => onDragStart(e, entry.key)} // Use entry.key if entry.id is missing
+          draggable={true}
+          onDragStart={(e) => onDragStart(e, entry.key)}
           onDragEnd={(e) => {
             (e.currentTarget as HTMLElement).style.opacity = '1';
           }}
-          className="cursor-grab active:cursor-grabbing"
+          className="group relative cursor-grab active:cursor-grabbing"
         >
           <Button
-            onClick={() => entry.id && onEventClick?.(entry.id)}
-            title={entry.title}
-            aria-label={entry.title}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (entry.id) onEventClick?.(entry.id);
+            }}
             color_name="light"
-            className="text-left text-xs p-1.5 w-full h-auto min-h-fit leading-tight border-none bg-primary/10 hover:bg-primary/20 text-primary-dark dark:text-primary pointer-events-none"
+            className="text-left text-xs p-1.5 w-full h-auto min-h-fit border-none bg-primary/10 hover:bg-primary/20"
           >
-            <div className="line-clamp-2 break-words overflow-hidden">{entry.title}</div>
+            <div className="line-clamp-2 pointer-events-none">{entry.title}</div>
           </Button>
         </div>
       ))}

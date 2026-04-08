@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calendar } from '../../lib/main';
-import { within, expect, waitFor } from 'storybook/test';
+import { within, expect, waitFor, fn, userEvent } from 'storybook/test';
 
 /**
  * # Calendar Component Documentation
@@ -47,14 +47,14 @@ const initialEvents = {
 };
 
 /**
- * ## Interaction Test (Automated)
+ * ## Drag and DropInteraction Test (Automated)
  * * This story demonstrates the "Real" interaction flow. It uses a `play` function to
  * simulate a user dragging an event from today to tomorrow.
  * * **Technical Note on Testing:**
  * Since the component renders two versions of the grid (Mobile/Desktop), the test
  * specifically targets the `.sm:contents` container to avoid "Multiple elements found" errors.
  */
-export const InteractionTest: Story = {
+export const DragAndDropInteractionTest: Story = {
   render: () => {
     const [events, setEvents] = useState<Record<string, unknown[]>>(initialEvents);
 
@@ -168,5 +168,41 @@ export const StaticMonthView: Story = {
     month: today.getMonth(),
     eventsByDate: initialEvents,
     initialView: 'month',
+  },
+};
+
+/**
+ * ## Click Interaction Test
+ * This test ensures that meal items are "clickable" and navigate correctly.
+ * It specifically checks that pointer-events are not blocked and that
+ * the onEventClick callback receives the clean ID (without the index suffix).
+ */
+export const ClickInteractionTest: Story = {
+  args: {
+    year: today.getFullYear(),
+    month: today.getMonth(),
+    eventsByDate: {
+      [iso(today)]: [{ id: 'test-meal-123', title: 'Clickable Recipe' }],
+    },
+    onEventClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const desktopGrid = canvasElement.querySelector('.hidden.sm\\:contents');
+    if (!desktopGrid) throw new Error('Desktop grid not found');
+
+    const mealButton = await within(desktopGrid as HTMLElement).findByRole('button', {
+      name: /Clickable Recipe/i,
+    });
+
+    const style = window.getComputedStyle(mealButton);
+    if (style.pointerEvents === 'none') {
+      throw new Error('Test failed: Button still has pointer-events: none');
+    }
+
+    await userEvent.click(mealButton);
+
+    await waitFor(() => {
+      expect(args.onEventClick).toHaveBeenCalledWith('test-meal-123');
+    });
   },
 };
