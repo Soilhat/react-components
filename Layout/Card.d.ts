@@ -1,24 +1,28 @@
-import { default as React, ReactNode } from '../../node_modules/react';
-import { HeadingProps } from './Heading';
-interface CardSubComponents {
-    Header: typeof Header;
-    Body: typeof Body;
-    Footer: typeof Footer;
+import { default as React } from '../../node_modules/react';
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+    children: React.ReactNode;
 }
-export declare const Card: React.FC<React.HTMLAttributes<HTMLElement>> & CardSubComponents;
-declare const Header: React.FC<HeadingProps>;
-declare const Body: {
-    ({ children, className }: {
-        children: ReactNode;
+export declare const Card: {
+    ({ children, className, ...props }: CardProps): import("react/jsx-runtime").JSX.Element;
+    Header({ children, className }: {
+        children: React.ReactNode;
         className?: string;
     }): import("react/jsx-runtime").JSX.Element;
-    displayName: string;
-};
-declare const Footer: {
-    ({ children, className }: {
-        children: ReactNode;
+    Title({ children, className }: {
+        children: React.ReactNode;
         className?: string;
     }): import("react/jsx-runtime").JSX.Element;
-    displayName: string;
+    Description({ children, className }: {
+        children: React.ReactNode;
+        className?: string;
+    }): import("react/jsx-runtime").JSX.Element;
+    Body({ children, className }: {
+        children: React.ReactNode;
+        className?: string;
+    }): import("react/jsx-runtime").JSX.Element;
+    Footer({ children, className }: {
+        children: React.ReactNode;
+        className?: string;
+    }): import("react/jsx-runtime").JSX.Element;
 };
 export default Card;

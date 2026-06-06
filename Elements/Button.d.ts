@@ -1,14 +1,7 @@
-import { ButtonHTMLAttributes, ReactNode } from '../../node_modules/react';
-import { ColorName } from '../utils/types';
-type ButtonVariant = 'default' | 'border' | 'ghost';
-type Size = 'small' | 'medium' | 'large';
-export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'size'> {
-    variant?: ButtonVariant;
-    color_name?: ColorName;
-    size?: Size;
-    isLoading?: boolean;
-    leftIcon?: ReactNode;
-    rightIcon?: ReactNode;
+import { default as React } from '../../node_modules/react';
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+    children: React.ReactNode;
 }
-export declare const Button: import('../../node_modules/react').ForwardRefExoticComponent<ButtonProps & import('../../node_modules/react').RefAttributes<HTMLButtonElement>>;
-export default Button;
+export declare const Button: ({ variant, children, className, ...props }: ButtonProps) => import("react/jsx-runtime").JSX.Element;
+export {};
