@@ -227,6 +227,58 @@ const DayCard = ({
   );
 };
 
+interface DaysGridProps {
+  days: Date[];
+  isMobile?: boolean;
+  view: 'month' | 'week';
+  currentDate: Date;
+  eventsByDate: Record<string, unknown[]>;
+  actionLabel: string;
+  onAction?: (date: Date) => void;
+  onEventClick?: (id: string) => void;
+  onEventDrop?: (eventId: string, date: Date) => void;
+}
+
+const DaysGrid = ({
+  days,
+  isMobile = false,
+  view,
+  currentDate,
+  eventsByDate,
+  actionLabel,
+  onAction,
+  onEventClick,
+  onEventDrop,
+}: DaysGridProps) => {
+  return (
+    <>
+      {days.map((d) => {
+        let containerHeightClass = 'min-h-[8rem]';
+        if (isMobile) {
+          containerHeightClass = 'min-h-[5rem]';
+        } else if (view === 'week') {
+          containerHeightClass = 'min-h-[12rem]';
+        }
+
+        return (
+          <DayCard
+            id={isMobile ? `mob-${toISODate(d)}` : `dt-${toISODate(d)}`}
+            key={`${isMobile ? 'mob' : 'dt'}-${toISODate(d)}`}
+            d={d}
+            isCurrentMonth={d.getMonth() === currentDate.getMonth()}
+            dayEvents={eventsByDate[toISODate(d)] ?? []}
+            actionLabel={actionLabel}
+            onAction={onAction}
+            onEventClick={onEventClick}
+            onEventDrop={onEventDrop}
+            containerClass={containerHeightClass}
+          />
+        );
+      })}
+    </>
+  );
+};
+
 export function Calendar({
   year,
   month,
@@ -329,31 +381,6 @@ export function Calendar({
     return d;
   });
 
-  const renderDays = (days: Date[], isMobile = false) =>
-    days.map((d) => {
-      let containerHeightClass = 'min-h-[8rem]';
-      if (isMobile) {
-        containerHeightClass = 'min-h-[5rem]';
-      } else if (view === 'week') {
-        containerHeightClass = 'min-h-[12rem]';
-      }
-
-      return (
-        <DayCard
-          id={isMobile ? `mob-${toISODate(d)}` : `dt-${toISODate(d)}`}
-          key={`${isMobile ? 'mob' : 'dt'}-${toISODate(d)}`}
-          d={d}
-          isCurrentMonth={d.getMonth() === currentDate.getMonth()}
-          dayEvents={eventsByDate[toISODate(d)] ?? []}
-          actionLabel={actionLabel}
-          onAction={onAction}
-          onEventClick={onEventClick}
-          onEventDrop={onEventDrop}
-          containerClass={containerHeightClass}
-        />
-      );
-    });
-
   const daysToDisplay = view === 'month' ? allDays : weekDays;
   const mobileDays =
     view === 'month' ? daysToDisplay.filter((d) => d.getMonth() === currentDate.getMonth()) : daysToDisplay;
@@ -443,8 +470,32 @@ export function Calendar({
       </div>
 
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-7">
-        <div className="contents sm:hidden">{renderDays(mobileDays, true)}</div>
-        <div className="hidden sm:contents">{renderDays(daysToDisplay)}</div>
+        <div className="contents sm:hidden">
+          <DaysGrid
+            days={mobileDays}
+            isMobile={true}
+            view={view}
+            currentDate={currentDate}
+            eventsByDate={eventsByDate}
+            actionLabel={actionLabel}
+            onAction={onAction}
+            onEventClick={onEventClick}
+            onEventDrop={onEventDrop}
+          />
+        </div>
+        <div className="hidden sm:contents">
+          <DaysGrid
+            days={daysToDisplay}
+            isMobile={false}
+            view={view}
+            currentDate={currentDate}
+            eventsByDate={eventsByDate}
+            actionLabel={actionLabel}
+            onAction={onAction}
+            onEventClick={onEventClick}
+            onEventDrop={onEventDrop}
+          />
+        </div>
       </div>
     </div>
   );

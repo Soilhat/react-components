@@ -82,7 +82,7 @@ export function Select({
                 <ListboxOption
                   key={option.value}
                   value={option.value}
-                  className="group relative cursor-pointer select-none py-2.5 pl-10 pr-4 text-sm transition-colors data-[focus]:bg-primary/10"
+                  className="group relative cursor-pointer select-none py-2.5 pl-10 pr-4 text-sm transition-colors data-focus:bg-primary/10"
                 >
                   {({ selected }) => (
                     <>

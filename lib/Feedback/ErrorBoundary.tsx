@@ -31,11 +31,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.props.onError?.(error, errorInfo);
-
     this.setState({ errorInfo });
   }
 
-  resetError = () => {
+  handleReset = () => {
     this.props.onReset?.();
     this.setState({
       hasError: false,
@@ -49,7 +48,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     const { children, fallback, fullPage = true, supportEmail } = this.props;
 
     if (hasError) {
-      if (typeof fallback === 'function') return fallback(error!, this.resetError);
+      if (typeof fallback === 'function') return fallback(error!, this.handleReset);
       if (fallback) return fallback;
 
       const isDevelopment = !!import.meta.env?.DEV;
@@ -98,7 +97,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               </div>
             </Card.Body>
             <Card.Footer className="flex gap-4">
-              <Button onClick={this.resetError} className="flex-1">
+              <Button onClick={this.handleReset} className="flex-1">
                 Try Again
               </Button>
               <Button onClick={() => (globalThis.location.href = '/')} variant="secondary" className="flex-1">
