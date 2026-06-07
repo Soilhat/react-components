@@ -1,1 +1,0 @@
-import{j as t}from"./jsx-runtime-u17CrQMm.js";const o=({children:e})=>t.jsx("div",{className:"mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 text-foreground",children:e});o.__docgenInfo={description:"",methods:[],displayName:"Container",props:{children:{required:!0,tsType:{name:"ReactReactNode",raw:"React.ReactNode"},description:""}}};export{o as C};

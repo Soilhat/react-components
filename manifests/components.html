@@ -1,0 +1,4257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Components Manifest</title>
+  <style>
+      :root {
+          --bg: #0b0c10;
+          --panel: #121318;
+          --muted: #9aa0a6;
+          --fg: #e8eaed;
+          --ok: #22c55e;
+          --info: #1e88e5;
+          --err: #c62828;
+          --ok-bg: #0c1a13;
+          --info-bg: #0c1624;
+          --err-bg: #1a0e0e;
+          --chip: #1f2330;
+          --border: #2b2f3a;
+          --link: #8ab4f8;
+          --active-ring: 1px; /* 1px active ring for pills and toggles */
+      }
+
+      * {
+          box-sizing: border-box;
+      }
+
+      html,
+      body {
+          margin: 0;
+          background: var(--bg);
+          color: var(--fg);
+          font: 14px/1.5 system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Ubuntu,
+          Cantarell,
+          'Helvetica Neue',
+          Arial,
+          'Noto Sans';
+      }
+
+      .wrap {
+          max-width: 1100px;
+          margin: 0 auto;
+          padding: 16px 20px;
+      }
+
+      header {
+          position: sticky;
+          top: 0;
+          backdrop-filter: blur(6px);
+          background: color-mix(in srgb, var(--bg) 84%, transparent);
+          border-bottom: 1px solid var(--border);
+          z-index: 10;
+      }
+
+      h1 {
+          font-size: 20px;
+          margin: 0 0 6px;
+      }
+
+      .summary {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          align-items: center;
+      }
+
+      /* Top filter pills */
+      .filter-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border: 1px solid var(--border);
+          border-radius: 999px;
+          background: var(--panel);
+          text-decoration: none;
+          cursor: pointer;
+          user-select: none;
+          color: var(--fg);
+      }
+
+      .filter-pill.ok {
+          color: #b9f6ca;
+          border-color: color-mix(in srgb, var(--ok) 55%, var(--border));
+          background: color-mix(in srgb, var(--ok) 18%, #000);
+      }
+
+      .filter-pill.info {
+          color: #b3d9ff;
+          border-color: color-mix(in srgb, var(--info) 55%, var(--border));
+          background: var(--info-bg);
+      }
+
+      .filter-pill.err {
+          color: #ff9aa0;
+          border-color: color-mix(in srgb, var(--err) 55%, var(--border));
+          background: var(--err-bg);
+      }
+
+      .filter-pill.all {
+          color: #d7dbe0;
+          border-color: var(--border);
+          background: var(--panel);
+      }
+
+      .filter-pill[aria-disabled='true'] {
+          cursor: default;
+          text-decoration: none;
+      }
+
+      .filter-pill:focus,
+      .filter-pill:active {
+          outline: none;
+          box-shadow: none;
+      }
+
+      /* Selected top pill ring via :target */
+      #filter-all:target ~ header .filter-pill[data-k='all'],
+      #filter-errors:target ~ header .filter-pill[data-k='errors'],
+      #filter-infos:target ~ header .filter-pill[data-k='infos'],
+      #filter-story-errors:target ~ header .filter-pill[data-k='story-errors'],
+      #filter-doc-errors:target ~ header .filter-pill[data-k='docs'],
+      #filter-docs:target ~ header .filter-pill[data-k='docs'] {
+          box-shadow: 0 0 0 var(--active-ring) currentColor;
+          border-color: currentColor;
+      }
+
+      /* Hidden targets for filtering */
+      #filter-all,
+      #filter-errors,
+      #filter-infos,
+      #filter-story-errors,
+      #filter-doc-errors,
+      #filter-docs {
+          display: none;
+      }
+
+      main {
+          padding: 36px 0 40px;
+      }
+
+      .grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 18px;
+      }
+
+      /* one card per row */
+
+      .card {
+          border: 1px solid var(--border);
+          background: var(--panel);
+          border-radius: 14px;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+      }
+
+      .head {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+      }
+
+      .title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+      }
+
+      .title h2 {
+          font-size: 16px;
+          margin: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+      }
+
+      .meta {
+          font-size: 12px;
+          color: var(--muted);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+      }
+
+      .kv {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+      }
+
+      .chip {
+          font-size: 12px;
+          padding: 4px 8px;
+          border-radius: 999px;
+          background: var(--chip);
+          border: 1px solid var(--border);
+      }
+
+      .hint {
+          color: var(--muted);
+          font-size: 12px;
+      }
+
+      .badges {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+      }
+
+      /* Per-card badges: labels become toggles when clickable */
+      .badge {
+          font-size: 12px;
+          padding: 3px 8px;
+          border-radius: 999px;
+          border: 1px solid var(--border);
+          background: var(--chip);
+          color: #d7dbe0;
+      }
+
+      .badge.ok {
+          color: #b9f6ca;
+          border-color: color-mix(in srgb, var(--ok) 55%, var(--border));
+      }
+
+      .badge.info {
+          color: #b3d9ff;
+          border-color: color-mix(in srgb, var(--info) 55%, var(--border));
+      }
+
+      .badge.err {
+          color: #ff9aa0;
+          border-color: color-mix(in srgb, var(--err) 55%, var(--border));
+      }
+
+      .as-toggle {
+          cursor: pointer;
+      }
+
+      /* 1px ring on active toggle */
+      .tg-err:checked + label.as-toggle,
+      .tg-info:checked + label.as-toggle,
+      .tg-stories:checked + label.as-toggle,
+      .tg-docs:checked + label.as-toggle,
+      .tg-content:checked + label.as-toggle,
+      .tg-props:checked + label.as-toggle {
+          box-shadow: 0 0 0 var(--active-ring) currentColor;
+          border-color: currentColor;
+      }
+
+      /* Panels: hidden by default, shown when respective toggle checked */
+      .panels {
+          display: grid;
+          gap: 10px;
+      }
+
+      .panel {
+          display: none;
+      }
+
+      .tg-err:checked ~ .panels .panel-err {
+          display: grid;
+      }
+
+      .tg-info:checked ~ .panels .panel-info {
+          display: grid;
+          gap: 8px;
+      }
+
+      .tg-stories:checked ~ .panels .panel-stories {
+          display: grid;
+          gap: 8px;
+      }
+
+      .tg-docs:checked ~ .panels .panel-docs {
+          display: grid;
+          gap: 8px;
+      }
+
+      .tg-content:checked ~ .panels .panel-content {
+          display: grid;
+          gap: 8px;
+      }
+
+      .tg-props:checked ~ .panels .panel-props {
+          display: grid;
+      }
+
+      /* Colored notes for prop type error + info */
+      .note {
+          padding: 12px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+      }
+
+      .note.err {
+          border-color: color-mix(in srgb, var(--err) 55%, var(--border));
+          background: var(--err-bg);
+          color: #ffd1d4;
+      }
+
+      .note.info {
+          border-color: color-mix(in srgb, var(--info) 55%, var(--border));
+          background: var(--info-bg);
+          color: #d6e8ff;
+      }
+
+      .note.ok {
+          border-color: color-mix(in srgb, var(--ok) 55%, var(--border));
+          background: var(--ok-bg);
+          color: var(--fg);
+      }
+
+      .note-title {
+          font-weight: 600;
+          margin-bottom: 6px;
+      }
+
+      .note-body {
+          white-space: normal;
+      }
+
+      /* Story error cards */
+      .ex {
+          padding: 10px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          background: #0f131b;
+      }
+
+      .ex.err {
+          border-color: color-mix(in srgb, var(--err) 55%, var(--border));
+      }
+
+      .row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-wrap: wrap;
+      }
+
+      .status-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          display: inline-block;
+      }
+
+      .dot-ok {
+          background: var(--ok);
+      }
+
+      .dot-err {
+          background: var(--err);
+      }
+
+      .ex-name {
+          font-weight: 600;
+      }
+
+      /* Error groups (visible in errors filter) */
+      .error-groups {
+          display: none;
+          margin-bottom: 16px;
+      }
+
+      .group {
+          border: 1px solid var(--border);
+          background: var(--panel);
+          border-radius: 14px;
+          overflow: hidden;
+      }
+
+      .group + .group {
+          margin-top: 12px;
+      }
+
+      .group-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 14px;
+          cursor: pointer;
+          border-bottom: 1px solid var(--border);
+      }
+
+      .group-header:hover {
+          background: #141722;
+      }
+
+      .group-title {
+          font-weight: 600;
+          flex: 1;
+      }
+
+      .group-count {
+          font-size: 12px;
+          color: var(--muted);
+      }
+
+      .group-cards {
+          display: none;
+          padding: 12px;
+      }
+
+      .group .card {
+          margin: 12px 0;
+      }
+
+      .group .card:first-child {
+          margin-top: 0;
+      }
+
+      .group .card:last-child {
+          margin-bottom: 0;
+      }
+
+      /* caret rotation */
+      .group-tg:checked + label .caret {
+          transform: rotate(90deg);
+      }
+
+      .caret {
+          transition: transform 0.15s ease;
+      }
+
+      /* toggle body */
+      .group-tg:checked ~ .group-cards {
+          display: block;
+      }
+
+      /* CSS-only filtering of cards via top pills */
+      #filter-errors:target ~ main .card:not(.has-error):not(.has-story-error) {
+          display: none;
+      }
+
+      #filter-infos:target ~ main .card:not(.has-info) {
+          display: none;
+      }
+
+      #filter-story-errors:target ~ main .card:not(.has-story-error) {
+          display: none;
+      }
+
+      #filter-doc-errors:target ~ main .card:not(.has-doc-error) {
+          display: none;
+      }
+
+      #filter-docs:target ~ main .card:has(> .tg-docs),
+      #filter-docs:target ~ main .card.is-doc {
+          display: block;
+      }
+
+      #filter-docs:target ~ main .card:not(:has(> .tg-docs)):not(.is-doc) {
+          display: none;
+      }
+
+      #filter-all:target ~ main .card {
+          display: block;
+      }
+
+      /* In errors view, hide standalone component-error cards in the regular grid (they will appear in groups) */
+      #filter-errors:target ~ main .grid .card.has-error {
+          display: none;
+      }
+
+      /* Show grouped section only in errors view */
+      #filter-errors:target ~ main .error-groups {
+          display: block;
+      }
+
+      /* Section titles */
+      .section-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--muted);
+          margin: 24px 0 12px;
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--border);
+      }
+      .section-title:first-child {
+          margin-top: 0;
+      }
+
+      /* When a toggle is checked, show the corresponding panel */
+      .card > .tg-err:checked ~ .panels .panel-err {
+          display: grid;
+      }
+      
+      .card > .tg-info:checked ~ .panels .panel-info {
+          display: grid;
+      }
+      
+      .card > .tg-stories:checked ~ .panels .panel-stories {
+          display: grid;
+      }
+
+      .card > .tg-docs:checked ~ .panels .panel-docs {
+          display: grid;
+      }
+
+      .card > .tg-content:checked ~ .panels .panel-content {
+          display: grid;
+      }
+
+      /* Add vertical spacing around panels only when any panel is visible */
+      .card > .tg-err:checked ~ .panels,
+      .card > .tg-info:checked ~ .panels,
+      .card > .tg-stories:checked ~ .panels,
+      .card > .tg-docs:checked ~ .panels,
+      .card > .tg-content:checked ~ .panels,
+      .card > .tg-props:checked ~ .panels {
+          margin: 10px 0;
+      }
+
+      /* Optional: a subtle 1px ring on the active badge, using :has() if available */
+      @supports selector(.card:has(.tg-err:checked)) {
+          .card:has(.tg-err:checked) label[for$='-err'],
+          .card:has(.tg-info:checked) label[for$='-info'],
+          .card:has(.tg-stories:checked) label[for$='-stories'],
+          .card:has(.tg-docs:checked) label[for$='-docs'],
+          .card:has(.tg-content:checked) label[for$='-content'],
+          .card:has(.tg-props:checked) label[for$='-props'] {
+              box-shadow: 0 0 0 1px currentColor;
+              border-color: currentColor;
+          }
+      }
+
+      /* Wrap long lines in code blocks at ~120 characters */
+      pre, code {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+      pre {
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          overflow-x: auto; /* fallback for extremely long tokens */
+          margin: 8px 0 0;
+      }
+      pre > code {
+          display: block;
+          white-space: inherit;
+          overflow-wrap: inherit;
+          word-break: inherit;
+          inline-size: min(100%, 120ch);
+      }
+
+      /* MDX content container for docs */
+      .mdx-content {
+          background: #0f131b;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          padding: 12px;
+          max-height: 400px;
+          overflow-y: auto;
+          margin-top: 8px;
+      }
+  </style>
+</head>
+<body>
+<!-- Hidden targets for the top-level filters -->
+<span id="filter-all"></span>
+<span id="filter-errors"></span>
+<span id="filter-infos"></span>
+<span id="filter-story-errors"></span>
+<span id="filter-doc-errors"></span>
+<span id="filter-docs"></span>
+<header>
+  <div class="wrap">
+    <h1>Manifest Debugger</h1>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">26 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">23/26 infos</a><span class="filter-pill ok" aria-disabled="true">69 stories ok</span><a class="filter-pill ok" data-k="docs" href="#filter-docs">4 docs ok</a></div>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="note info" style="margin-bottom: 16px;">
+            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>0.7s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
+            <pre><code>typescript: {
+  reactDocgen: 'react-docgen-typescript',
+}</code></pre>
+            Note: <code>react-docgen-typescript</code> can be slower. If performance is acceptable for your project, it generally produces better results.
+            <a href="https://storybook.js.org/docs/api/main-config/main-config-typescript#reactdocgen" target="_blank">Learn more</a>
+          </div>
+    <h2 class="section-title">Components</h2>
+    <div class="grid" role="list">
+      
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="ButtonEl">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> ButtonEl</h2>
+      <div class="badges">
+        <label for="c-0-elements-button-props" class="badge ok as-toggle">7 prop types</label>
+        <label for="c-0-elements-button-info" class="badge info as-toggle">1 info</label>
+        <label for="c-0-elements-button-stories" class="badge ok as-toggle">1 story</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Elements/Button.stories.tsx">elements-button · ./src/Elements/Button.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-0-elements-button-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-0-elements-button-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-0-elements-button-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">7 prop types</span>
+            </div>
+            <pre><code>Component: lib/Elements/Button.tsx::Button</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: any = &#39;&#39;
+
+color_name?: &#39;primary&#39; | &#39;secondary&#39; | &#39;success&#39; | &#39;danger&#39; | &#39;warning&#39; | &#39;info&#39; | &#39;light&#39; | &#39;dark&#39; = &#39;primary&#39;
+
+isLoading?: boolean = false
+
+leftIcon?: ReactNode
+
+rightIcon?: ReactNode
+
+size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
+
+variant?: &#39;default&#39; | &#39;border&#39; | &#39;ghost&#39; = &#39;default&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Button as ButtonEl } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Button</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Button = () =&gt; &lt;ButtonEl onClick={fn()}&gt;Button&lt;/ButtonEl&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  no-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Calendar">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Calendar</h2>
+      <div class="badges">
+        <label for="c-1-data-display-calendar-props" class="badge ok as-toggle">2 prop types</label>
+        
+        <label for="c-1-data-display-calendar-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Data Display/Calendar.stories.tsx">data-display-calendar · ./src/Data Display/Calendar.stories.tsx</div>
+    
+    <div class="hint"># Calendar Component Documentation * The `Calendar` is a high-level data display component designed for planning and event management. * ### Key Functionalities: 1. **Hybrid Grid Rendering**: Uses `sm:hidden` and `sm:contents` to toggle between a mobile-optimized list/stack view and a traditional 7-column desktop grid. 2. **Native Drag &amp; Drop**: Implements HTML5 Drag and Drop API. Events are made draggable via the `EventList` child, and `DayCard` acts as the drop target. 3. **Date Navigation**: Supports Month and Week views with state-controlled navigation (`goPrev`, `goNext`). 4. **Touch Support**: Built-in swipe gestures for mobile users to navigate between periods. 5. **Event Normalization**: Processes raw event arrays into a consistent `NormalizedEntry` format, supporting nested items (e.g., meals within a daily plan).</div>
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  
+  <input id="c-1-data-display-calendar-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-1-data-display-calendar-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">2 prop types</span>
+            </div>
+            <pre><code>Component: lib/Data Display/Calendar.tsx::Calendar</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>actionLabel?: any = &#39;Plan&#39;
+
+eventsByDate?: any = {}</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Calendar } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Drag And Drop Interaction Test</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">## Drag and DropInteraction Test (Automated) * This story demonstrates the &quot;Real&quot; interaction flow. It uses a `play` function to simulate a user dragging an event from today to tomorrow. * **Technical Note on Testing:** Since the component renders two versions of the grid (Mobile/Desktop), the test specifically targets the `.sm:contents` container to avoid &quot;Multiple elements found&quot; errors.</div>
+              <pre><code>const DragAndDropInteractionTest = () =&gt; {
+  const [events, setEvents] = useState&lt;Record&lt;string, unknown[]&gt;&gt;(initialEvents);
+
+  const handleEventDrop = (eventId: string, targetDate: Date) =&gt; {
+    const targetIso = iso(targetDate);
+    setEvents((prev) =&gt; {
+      const next = { ...prev };
+      let foundItem: unknown = null;
+
+      // Logic to find and pluck the event from its original date
+      Object.keys(next).forEach((dateKey) =&gt; {
+        const index = next[dateKey].findIndex((e) =&gt; e.id === eventId);
+        if (index !== -1) [foundItem] = next[dateKey].splice(index, 1);
+      });
+
+      // Push the item into the new date array
+      if (foundItem) {
+        next[targetIso] = [...(next[targetIso] || []), foundItem];
+      }
+      return { ...next };
+    });
+  };
+
+  return (
+    &lt;div className=&quot;p-8 bg-surface-base dark:bg-surface-base-dark min-h-screen&quot;&gt;
+      &lt;Calendar
+        year={today.getFullYear()}
+        month={today.getMonth()}
+        eventsByDate={events}
+        onEventDrop={handleEventDrop}
+        actionLabel=&quot;Plan&quot;
+      /&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Static Month View</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">## Static Month View Standard usage with predefined events to test layout and color schemes.</div>
+              <pre><code>const StaticMonthView = () =&gt; &lt;Calendar
+    year={today.getFullYear()}
+    month={today.getMonth()}
+    eventsByDate={initialEvents}
+    initialView=&quot;month&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Click Interaction Test</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">## Click Interaction Test This test ensures that meal items are &quot;clickable&quot; and navigate correctly. It specifically checks that pointer-events are not blocked and that the onEventClick callback receives the clean ID (without the index suffix).</div>
+              <pre><code>const ClickInteractionTest = () =&gt; &lt;Calendar
+    year={today.getFullYear()}
+    month={today.getMonth()}
+    eventsByDate={{
+      [iso(today)]: [{ id: &#39;test-meal-123&#39;, title: &#39;Clickable Recipe&#39; }],
+    }}
+    onEventClick={fn()} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Card">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Card</h2>
+      <div class="badges">
+        <label for="c-2-layout-card-props" class="badge ok as-toggle">1 prop type</label>
+        <label for="c-2-layout-card-info" class="badge info as-toggle">1 info</label>
+        <label for="c-2-layout-card-stories" class="badge ok as-toggle">4 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Layout/Card.stories.tsx">layout-card · ./src/Layout/Card.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-2-layout-card-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-2-layout-card-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-2-layout-card-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">1 prop type</span>
+            </div>
+            <pre><code>Component: lib/Layout/Card.tsx::Card</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: any = &#39;&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Card, Container, Heading } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Card With Header Content Footer</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CardWithHeaderContentFooter = () =&gt; (
+  &lt;Container&gt;
+    &lt;Heading title=&quot;Card with header, content, and footer&quot; /&gt;
+    &lt;Card&gt;
+      &lt;Card.Header title=&quot;Card Title&quot; /&gt;
+      &lt;div&gt;This is the card content.&lt;/div&gt;
+      &lt;Card.Footer&gt;Footer Content&lt;/Card.Footer&gt;
+    &lt;/Card&gt;
+  &lt;/Container&gt;
+);</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Card With Only Content</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CardWithOnlyContent = () =&gt; (
+  &lt;Container&gt;
+    &lt;Heading title=&quot;Card with only content&quot; /&gt;
+    &lt;Card&gt;
+      &lt;div&gt;Card without header or footer.&lt;/div&gt;
+    &lt;/Card&gt;
+  &lt;/Container&gt;
+);</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Card With Header Only</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CardWithHeaderOnly = () =&gt; (
+  &lt;Container&gt;
+    &lt;Heading title=&quot;Card with header only&quot; /&gt;
+    &lt;Card&gt;
+      &lt;Card.Header title=&quot;Card Title&quot; /&gt;
+      &lt;div&gt;Content goes here.&lt;/div&gt;
+    &lt;/Card&gt;
+  &lt;/Container&gt;
+);</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Card With Footer Only</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CardWithFooterOnly = () =&gt; (
+  &lt;Container&gt;
+    &lt;Heading title=&quot;Card with footer only&quot; /&gt;
+    &lt;Card&gt;
+      &lt;Card.Footer&gt;Footer Only&lt;/Card.Footer&gt;
+      &lt;div&gt;Content goes here.&lt;/div&gt;
+    &lt;/Card&gt;
+  &lt;/Container&gt;
+);</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="CategoryTree">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> CategoryTree</h2>
+      <div class="badges">
+        <label for="c-3-layout-categorytree-props" class="badge ok as-toggle">2 prop types</label>
+        <label for="c-3-layout-categorytree-info" class="badge info as-toggle">1 info</label>
+        <label for="c-3-layout-categorytree-stories" class="badge ok as-toggle">4 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Layout/CategoryTree.stories.tsx">layout-categorytree · ./src/Layout/CategoryTree.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-3-layout-categorytree-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-3-layout-categorytree-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-3-layout-categorytree-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">2 prop types</span>
+            </div>
+            <pre><code>Component: lib/Layout/CategoryTree.tsx::CategoryTree</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>level?: any = 0
+
+parentId?: any = null</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Button, CategoryTree } from "@soilhat/react-components";
+import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from "@heroicons/react/24/outline";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">Default view showing a standard financial category hierarchy.</div>
+              <pre><code>const Default = () =&gt; &lt;div
+    className=&quot;w-100 border p-4 rounded-xl bg-surface-panel dark:bg-surface-panel-dark shadow-sm&quot;&gt;
+    &lt;CategoryTree items={mockCategories} renderItem={defaultRender} /&gt;
+&lt;/div&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Deeply Nested</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">Demonstrates deep nesting to test the recursive indentation and border-left lines.</div>
+              <pre><code>const DeeplyNested = () =&gt; &lt;CategoryTree
+    items={[
+      { id: &#39;1&#39;, name: &#39;Root Level&#39;, parent_id: null, color: &#39;#3b82f6&#39; },
+      { id: &#39;2&#39;, name: &#39;Level 1&#39;, parent_id: &#39;1&#39;, color: &#39;#3b82f6&#39; },
+      { id: &#39;3&#39;, name: &#39;Level 2&#39;, parent_id: &#39;2&#39;, color: &#39;#3b82f6&#39; },
+      { id: &#39;4&#39;, name: &#39;Level 3&#39;, parent_id: &#39;3&#39;, color: &#39;#3b82f6&#39; },
+    ]}
+    renderItem={defaultRender} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Interactive</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">Visualizing how it looks with custom interactive elements (like edit buttons).</div>
+              <pre><code>const Interactive = () =&gt; &lt;CategoryTree
+    items={mockCategories}
+    renderItem={(item, level) =&gt; (
+      &lt;div className=&quot;flex items-center justify-between group p-2 hover:bg-surface-panel dark:hover:bg-surface-panel-dark rounded-md&quot;&gt;
+        &lt;div className=&quot;flex items-center gap-2 text-sm font-medium&quot;&gt;
+          {level &gt; 0 &amp;&amp; &lt;span className=&quot;text-text-secondary dark:text-text-secondary-dark&quot;&gt;↳&lt;/span&gt;}
+          {item.name}
+        &lt;/div&gt;
+        &lt;Button color_name=&quot;light&quot;&gt;Edit&lt;/Button&gt;
+      &lt;/div&gt;
+    )} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Expandable</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Expandable = () =&gt; &lt;CategoryTree
+    items={mockCategories}
+    renderItem={(item, level, { isExpanded, toggle, hasChildren }) =&gt; (
+      &lt;div
+        onClick={hasChildren ? toggle : undefined}
+        className={`
+          flex items-center gap-2 p-2 rounded-lg transition-all cursor-pointer
+          ${level === 0 ? &#39;bg-surface-panel dark:bg-surface-panel-dark font-bold&#39; : &#39;hover:bg-surface-base dark:hover:bg-surface-base-dark&#39;}
+        `}
+      &gt;
+        {/* Chevron Icon */}
+        {hasChildren &amp;&amp; (
+          &lt;ChevronRightIcon className={`h-4 w-4 transition-transform duration-200 ${isExpanded ? &#39;rotate-90&#39; : &#39;&#39;}`} /&gt;
+        )}
+
+        {/* Folder Icon */}
+        {hasChildren ? (
+          isExpanded ? (
+            &lt;FolderOpenIcon className=&quot;h-4 w-4 text-primary dark:text-primary-dark&quot; /&gt;
+          ) : (
+            &lt;FolderIcon className=&quot;h-4 w-4 text-primary dark:text-primary-dark&quot; /&gt;
+          )
+        ) : (
+          &lt;div className=&quot;h-4 w-4 ml-1 border-b-2 border-l-2 border-border dark:border-border-dark rounded-bl-sm&quot; /&gt;
+        )}
+
+        &lt;span className=&quot;text-sm text-text-secondary dark:text-text-secondary-dark&quot;&gt;{item.name}&lt;/span&gt;
+      &lt;/div&gt;
+    )} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Checkbox">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Checkbox</h2>
+      <div class="badges">
+        <label for="c-4-forms-checkbox-props" class="badge ok as-toggle">5 prop types</label>
+        <label for="c-4-forms-checkbox-info" class="badge info as-toggle">1 info</label>
+        <label for="c-4-forms-checkbox-stories" class="badge ok as-toggle">5 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Forms/Checkbox.stories.tsx">forms-checkbox · ./src/Forms/Checkbox.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-4-forms-checkbox-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-4-forms-checkbox-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-4-forms-checkbox-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">5 prop types</span>
+            </div>
+            <pre><code>Component: lib/Forms/Checkbox.tsx::Checkbox</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: any = &#39;&#39;
+
+containerClassName?: string = &#39;&#39;
+
+description?: ReactNode
+
+indeterminate?: boolean
+
+label?: ReactNode</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Checkbox, Text } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;Checkbox label=&quot;Accepter les conditions&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Description</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithDescription = () =&gt; &lt;Checkbox
+    label=&quot;Notifications Flash&quot;
+    description=&quot;Recevez des alertes en temps réel pour vos recettes favorites.&quot;
+    containerClassName=&quot;max-w-sm border border-border rounded-xl&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Indeterminate</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Indeterminate = () =&gt; &lt;Checkbox
+    label=&quot;Ingrédients (Sélection partielle)&quot;
+    description=&quot;4 articles sur 10 sélectionnés&quot;
+    indeterminate
+    checked={false} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Complex Card</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const ComplexCard = () =&gt; &lt;Checkbox
+    label=&quot;Option Premium&quot;
+    description={(&lt;div className=&quot;mt-2 p-2 bg-primary/10 rounded border border-primary/20 text-xs&quot;&gt;
+      &lt;Text variant=&quot;small&quot;&gt;Inclus : Recettes illimitées, mode hors-ligne et export PDF.&lt;/Text&gt;
+    &lt;/div&gt;)}
+    containerClassName=&quot;w-80 border-2 border-primary/20 shadow-sm&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Disabled</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Disabled = () =&gt; &lt;Checkbox
+    label=&quot;Option indisponible&quot;
+    disabled
+    description=&quot;Cette option nécessite un abonnement actif.&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Container">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Container</h2>
+      <div class="badges">
+        <label for="c-5-layout-container-props" class="badge ok as-toggle">1 prop type</label>
+        <label for="c-5-layout-container-info" class="badge info as-toggle">1 info</label>
+        <label for="c-5-layout-container-stories" class="badge ok as-toggle">1 story</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Layout/Container.stories.tsx">layout-container · ./src/Layout/Container.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-5-layout-container-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-5-layout-container-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-5-layout-container-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">1 prop type</span>
+            </div>
+            <pre><code>Component: lib/Layout/Container.tsx::Container</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>children: React.ReactNode</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Container, Heading } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Container Example</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const ContainerExample = () =&gt; (
+  &lt;Container&gt;
+    &lt;Heading title=&quot;Container Example&quot; /&gt;
+    &lt;div&gt;This content is centered and padded.&lt;/div&gt;
+  &lt;/Container&gt;
+);</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Divider">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Divider</h2>
+      <div class="badges">
+        <label for="c-6-layout-divider-props" class="badge ok as-toggle">1 prop type</label>
+        <label for="c-6-layout-divider-info" class="badge info as-toggle">1 info</label>
+        <label for="c-6-layout-divider-stories" class="badge ok as-toggle">1 story</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Layout/Divider.stories.tsx">layout-divider · ./src/Layout/Divider.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-6-layout-divider-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-6-layout-divider-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-6-layout-divider-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">1 prop type</span>
+            </div>
+            <pre><code>Component: lib/Layout/Divider.tsx::Divider</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: any = &#39;&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Container, Divider, Heading } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Divider Example</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DividerExample = () =&gt; (
+  &lt;Container&gt;
+    &lt;Heading title=&quot;Divider Example&quot; /&gt;
+    &lt;div&gt;Above the divider&lt;/div&gt;
+    &lt;Divider /&gt;
+    &lt;div&gt;Below the divider&lt;/div&gt;
+  &lt;/Container&gt;
+);</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Dropdown">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Dropdown</h2>
+      <div class="badges">
+        <label for="c-7-elements-dropdown-props" class="badge ok as-toggle">1 prop type</label>
+        <label for="c-7-elements-dropdown-info" class="badge info as-toggle">1 info</label>
+        <label for="c-7-elements-dropdown-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Elements/Dropdown.stories.tsx">elements-dropdown · ./src/Elements/Dropdown.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-7-elements-dropdown-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-7-elements-dropdown-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-7-elements-dropdown-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">1 prop type</span>
+            </div>
+            <pre><code>Component: lib/Elements/Dropdown.tsx::Dropdown</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>buttonVariant?: any = &#39;primary&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import {
+    ArchiveBoxIcon,
+    ArrowRightStartOnRectangleIcon,
+    PencilSquareIcon,
+    TrashIcon,
+    UserIcon,
+} from "@heroicons/react/20/solid";
+import { Dropdown } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;Dropdown
+    label=&quot;Options&quot;
+    buttonVariant=&quot;primary&quot;
+    sections={[
+      {
+        items: [
+          {
+            label: &#39;View Profile&#39;,
+            icon: &lt;UserIcon className=&quot;h-5 w-5&quot; /&gt;,
+            onClick: () =&gt; console.log(&#39;Profile clicked&#39;),
+          },
+          {
+            label: &#39;Edit Recipe&#39;,
+            icon: &lt;PencilSquareIcon className=&quot;h-5 w-5&quot; /&gt;,
+            onClick: () =&gt; console.log(&#39;Edit clicked&#39;),
+          },
+        ],
+      },
+      {
+        items: [
+          {
+            label: &#39;Delete&#39;,
+            icon: &lt;TrashIcon className=&quot;h-5 w-5&quot; /&gt;,
+            isDanger: true,
+            onClick: () =&gt; alert(&#39;Delete action triggered&#39;),
+          },
+        ],
+      },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Tonal Variant</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const TonalVariant = () =&gt; &lt;Dropdown label=&quot;Manage Action&quot; buttonVariant=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Complex Menu</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const ComplexMenu = () =&gt; &lt;Dropdown
+    label=&quot;Project Actions&quot;
+    buttonVariant=&quot;secondary&quot;
+    sections={[
+      {
+        items: [
+          { label: &#39;Archive&#39;, icon: &lt;ArchiveBoxIcon className=&quot;h-5 w-5&quot; /&gt; },
+          { label: &#39;Move to Folder&#39;, disabled: true },
+        ],
+      },
+      {
+        items: [{ label: &#39;Logout&#39;, icon: &lt;ArrowRightStartOnRectangleIcon className=&quot;h-5 w-5&quot; /&gt;, isDanger: true }],
+      },
+    ]} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  no-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="ErrorBoundary">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> ErrorBoundary</h2>
+      <div class="badges">
+        <label for="c-8-feedback-errorboundary-props" class="badge ok as-toggle">6 prop types</label>
+        
+        <label for="c-8-feedback-errorboundary-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Feedback/ErrorBoundary.stories.tsx">feedback-errorboundary · ./src/Feedback/ErrorBoundary.stories.tsx</div>
+    
+    <div class="hint">### ErrorBoundary Component * The `ErrorBoundary` is a safety wrapper that catches JavaScript errors anywhere in its child component tree, logs those errors, and displays a fallback UI instead of crashing the whole application. * #### Key Features: - **Full Page vs Inline:** Use the `fullPage` prop to toggle between a full-screen takeover and a local widget fallback. - **Support Integration:** Provide a `supportEmail` to automatically generate a `mailto` link for users in production. - **Development DX:** Automatically shows a technical stack trace when `import.meta.env.DEV` is true. - **Custom Fallbacks:** Pass a custom ReactNode or a render function to the `fallback` prop. * #### Usage: ```tsx &lt;ErrorBoundary supportEmail=&quot;support@company.com&quot; onError={(err, info) =&gt; logToSentry(err, info)} &gt; &lt;MyCriticalComponent /&gt; &lt;/ErrorBoundary&gt; ```</div>
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  
+  <input id="c-8-feedback-errorboundary-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-8-feedback-errorboundary-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">6 prop types</span>
+            </div>
+            <pre><code>Component: lib/Feedback/ErrorBoundary.tsx::ErrorBoundary</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>children: ReactNode
+
+fallback?: ReactNode | ((error: Error, reset: () =&gt; void) =&gt; ReactNode)
+
+fullPage?: boolean
+
+onError?: (error: Error, errorInfo: ErrorInfo) =&gt; void
+
+onReset?: () =&gt; void
+
+supportEmail?: string</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Button, ErrorBoundary, Heading, Text } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Full Page Crash</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">**Default Full Page Error** * Use this at the top level of your `App.tsx` or main routing file. It ensures that if a major crash happens, the user sees a branded recovery page rather than a white screen.</div>
+              <pre><code>const FullPageCrash = () =&gt; {
+  const [hasError, setHasError] = useState(false);
+  return (
+    &lt;ErrorBoundary onReset={() =&gt; setHasError(false)} supportEmail=&quot;dev-team@example.com&quot;&gt;
+      &lt;div className=&quot;p-10 flex flex-col items-center gap-6&quot;&gt;
+        &lt;Heading title=&quot;Main Application Shell&quot; /&gt;
+        &lt;Crasher shouldCrash={hasError} /&gt;
+        &lt;Button color_name=&quot;danger&quot; onClick={() =&gt; setHasError(true)}&gt;
+          Trigger Fatal Error
+        &lt;/Button&gt;
+      &lt;/div&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Widget Crash</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">**Widget Level (Local) Crash** * By setting `fullPage={false}`, the boundary only occupies the space of its container. This is ideal for dashboards where you want one failing widget to stay isolated without breaking the rest of the navigation or UI.</div>
+              <pre><code>const WidgetCrash = () =&gt; {
+  const [crashLeft, setCrashLeft] = useState(false);
+  return (
+    &lt;div className=&quot;p-8 space-y-8&quot;&gt;
+      &lt;div className=&quot;bg-surface-panel dark:bg-surface-panel-dark p-4 rounded-lg border border-border dark:border-border-dark&quot;&gt;
+        &lt;h2 className=&quot;font-bold&quot;&gt;Global Navigation (Always Safe)&lt;/h2&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;grid grid-cols-1 md:grid-cols-2 gap-8&quot;&gt;
+        &lt;div className=&quot;space-y-4&quot;&gt;
+          &lt;Text className=&quot;font-bold uppercase text-xs&quot;&gt;Analytics Module&lt;/Text&gt;
+          &lt;ErrorBoundary fullPage={false} onReset={() =&gt; setCrashLeft(false)}&gt;
+            &lt;div className=&quot;border-2 border-dashed border-border dark:border-border-dark p-4 rounded-2xl&quot;&gt;
+              &lt;Crasher shouldCrash={crashLeft} /&gt;
+              {!crashLeft &amp;&amp; (
+                &lt;Button className=&quot;mt-4&quot; onClick={() =&gt; setCrashLeft(true)}&gt;
+                  Crash Module
+                &lt;/Button&gt;
+              )}
+            &lt;/div&gt;
+          &lt;/ErrorBoundary&gt;
+        &lt;/div&gt;
+        &lt;div className=&quot;p-4 rounded-2xl&quot;&gt;
+          &lt;Text&gt;Secondary content remains interactive even if the primary module crashes.&lt;/Text&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Custom Fallback</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">**Custom Fallback UI** * If the default Card UI doesn&#39;t fit your design, use the `fallback` prop. You can provide a custom component or a function that receives the `error` and `reset` trigger.</div>
+              <pre><code>const CustomFallback = () =&gt; {
+  const [isCrashed, setIsCrashed] = useState(false);
+  return (
+    &lt;div className=&quot;p-10&quot;&gt;
+      &lt;ErrorBoundary
+        onReset={() =&gt; setIsCrashed(false)}
+        fallback={(error, reset) =&gt; (
+          &lt;div className=&quot;p-4 bg-state-danger text-text-on-danger dark:bg-state-danger-dark dark:text-text-on-danger-dark rounded-lg flex justify-between items-center shadow-lg animate-pulse&quot;&gt;
+            &lt;span className=&quot;font-mono text-sm&quot;&gt;Critical Error: {error.message}&lt;/span&gt;
+            &lt;Button onClick={reset} color_name=&quot;danger&quot;&gt;
+              RETRY
+            &lt;/Button&gt;
+          &lt;/div&gt;
+        )}
+      &gt;
+        &lt;div className=&quot;p-8 bg-surface-panel dark:bg-surface-panel-dark rounded-2xl shadow-xl border border-border dark:border-border-dark&quot;&gt;
+          &lt;h3 className=&quot;text-xl font-bold mb-4&quot;&gt;Stock Ticker Widget&lt;/h3&gt;
+          &lt;Crasher shouldCrash={isCrashed} /&gt;
+          {!isCrashed &amp;&amp; (
+            &lt;Button variant=&quot;ghost&quot; className=&quot;mt-4&quot; onClick={() =&gt; setIsCrashed(true)}&gt;
+              Simulate API Failure
+            &lt;/Button&gt;
+          )}
+        &lt;/div&gt;
+      &lt;/ErrorBoundary&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Form">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Form</h2>
+      <div class="badges">
+        <label for="c-9-forms-form-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-9-forms-form-info" class="badge info as-toggle">1 info</label>
+        <label for="c-9-forms-form-stories" class="badge ok as-toggle">1 story</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Forms/Form.stories.tsx">forms-form · ./src/Forms/Form.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-9-forms-form-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-9-forms-form-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-9-forms-form-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: lib/Forms/Form.tsx::Form</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>children?: React.ReactNode
+
+className?: any = &#39;&#39;
+
+method?: any = &#39;post&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Form, Input, Textarea } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; (
+  &lt;Form
+    onSubmit={(e) =&gt; {
+      e.preventDefault();
+      alert(&#39;Submitted!&#39;);
+    }}
+  &gt;
+    &lt;Input label=&quot;Name&quot; name=&quot;name&quot; placeholder=&quot;Enter your name&quot; /&gt;
+    &lt;Textarea label=&quot;Message&quot; name=&quot;message&quot; placeholder=&quot;Type your message...&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+  &lt;/Form&gt;
+);</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Heading">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Heading</h2>
+      <div class="badges">
+        <label for="c-10-layout-heading-props" class="badge ok as-toggle">5 prop types</label>
+        <label for="c-10-layout-heading-info" class="badge info as-toggle">1 info</label>
+        <label for="c-10-layout-heading-stories" class="badge ok as-toggle">1 story</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Layout/Heading.stories.tsx">layout-heading · ./src/Layout/Heading.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-10-layout-heading-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-10-layout-heading-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-10-layout-heading-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">5 prop types</span>
+            </div>
+            <pre><code>Component: lib/Layout/Heading.tsx::Heading</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>children?: ReactNode
+
+filters?: filters[]
+
+meta?: meta[]
+
+title?: string
+
+variant?: &#39;page&#39; | &#39;card&#39; = &#39;page&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Button, Container, Heading as HeadingEl } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Heading</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Heading = () =&gt; {
+    // Provide a default action button with Storybook&#39;s fn for action logging
+    const handleAction = fn();
+
+    return (
+        &lt;Container&gt;
+            &lt;HeadingEl
+                meta={[
+                  { value: &#39;Meta Info&#39;, key: &#39;meta&#39; },
+                  { value: &#39;More Info&#39;, key: &#39;more&#39; },
+                ]}
+                title=&quot;Heading Example&quot;
+                filters={[
+                  { value: &#39;Filter 1&#39;, key: &#39;filter1&#39; },
+                  { value: &#39;Filter 2&#39;, key: &#39;filter2&#39; },
+                ]}&gt;
+                &lt;Button size=&quot;small&quot; onClick={handleAction}&gt;Action
+                            &lt;/Button&gt;
+            &lt;/HeadingEl&gt;
+            &lt;div&gt;Some content below the heading.&lt;/div&gt;
+        &lt;/Container&gt;
+    );
+};</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="ImageUploader">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> ImageUploader</h2>
+      <div class="badges">
+        <label for="c-11-forms-imageuploader-props" class="badge ok as-toggle">4 prop types</label>
+        <label for="c-11-forms-imageuploader-info" class="badge info as-toggle">1 info</label>
+        <label for="c-11-forms-imageuploader-stories" class="badge ok as-toggle">1 story</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Forms/ImageUploader.stories.tsx">forms-imageuploader · ./src/Forms/ImageUploader.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-11-forms-imageuploader-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-11-forms-imageuploader-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-11-forms-imageuploader-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">4 prop types</span>
+            </div>
+            <pre><code>Component: lib/Forms/ImageUploader.tsx::ImageUploader</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>initialImageUrl?: string
+
+isUploading?: boolean = false
+
+placeholderImageUrl: string
+
+uploadImage: (file: File) =&gt; unknown</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { ImageUploader } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;ImageUploader
+    placeholderImageUrl=&quot;https://images.unsplash.com/photo-1544724759-e2e242adb0db&quot;
+    uploadImage={fn(async (file: File) =&gt; {
+      // Simulate an upload delay
+      await new Promise((resolve) =&gt; setTimeout(resolve, 2000));
+      // Return a mock URL for the uploaded image
+      return file.name;
+    })} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="InfiniteScroll">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> InfiniteScroll</h2>
+      <div class="badges">
+        <label for="c-12-navigation-infinitescroll-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-12-navigation-infinitescroll-info" class="badge info as-toggle">1 info</label>
+        <label for="c-12-navigation-infinitescroll-stories" class="badge ok as-toggle">1 story</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Navigation/InfiniteScroll.stories.tsx">navigation-infinitescroll · ./src/Navigation/InfiniteScroll.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-12-navigation-infinitescroll-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-12-navigation-infinitescroll-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-12-navigation-infinitescroll-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: lib/Navigation/InfiniteScroll.tsx::InfiniteScroll</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>hasMore: boolean
+
+loading: boolean
+
+onReachBottom: () =&gt; void</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { InfiniteScroll } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; {
+  const [items, setItems] = useState&lt;string[]&gt;(generateItems(0, 20));
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const loadMore = useCallback(() =&gt; {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+
+    // Simulate API latency
+    setTimeout(() =&gt; {
+      setItems((prev) =&gt; [...prev, ...generateItems(prev.length, 10)]);
+      setLoading(false);
+
+      // Stop after 50 items for demonstration
+      if (items.length &gt;= 50) {
+        setHasMore(false);
+      }
+    }, 1500);
+  }, [loading, hasMore, items.length]);
+
+  return (
+    &lt;div className=&quot;p-4 max-w-md mx-auto&quot;&gt;
+      &lt;h1 className=&quot;text-xl font-bold mb-4&quot;&gt;Infinite Scroll Demo&lt;/h1&gt;
+      &lt;div className=&quot;space-y-2 mb-4&quot;&gt;
+        {items.map((item, index) =&gt; (
+          &lt;div key={index} className=&quot;p-4 bg-white dark:bg-gray-800 border border-border rounded shadow-sm&quot;&gt;
+            {item}
+          &lt;/div&gt;
+        ))}
+      &lt;/div&gt;
+
+      &lt;InfiniteScroll onReachBottom={loadMore} hasMore={hasMore} loading={loading} /&gt;
+
+      {!hasMore &amp;&amp; &lt;p className=&quot;text-center text-text-secondary text-sm mt-4&quot;&gt;— You&#39;ve reached the end —&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Input">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Input</h2>
+      <div class="badges">
+        <label for="c-13-forms-input-props" class="badge ok as-toggle">10 prop types</label>
+        <label for="c-13-forms-input-info" class="badge info as-toggle">1 info</label>
+        <label for="c-13-forms-input-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Forms/Input.stories.tsx">forms-input · ./src/Forms/Input.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-13-forms-input-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-13-forms-input-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-13-forms-input-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">10 prop types</span>
+            </div>
+            <pre><code>Component: lib/Forms/Input.tsx::Input</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: any = &#39;&#39;
+
+containerClassName?: string = &#39;&#39;
+
+error?: string
+
+fullWidth?: boolean = true
+
+hint?: string
+
+label?: string
+
+leftIcon?: ReactNode
+
+rightIcon?: ReactNode
+
+size?: &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; = &#39;md&#39;
+
+variant?: &#39;outline&#39; | &#39;soft&#39; | &#39;underline&#39; = &#39;outline&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Input } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;Input type=&quot;string&quot; label=&quot;Name&quot; placeholder=&quot;Enter your name&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Password</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Password = () =&gt; &lt;Input type=&quot;password&quot; label=&quot;Password&quot; placeholder=&quot;Enter your password&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Checkbox</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Checkbox = () =&gt; &lt;Input type=&quot;checkbox&quot; label=&quot;Checkbox&quot; placeholder=&quot;Click to select value&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="LoginPage">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> LoginPage</h2>
+      <div class="badges">
+        <label for="c-14-pages-login-props" class="badge ok as-toggle">1 prop type</label>
+        <label for="c-14-pages-login-info" class="badge info as-toggle">1 info</label>
+        <label for="c-14-pages-login-stories" class="badge ok as-toggle">1 story</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Pages/Login.stories.ts">pages-login · ./src/Pages/Login.stories.ts</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-14-pages-login-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-14-pages-login-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-14-pages-login-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">1 prop type</span>
+            </div>
+            <pre><code>Component: src/Pages/Login.tsx::default</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>onSubmit?: (login: loginInfo) =&gt; void</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { LoginPage } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Login</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Login = () =&gt; &lt;LoginPage onSubmit={fn()} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  no-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="ModalEl">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> ModalEl</h2>
+      <div class="badges">
+        
+        
+        <label for="c-15-overlays-modal-stories" class="badge ok as-toggle">4 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Overlays/Modal.stories.tsx">overlays-modal · ./src/Overlays/Modal.stories.tsx</div>
+    
+    <div class="hint">### Modal Component A versatile overlay that functions as a **Centered Dialog** on desktop and automatically transforms into a **Responsive Bottom Sheet** on mobile devices. * #### Key Features - **Compound Component Pattern**: Use `Modal.Header`, `Modal.Body`, and `Modal.Footer` for structured layouts. - **Adaptive UI**: Rounded-top &quot;drawer&quot; style on mobile; centered card on desktop. - **Focus &amp; Scroll Management**: Automatically locks body scroll when open and handles &#39;Escape&#39; key to close. - **Z-Index Layering**: Optimized with `z-[100]` to ensure visibility over fixed Navbars and Bottom Bars. * #### Basic Implementation ```tsx &lt;Modal open={isOpen} onClose={() =&gt; setIsOpen(false)}&gt; &lt;Modal.Header&gt;Title&lt;/Modal.Header&gt; &lt;Modal.Body&gt;Content goes here...&lt;/Modal.Body&gt; &lt;Modal.Footer&gt; &lt;Button onClick={onClose}&gt;Close&lt;/Button&gt; &lt;/Modal.Footer&gt; &lt;/Modal&gt; ```</div>
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  
+  <input id="c-15-overlays-modal-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  
+
+  <div class="panels">
+    
+    
+    
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { BrowserRouter } from "react-router-dom";
+import { Button, Modal as ModalEl, Navbar, Text } from "@soilhat/react-components";
+import { ChatBubbleLeftRightIcon, HomeIcon, UserIcon } from "@heroicons/react/24/outline";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Simple</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">**Simple Usage** * Use this for quick alerts or short messages. If you don&#39;t use the sub-components (`Header`, `Body`), the Modal will wrap your children in a default padding container.</div>
+              <pre><code>const Simple = () =&gt; {
+  const [open, setOpen] = useState(false);
+  return (
+    &lt;div className=&quot;p-8&quot;&gt;
+      &lt;Button onClick={() =&gt; setOpen(true)}&gt;Open Simple Modal&lt;/Button&gt;
+      &lt;ModalEl open={open} onClose={() =&gt; setOpen(false)}&gt;
+        &lt;Text&gt;Simple text content without specific structural components.&lt;/Text&gt;
+      &lt;/ModalEl&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Long Content</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">**Structured Content (Sticky Actions)** * Using `Modal.Header`, `Modal.Body`, and `Modal.Footer` ensures that the header and footer stay visible while the body area becomes scrollable if the content is too long.</div>
+              <pre><code>const LongContent = () =&gt; {
+  const [open, setOpen] = useState(false);
+  return (
+    &lt;div className=&quot;p-8&quot;&gt;
+      &lt;Button onClick={() =&gt; setOpen(true)}&gt;Open Long Content Modal&lt;/Button&gt;
+      &lt;ModalEl open={open} onClose={() =&gt; setOpen(false)}&gt;
+        &lt;ModalEl.Header&gt;
+          &lt;h3 className=&quot;text-xl font-bold&quot;&gt;Privacy Policy &amp; Terms&lt;/h3&gt;
+        &lt;/ModalEl.Header&gt;
+        &lt;ModalEl.Body&gt;
+          &lt;div className=&quot;space-y-4&quot;&gt;
+            {[...Array(15)].map((_, i) =&gt; (
+              &lt;p key={i} className=&quot;text-text-secondary dark:text-text-secondary-dark leading-relaxed&quot;&gt;
+                Paragraph {i + 1}: This is a demonstration of how the modal handles a significant amount of content. On
+                mobile, this will behave like a bottom sheet, allowing you to scroll through this text while the action
+                buttons below stay pinned to the bottom.
+              &lt;/p&gt;
+            ))}
+          &lt;/div&gt;
+        &lt;/ModalEl.Body&gt;
+        &lt;ModalEl.Footer&gt;
+          &lt;div className=&quot;flex flex-col sm:flex-row gap-3 w-full&quot;&gt;
+            &lt;Button onClick={() =&gt; setOpen(false)} className=&quot;flex-1&quot;&gt;
+              Accept All
+            &lt;/Button&gt;
+            &lt;Button variant=&quot;ghost&quot; onClick={() =&gt; setOpen(false)} className=&quot;flex-1&quot;&gt;
+              Decline
+            &lt;/Button&gt;
+          &lt;/div&gt;
+        &lt;/ModalEl.Footer&gt;
+      &lt;/ModalEl&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Standard Modal</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">**Complex Layout / Destructive Actions** * You can combine standard HTML/Tailwind structures inside the Modal for more complex designs like account deactivation confirmations.</div>
+              <pre><code>const StandardModal = () =&gt; {
+  const [open, setOpen] = useState(false);
+  return (
+    &lt;div className=&quot;p-8&quot;&gt;
+      &lt;Button onClick={() =&gt; setOpen(true)}&gt;Open Standard Modal&lt;/Button&gt;
+      &lt;ModalEl open={open} onClose={() =&gt; setOpen(false)}&gt;
+        &lt;div className=&quot;sm:flex sm:items-start p-2&quot;&gt;
+          &lt;div className=&quot;mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-state-danger/10 sm:mx-0 sm:size-10&quot;&gt;
+            &lt;svg
+              xmlns=&quot;http://www.w3.org/2000/svg&quot;
+              fill=&quot;none&quot;
+              viewBox=&quot;0 0 24 24&quot;
+              strokeWidth=&quot;1.5&quot;
+              stroke=&quot;currentColor&quot;
+              className=&quot;size-6 text-state-danger dark:text-state-danger-dark&quot;
+            &gt;
+              &lt;path
+                strokeLinecap=&quot;round&quot;
+                strokeLinejoin=&quot;round&quot;
+                d=&quot;M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z&quot;
+              /&gt;
+            &lt;/svg&gt;
+          &lt;/div&gt;
+          &lt;div className=&quot;mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left&quot;&gt;
+            &lt;h3 className=&quot;text-lg font-bold&quot;&gt;Deactivate Account&lt;/h3&gt;
+            &lt;div className=&quot;mt-2&quot;&gt;
+              &lt;p className=&quot;text-sm text-text-secondary dark:text-text-secondary-dark&quot;&gt;
+                Are you sure you want to deactivate your account? All of your data will be permanently removed from our
+                servers.
+              &lt;/p&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;ModalEl.Footer&gt;
+          &lt;Button
+            onClick={() =&gt; setOpen(false)}
+            className=&quot;bg-state-danger text-white hover:bg-state-danger dark:bg-state-danger-dark dark:hover:bg-state-danger-dark/90&quot;
+          &gt;
+            Deactivate
+          &lt;/Button&gt;
+          &lt;Button variant=&quot;ghost&quot; onClick={() =&gt; setOpen(false)}&gt;
+            Cancel
+          &lt;/Button&gt;
+        &lt;/ModalEl.Footer&gt;
+      &lt;/ModalEl&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Mobile Bottom Sheet Flow</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">**Full Mobile Interaction Flow** * This story demonstrates how the Modal interacts with the `Navbar` and `BottomBar`. **Switch to Mobile View** to see how the Modal appears as a bottom sheet over the navigation.</div>
+              <pre><code>const MobileBottomSheetFlow = () =&gt; {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const navLinks = [
+    { label: &#39;Home&#39;, to: &#39;/&#39;, icon: &lt;HomeIcon /&gt; },
+    { label: &#39;Messages&#39;, to: &#39;/messages&#39;, icon: &lt;ChatBubbleLeftRightIcon /&gt; },
+    { label: &#39;Profile&#39;, to: &#39;/profile&#39;, icon: &lt;UserIcon /&gt; },
+  ];
+
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;Navbar
+        brandName=&quot;Testing App&quot;
+        links={navLinks}
+        layout=&quot;sidebar&quot;
+        actions={
+          &lt;Button onClick={() =&gt; setIsModalOpen(true)} className=&quot;w-full lg:w-auto&quot;&gt;
+            View Legal Terms
+          &lt;/Button&gt;
+        }
+      &gt;
+        &lt;div className=&quot;max-w-2xl mx-auto space-y-6&quot;&gt;
+          &lt;header&gt;
+            &lt;h1 className=&quot;text-3xl uppercase italic&quot;&gt;Dashboard Overview&lt;/h1&gt;
+            &lt;p className=&quot;text-text-secondary dark:text-text-secondary-dark mt-2&quot;&gt;
+              This dashboard uses a sidebar on desktop and a fixed bottom bar on mobile. The Modal is configured to sit
+              above all navigation elements.
+            &lt;/p&gt;
+          &lt;/header&gt;
+
+          &lt;div className=&quot;grid grid-cols-1 md:grid-cols-2 gap-4&quot;&gt;
+            {[1, 2, 3, 4].map((i) =&gt; (
+              &lt;div
+                key={i}
+                className=&quot;p-6 rounded-2xl border border-border dark:border-border-dark bg-surface-panel dark:bg-surface-panel-dark shadow-sm&quot;
+              &gt;
+                &lt;h4 className=&quot;font-bold mb-2&quot;&gt;Feature Card {i}&lt;/h4&gt;
+                &lt;Text&gt;Placeholder content to demonstrate page depth and scrolling context.&lt;/Text&gt;
+              &lt;/div&gt;
+            ))}
+          &lt;/div&gt;
+
+          &lt;ModalEl open={isModalOpen} onClose={() =&gt; setIsModalOpen(false)}&gt;
+            &lt;ModalEl.Header&gt;Privacy Policy &amp; Terms of Service&lt;/ModalEl.Header&gt;
+
+            &lt;ModalEl.Body&gt;
+              &lt;div className=&quot;space-y-6&quot;&gt;
+                &lt;section&gt;
+                  &lt;h4 className=&quot;font-bold mb-2 underline decoration-primary dark:decoration-primary-dark&quot;&gt;
+                    1. Introduction
+                  &lt;/h4&gt;
+                  &lt;Text&gt;
+                    Welcome to our platform. On mobile devices, notice how this modal slides from the bottom and
+                    features a pull-handle. It respects the &quot;Safe Area&quot; of modern smartphones.
+                  &lt;/Text&gt;
+                &lt;/section&gt;
+
+                {[...Array(5)].map((_, i) =&gt; (
+                  &lt;section key={i}&gt;
+                    &lt;h4 className=&quot;font-bold mb-2 text-sm uppercase&quot;&gt;Legal Section {i + 2}&lt;/h4&gt;
+                    &lt;p className=&quot;text-text-secondary dark:text-text-secondary-dark text-sm leading-relaxed italic&quot;&gt;
+                      Standard placeholder text for verifying the scroll container within the modal body. The header and
+                      footer remain pinned during this scroll action.
+                    &lt;/p&gt;
+                  &lt;/section&gt;
+                ))}
+              &lt;/div&gt;
+            &lt;/ModalEl.Body&gt;
+
+            &lt;ModalEl.Footer&gt;
+              &lt;Button onClick={() =&gt; setIsModalOpen(false)} className=&quot;w-full sm:w-auto&quot;&gt;
+                I Accept
+              &lt;/Button&gt;
+              &lt;Button variant=&quot;ghost&quot; onClick={() =&gt; setIsModalOpen(false)} className=&quot;w-full sm:w-auto&quot;&gt;
+                Cancel
+              &lt;/Button&gt;
+            &lt;/ModalEl.Footer&gt;
+          &lt;/ModalEl&gt;
+        &lt;/div&gt;
+      &lt;/Navbar&gt;
+    &lt;/BrowserRouter&gt;
+  );
+};</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Navbar">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Navbar</h2>
+      <div class="badges">
+        <label for="c-16-navigation-navbar-props" class="badge ok as-toggle">7 prop types</label>
+        <label for="c-16-navigation-navbar-info" class="badge info as-toggle">1 info</label>
+        <label for="c-16-navigation-navbar-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Navigation/Navbar.stories.tsx">navigation-navbar · ./src/Navigation/Navbar.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-16-navigation-navbar-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-16-navigation-navbar-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-16-navigation-navbar-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">7 prop types</span>
+            </div>
+            <pre><code>Component: lib/Navigation/Navbar.tsx::Navbar</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>actions?: ReactNode
+
+brandName?: string
+
+children?: ReactNode
+
+layout?: &#39;sidebar&#39; | &#39;topbar&#39; = &#39;sidebar&#39;
+
+links?: NavLink[]
+
+logoURl?: string
+
+mobileNavLinks?: NavLink[]</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { ArrowsRightLeftIcon, HomeIcon, UserIcon } from "@heroicons/react/24/outline";
+import { Button, Navbar, Text } from "@soilhat/react-components";
+import { MemoryRouter } from "react-router-dom";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Sidebar Layout</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const SidebarLayout = () =&gt; &lt;Navbar
+    layout=&quot;sidebar&quot;
+    brandName=&quot;Components&quot;
+    logoURl=&quot;https://soilhat.github.io/react-components/assets/soilhat-logo.png&quot;
+    links={demoLinks}
+    actions={&lt;Button className=&quot;w-full&quot;&gt;Sign Out&lt;/Button&gt;}&gt;(&lt;div className=&quot;space-y-4&quot;&gt;
+      &lt;Text variant=&quot;h1&quot;&gt;Dashboard&lt;/Text&gt;
+      &lt;div className=&quot;grid grid-cols-1 md:grid-cols-3 gap-4&quot;&gt;
+        {[1, 2, 3].map((i) =&gt; (
+          &lt;div
+            key={i}
+            className=&quot;h-32 bg-surface-panel dark:bg-surface-panel-dark border border-border dark:border-border-dark rounded-xl&quot;
+          /&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/div&gt;)&lt;/Navbar&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Topbar Layout</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const TopbarLayout = () =&gt; &lt;Navbar layout=&quot;topbar&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Pill">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Pill</h2>
+      <div class="badges">
+        <label for="c-17-elements-pill-props" class="badge ok as-toggle">7 prop types</label>
+        <label for="c-17-elements-pill-info" class="badge info as-toggle">1 info</label>
+        <label for="c-17-elements-pill-stories" class="badge ok as-toggle">4 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Elements/Pill.stories.tsx">elements-pill · ./src/Elements/Pill.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-17-elements-pill-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-17-elements-pill-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-17-elements-pill-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">7 prop types</span>
+            </div>
+            <pre><code>Component: lib/Elements/Pill.tsx::Pill</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>active?: boolean = false
+
+className?: string = &#39;&#39;
+
+disabled?: boolean = false
+
+icon?: React.ReactNode
+
+label: string
+
+onClick?: () =&gt; void
+
+variant?: &#39;primary&#39; | &#39;success&#39; | &#39;danger&#39; | &#39;warning&#39; | &#39;ghost&#39; = &#39;primary&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { FireIcon, TagIcon } from "@heroicons/react/24/outline";
+import { Pill } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;Pill label=&quot;Housing&quot; active={false} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Active</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Active = () =&gt; &lt;Pill label=&quot;Subscription&quot; active variant=&quot;primary&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Icon</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithIcon = () =&gt; &lt;Pill label=&quot;Critical&quot; active variant=&quot;danger&quot; icon={&lt;FireIcon /&gt;} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Filter Bar</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">Common use case: A horizontal filter bar</div>
+              <pre><code>const FilterBar = () =&gt; {
+  const [selected, setSelected] = React.useState(&#39;all&#39;);
+  const categories = [&#39;all&#39;, &#39;shopping&#39;, &#39;health&#39;, &#39;travel&#39;, &#39;food&#39;];
+
+  return (
+    &lt;div className=&quot;flex items-center gap-2 bg-surface-panel dark:bg-surface-panel-dark p-4 rounded-xl&quot;&gt;
+      {categories.map((cat) =&gt; (
+        &lt;Pill
+          key={cat}
+          label={cat}
+          active={selected === cat}
+          onClick={() =&gt; setSelected(cat)}
+          icon={cat === &#39;all&#39; ? &lt;TagIcon /&gt; : undefined}
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Progress">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Progress</h2>
+      <div class="badges">
+        <label for="c-18-feedback-progress-props" class="badge ok as-toggle">7 prop types</label>
+        <label for="c-18-feedback-progress-info" class="badge info as-toggle">1 info</label>
+        <label for="c-18-feedback-progress-stories" class="badge ok as-toggle">6 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Feedback/Progress.stories.tsx">feedback-progress · ./src/Feedback/Progress.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-18-feedback-progress-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-18-feedback-progress-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-18-feedback-progress-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">7 prop types</span>
+            </div>
+            <pre><code>Component: lib/Feedback/Progress.tsx::Progress</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string = &#39;&#39;
+
+label?: string
+
+max?: number = 100
+
+showValue?: boolean = false
+
+size?: &#39;sm&#39; | &#39;md&#39; | &#39;lg&#39; = &#39;md&#39;
+
+value: number
+
+variant?: &#39;primary&#39; | &#39;success&#39; | &#39;info&#39; = &#39;primary&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Progress } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;Progress value={45} label=&quot;Loading Ingredients&quot; showValue /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Small</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Small = () =&gt; &lt;Progress value={70} size=&quot;sm&quot; label=&quot;Compact Progress&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Large</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Large = () =&gt; &lt;Progress value={30} size=&quot;lg&quot; label=&quot;Storage space&quot; showValue /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Completed</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Completed = () =&gt; &lt;Progress value={100} variant=&quot;success&quot; label=&quot;Grocery List Status&quot; showValue /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Info Variant</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const InfoVariant = () =&gt; &lt;Progress value={60} variant=&quot;info&quot; label=&quot;Current Month Budget&quot; showValue /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Without Label</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithoutLabel = () =&gt; &lt;Progress value={50} size=&quot;md&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="SearchableCombobox">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> SearchableCombobox</h2>
+      <div class="badges">
+        <label for="c-19-forms-searchablecombobox-props" class="badge ok as-toggle">2 prop types</label>
+        <label for="c-19-forms-searchablecombobox-info" class="badge info as-toggle">1 info</label>
+        <label for="c-19-forms-searchablecombobox-stories" class="badge ok as-toggle">4 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Forms/Combobox.stories.tsx">forms-searchablecombobox · ./src/Forms/Combobox.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-19-forms-searchablecombobox-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-19-forms-searchablecombobox-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-19-forms-searchablecombobox-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">2 prop types</span>
+            </div>
+            <pre><code>Component: lib/Forms/ComboBox.tsx::SearchableCombobox</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: any = &#39;&#39;
+
+placeholder?: any = &#39;Search...&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { SearchableCombobox } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;SearchableCombobox
+    label=&quot;Category&quot;
+    options={CATEGORY_OPTIONS}
+    placeholder=&quot;Search categories...&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Preselected</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Preselected = () =&gt; &lt;SearchableCombobox label=&quot;Edit Category&quot; options={CATEGORY_OPTIONS} defaultValue=&quot;transport&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Error</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithError = () =&gt; &lt;SearchableCombobox
+    label=&quot;Savings Goal&quot;
+    options={[
+      { value: &#39;car&#39;, label: &#39;New Car&#39;, description: &#39;Target: 15,000€&#39; },
+      { value: &#39;vacation&#39;, label: &#39;Summer Trip&#39;, description: &#39;Target: 2,000€&#39; },
+    ]}
+    error=&quot;Please select a valid savings goal to continue.&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Large Dataset</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LargeDataset = () =&gt; &lt;SearchableCombobox
+    label=&quot;Select Merchant&quot;
+    placeholder=&quot;Type to filter 100+ merchants...&quot;
+    options={Array.from({ length: 100 }).map((_, i) =&gt; ({
+      value: i,
+      label: `Merchant ${i + 1}`,
+      description: `Description for merchant number ${i + 1}`,
+    }))} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Select">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Select</h2>
+      <div class="badges">
+        <label for="c-20-forms-select-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-20-forms-select-info" class="badge info as-toggle">1 info</label>
+        <label for="c-20-forms-select-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Forms/Select.stories.tsx">forms-select · ./src/Forms/Select.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-20-forms-select-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-20-forms-select-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-20-forms-select-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: lib/Forms/Select..tsx::Select</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: any = &#39;&#39;
+
+disabled?: any = false
+
+placeholder?: any = &#39;Choose...&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Button, Modal, Select } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;SelectTemplate
+    label=&quot;Recipe Category&quot;
+    options={categories}
+    placeholder=&quot;Choose a category...&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Preselected</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Preselected = () =&gt; &lt;SelectTemplate
+    label=&quot;Recipe Category&quot;
+    options={categories}
+    placeholder=&quot;Choose a category...&quot;
+    value={{ value: 2, label: &#39;Main Dish&#39; }} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Inside Modal Collision</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const InsideModalCollision = () =&gt; {
+  const [isOpen, setIsOpen] = useState(false);
+  const [val, setVal] = useState&lt;string | number&gt;(&#39;&#39;);
+
+  return (
+    &lt;div className=&quot;p-10 text-center&quot;&gt;
+      &lt;Button onClick={() =&gt; setIsOpen(true)}&gt;Open Modal&lt;/Button&gt;
+
+      &lt;Modal open={isOpen} onClose={() =&gt; setIsOpen(false)}&gt;
+        &lt;div className=&quot;p-6&quot;&gt;
+          &lt;h2 className=&quot;text-xl font-bold mb-4 text-text-primary&quot;&gt;Settings&lt;/h2&gt;
+
+          &lt;div className=&quot;h-125 bg-surface-base/20 rounded flex items-center justify-center text-text-secondary italic border-2 border-dashed border-border mb-6&quot;&gt;
+            Long Content Area (Scroll down)
+          &lt;/div&gt;
+
+          &lt;Select
+            label=&quot;Bottom Select&quot;
+            placeholder=&quot;Choose an option...&quot;
+            options={options}
+            value={val}
+            onChange={setVal}
+          /&gt;
+        &lt;/div&gt;
+      &lt;/Modal&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="StackedList">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> StackedList</h2>
+      <div class="badges">
+        <label for="c-21-lists-stackedlist-props" class="badge ok as-toggle">4 prop types</label>
+        <label for="c-21-lists-stackedlist-info" class="badge info as-toggle">1 info</label>
+        <label for="c-21-lists-stackedlist-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Lists/StackedList.stories.tsx">lists-stackedlist · ./src/Lists/StackedList.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-21-lists-stackedlist-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-21-lists-stackedlist-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-21-lists-stackedlist-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">4 prop types</span>
+            </div>
+            <pre><code>Component: lib/Lists/StackedList.tsx::StackedList</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>children?: ReactNode
+
+emptyMessage?: string = &#39;Add a new item&#39;
+
+gridCols?: string
+
+onEmptyClick?: () =&gt; void</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Card, StackedList } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; (
+  &lt;StackedList&gt;
+    &lt;Card&gt;
+      &lt;Card.Header title=&quot;Item 1&quot; /&gt;
+      &lt;div&gt;This is the first item.&lt;/div&gt;
+      &lt;Card.Footer&gt;Card.Footer 1&lt;/Card.Footer&gt;
+    &lt;/Card&gt;
+    &lt;Card&gt;
+      &lt;Card.Header title=&quot;Item 2&quot; /&gt;
+      &lt;div&gt;This is the second item.&lt;/div&gt;
+      &lt;Card.Footer&gt;Card.Footer 2&lt;/Card.Footer&gt;
+    &lt;/Card&gt;
+    &lt;Card&gt;
+      &lt;Card.Header title=&quot;Item 3&quot; /&gt;
+      &lt;div&gt;This is the third item.&lt;/div&gt;
+      &lt;Card.Footer&gt;Card.Footer 3&lt;/Card.Footer&gt;
+    &lt;/Card&gt;
+    &lt;Card&gt;
+      &lt;Card.Header title=&quot;Item 4&quot; /&gt;
+      &lt;div&gt;This is the forth item.&lt;/div&gt;
+      &lt;Card.Footer&gt;Card.Footer 4&lt;/Card.Footer&gt;
+    &lt;/Card&gt;
+    &lt;Card&gt;
+      &lt;Card.Header title=&quot;Item 5&quot; /&gt;
+      &lt;div&gt;This is the fifth item.&lt;/div&gt;
+      &lt;Card.Footer&gt;Card.Footer 5&lt;/Card.Footer&gt;
+    &lt;/Card&gt;
+    &lt;Card&gt;
+      &lt;Card.Header title=&quot;Item 6&quot; /&gt;
+      &lt;div&gt;This is the sixth item.&lt;/div&gt;
+      &lt;Card.Footer&gt;Card.Footer 6&lt;/Card.Footer&gt;
+    &lt;/Card&gt;
+  &lt;/StackedList&gt;
+);</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Empty</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Empty = () =&gt; &lt;StackedList&gt;&lt;/StackedList&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="TagInput">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> TagInput</h2>
+      <div class="badges">
+        <label for="c-22-forms-taginput-props" class="badge ok as-toggle">6 prop types</label>
+        <label for="c-22-forms-taginput-info" class="badge info as-toggle">1 info</label>
+        <label for="c-22-forms-taginput-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Forms/TagInput.stories.tsx">forms-taginput · ./src/Forms/TagInput.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-22-forms-taginput-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-22-forms-taginput-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-22-forms-taginput-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">6 prop types</span>
+            </div>
+            <pre><code>Component: lib/Forms/TagInput.tsx::TagInput</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string = &#39;&#39;
+
+label?: string
+
+onChange: (tags: string[]) =&gt; void
+
+placeholder?: string
+
+suggestions?: string[] = []
+
+tags: string[]</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { TagInput } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;TagInputTemplate
+    onChange={fn()}
+    label=&quot;Recipe Tags&quot;
+    placeholder=&quot;Add a tag and press Enter...&quot;
+    tags={[&#39;Dinner&#39;, &#39;Quick&#39;]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Interaction Test</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const InteractionTest = () =&gt; &lt;TagInputTemplate onChange={fn()} label=&quot;Automated Test&quot; placeholder=&quot;Testing...&quot; tags={[]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Suggestions</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithSuggestions = () =&gt; &lt;TagInputTemplate
+    onChange={fn()}
+    label=&quot;Categorize Recipe&quot;
+    placeholder=&quot;Type \&quot;ve\&quot; for suggestions...&quot;
+    suggestions={[&#39;Vegan&#39;, &#39;Vegetarian&#39;, &#39;Veggies&#39;, &#39;Meat&#39;, &#39;Fish&#39;, &#39;Dessert&#39;]}
+    tags={[]} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Textarea">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Textarea</h2>
+      <div class="badges">
+        <label for="c-23-forms-textarea-props" class="badge ok as-toggle">4 prop types</label>
+        <label for="c-23-forms-textarea-info" class="badge info as-toggle">1 info</label>
+        <label for="c-23-forms-textarea-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Forms/Textarea.stories.tsx">forms-textarea · ./src/Forms/Textarea.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-23-forms-textarea-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-23-forms-textarea-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-23-forms-textarea-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">4 prop types</span>
+            </div>
+            <pre><code>Component: lib/Forms/Textarea.tsx::Textarea</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>error?: string
+
+label?: string
+
+markdown?: boolean = false
+
+rows?: any = 4</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Textarea } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;Textarea label=&quot;Description&quot; placeholder=&quot;Type your message...&quot; rows={4} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Value</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithValue = () =&gt; &lt;Textarea label=&quot;Bio&quot; defaultValue=&quot;This is a pre-filled textarea.&quot; rows={6} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Markdown Preview</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const MarkdownPreview = () =&gt; &lt;Textarea
+    label=&quot;Markdown text&quot;
+    defaultValue={`# Udaeque pallenti
+
+Lorem markdownum Icarus ulla sed isque dant fragmina casa, sacerdotis iaculo.
+Quae fera et, *pius nimium*, cruentis, at. Praesens parte sicco candida pleno.
+Est sociis dis aniles maestisque nemorum victa varios, an ingentes summis certa
+vetustas nato. Fuit pater haec victricia sociae et \`adfPiracy\` excipit vidit
+\`arrayBiometricsCpu\` ullis fratremque uterque aequora Iuppiter aliquos sui.`}
+    markdown
+    rows={8} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Toast">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Toast</h2>
+      <div class="badges">
+        <label for="c-24-feedback-toast-props" class="badge ok as-toggle">1 prop type</label>
+        <label for="c-24-feedback-toast-info" class="badge info as-toggle">1 info</label>
+        <label for="c-24-feedback-toast-stories" class="badge ok as-toggle">3 stories</label>
+        <label for="c-24-feedback-toast-docs" class="badge ok as-toggle">1 doc</label>
+      </div>
+    </div>
+    <div class="meta" title="./src/Feedback/Toast.stories.tsx">feedback-toast · ./src/Feedback/Toast.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-24-feedback-toast-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-24-feedback-toast-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-24-feedback-toast-docs" class="tg tg-docs" type="checkbox" hidden />
+  <input id="c-24-feedback-toast-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">1 prop type</span>
+            </div>
+            <pre><code>Component: lib/Feedback/Toast.tsx::Toast</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>type?: any = &#39;success&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Toast } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Success</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Success = () =&gt; &lt;Toast
+    message=&quot;Operation successful!&quot;
+    onClose={() =&gt; alert(&#39;Toast closed!&#39;)}
+    type=&quot;success&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Error Toast</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const ErrorToast = () =&gt; &lt;Toast
+    message=&quot;Something went wrong!&quot;
+    onClose={() =&gt; alert(&#39;Toast closed!&#39;)}
+    type=&quot;error&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Info</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Info = () =&gt; &lt;Toast
+    message=&quot;Here is some information.&quot;
+    onClose={() =&gt; alert(&#39;Toast closed!&#39;)}
+    type=&quot;info&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+        <div class="panel panel-docs">
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Docs</span>
+                <span class="badge ok">doc ok</span>
+              </div>
+              <div class="hint">./src/Feedback/Toast.mdx</div>
+              
+              <div class="mdx-content"><pre><code>import { Meta, Story } from &#39;@storybook/addon-docs/blocks&#39;;
+import { ArgTypes } from &#39;@storybook/addon-docs/blocks&#39;;
+import { Toast } from &#39;../../lib/Feedback/Toast&#39;;
+import * as ToastStories from &#39;./Toast.stories&#39;;
+
+&lt;Meta title=&quot;Feedback/Toast&quot; of={ToastStories} /&gt;
+
+# Toast
+
+The `Toast` component displays brief messages to the user. It is typically used for feedback such as success, error, or informational messages. Toasts are usually triggered by user actions or system events and disappear automatically after a short duration.
+
+## Usage
+
+```tsx
+import { Toast } from &#39;lib/Feedback/Toast&#39;;
+
+&lt;Toast
+  message=&quot;Your changes have been saved!&quot;
+  type=&quot;success&quot;
+  onClose={() =&gt; {
+    /* handle close */
+  }}
+/&gt;;
+```
+
+## Types
+
+- `success`: Indicates a successful or positive action.
+- `error`: Indicates an error or something went wrong.
+- `info`: Provides neutral information.
+
+## Examples
+
+&lt;Story of={ToastStories.Success} /&gt;
+&lt;Story of={ToastStories.ErrorToast} /&gt;
+&lt;Story of={ToastStories.Info} /&gt;
+
+## Props
+
+&lt;ArgTypes of={Toast} /&gt;
+
+## Best Practices
+
+- Use concise and clear messages.
+- Use the appropriate type for the context.
+- Toasts should not interrupt the user’s workflow.
+- Use with a provider (see `ToastProvider`) for global toasts.
+</code></pre></div>
+            </div>
+        </div>
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="ToastProvider">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> ToastProvider</h2>
+      <div class="badges">
+        
+        <label for="c-25-feedback-toastprovider-info" class="badge info as-toggle">1 info</label>
+        <label for="c-25-feedback-toastprovider-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/Feedback/ToastProvider.stories.tsx">feedback-toastprovider · ./src/Feedback/ToastProvider.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-25-feedback-toastprovider-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-25-feedback-toastprovider-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Button, ToastProvider } from "@soilhat/react-components";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Basic Usage</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const BasicUsage = () =&gt; (
+  &lt;ToastProvider&gt;
+    &lt;DemoButton /&gt;
+  &lt;/ToastProvider&gt;
+);</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Custom Duration And Type</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CustomDurationAndType = () =&gt; (
+  &lt;ToastProvider&gt;
+    &lt;CustomDemo /&gt;
+  &lt;/ToastProvider&gt;
+);</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+    </div>
+    
+    <h2 class="section-title">Unattached Docs</h2>
+    <div class="grid" role="list">
+      
+<article
+  class="card is-doc no-doc-error"
+  role="listitem"
+  aria-label="Docs">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Color Palette</h2>
+      <div class="badges">
+        
+        <label for="doc-0-color-palette-docs-content" class="badge ok as-toggle">view content</label>
+      </div>
+    </div>
+    <div class="meta" title="./src/colors.mdx">color-palette--docs · ./src/colors.mdx</div>
+    
+  </div>
+
+  <!-- Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="doc-0-color-palette-docs-content" class="tg tg-content" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-content">
+          <div class="mdx-content">
+            <pre><code>import { Meta } from &#39;@storybook/addon-docs/blocks&#39;;
+import ColorBox from &#39;./ColorBox&#39;;
+
+&lt;Meta title=&quot;Color Palette&quot; component={ColorBox} /&gt;
+
+# Color Palette
+
+Here are listed colors used. Refer only to colox box background colors.
+Feel free to override colors as per [Tailwind CSS theme set up](https://tailwindcss.com/docs/theme)
+
+## 🎨 Semantic Color System (Light &amp; Dark Mode)
+
+This system is built around the role of the color, not its literal value (e.g., color-primary instead of color-blue-600).
+
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;h3 className=&quot;text-center m-0&quot;&gt;Light&lt;/h3&gt;
+  &lt;h3 className=&quot;text-center m-0&quot;&gt;Dark&lt;/h3&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;brand&quot; className=&quot;bg-brand&quot; /&gt;
+  &lt;ColorBox colorName=&quot;brand-dark&quot; className=&quot;bg-brand-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Brand color&lt;/h3&gt;
+    &lt;p&gt;Usually remains the same (unless the brand must be subtle in dark mode).&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Branding&lt;/b&gt;: Used for the logo and non-interactive brand elements.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;primary&quot; className=&quot;bg-primary&quot; /&gt;
+  &lt;ColorBox colorName=&quot;primary-dark&quot; className=&quot;bg-primary-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Primary&lt;/h3&gt;
+    &lt;p&gt;Primary action buttons, active links, main icons.&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Action/Focus&lt;/b&gt;: The main focal point of the interface.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;secondary&quot; className=&quot;bg-secondary&quot; /&gt;
+  &lt;ColorBox colorName=&quot;secondary-dark&quot; className=&quot;bg-secondary-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Secondary&lt;/h3&gt;
+    &lt;p&gt;Secondary action buttons, supporting navigation elements.&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Support/Alternative&lt;/b&gt;: Lower-priority actions.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;tertiary&quot; className=&quot;bg-tertiary&quot; /&gt;
+  &lt;ColorBox colorName=&quot;tertiary-dark&quot; className=&quot;bg-tertiary-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;tertiary&lt;/h3&gt;
+    &lt;p&gt;Divider lines, decorative icons, subtle hover states.&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Decoration/Subtlety&lt;/b&gt;: Background or structural elements.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;light&quot; className=&quot;bg-light&quot; /&gt;
+  &lt;ColorBox colorName=&quot;light-dark&quot; className=&quot;bg-light-dark text-white&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Light (Tonal)&lt;/h3&gt;
+    &lt;p&gt;
+      Low-emphasis buttons (e.g., &quot;Cancel&quot;), background highlights for active menu items, or ghost-style components.
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Tonal/Low Emphasis&lt;/b&gt;: Used for tertiary actions that need to remain visible but should not distract from the
+      Primary or Secondary focal points.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+## 📝 Text and Surface Colors (Dynamic Theme)
+
+These colors are critical for readability and must switch between light and dark modes.
+
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;surface-base&quot; className=&quot;bg-surface-base text-black&quot; /&gt;
+  &lt;ColorBox colorName=&quot;surface-base-dark&quot; className=&quot;bg-surface-base-dark text-white&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Surface base&lt;/h3&gt;
+    &lt;p&gt;Page or main section background.&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Canvas&lt;/b&gt;: The broadest background color.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;surface-panel&quot; className=&quot;bg-surface-panel text-black&quot; /&gt;
+  &lt;ColorBox colorName=&quot;surface-panel-dark&quot; className=&quot;bg-surface-panel-dark text-white&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Surface panel&lt;/h3&gt;
+    &lt;p&gt;Background for cards, modals, side panels.&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Elevation&lt;/b&gt;: Should be slightly darker than surface-base in light mode, and slightly lighter in dark mode to
+      create a &quot;floating&quot; effect.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;text-primary&quot; className=&quot;bg-text-primary text-white&quot; /&gt;
+  &lt;ColorBox colorName=&quot;text-primary-dark&quot; className=&quot;bg-text-primary-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Text primary&lt;/h3&gt;
+    &lt;p&gt;Main body text, H1/H2 headings.&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Readability&lt;/b&gt;: The darkest/lightest text color.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;text-secondary&quot; className=&quot;bg-text-secondary&quot; /&gt;
+  &lt;ColorBox colorName=&quot;text-secondary-dark&quot; className=&quot;bg-text-secondary-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Text secondary&lt;/h3&gt;
+    &lt;p&gt;Captions, helper text, form field placeholders.&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Details/Subtlety&lt;/b&gt;: Lower contrast than primary text.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;text-on-primary&quot; className=&quot;bg-text-on-primary&quot; /&gt;
+  &lt;ColorBox colorName=&quot;text-on-primary-dark&quot; className=&quot;bg-text-on-primary-dark text-white&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Text on primary&lt;/h3&gt;
+    &lt;p&gt;Text or icon placed on a primary background (color-primary)&lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Contrast&lt;/b&gt;: Must ensure AA or AAA contrast ratio with color-primary. Often white or black.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+## 🚦 State Colors (Feedback and Validation)
+
+These colors indicate status and should have dark mode equivalents to ensure they remain legible on dark backgrounds.
+
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;state-success&quot; className=&quot;bg-state-success&quot; /&gt;
+  &lt;ColorBox colorName=&quot;state-success-dark&quot; className=&quot;bg-state-success-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Success&lt;/h3&gt;
+    &lt;p&gt;Successful notifications, OK status indicators.&lt;/p&gt;
+    &lt;p&gt;Green (Good).&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;state-warning&quot; className=&quot;bg-state-warning&quot; /&gt;
+  &lt;ColorBox colorName=&quot;state-warning-dark&quot; className=&quot;bg-state-warning-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Warning&lt;/h3&gt;
+    &lt;p&gt;Non-blocking alerts, unstable status indicators.&lt;/p&gt;
+    &lt;p&gt;Yellow/Orange (Caution).&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;state-danger&quot; className=&quot;bg-state-danger&quot; /&gt;
+  &lt;ColorBox colorName=&quot;state-danger-dark&quot; className=&quot;bg-state-danger-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Danger&lt;/h3&gt;
+    &lt;p&gt;Error messages, deletion, critical status indicators.&lt;/p&gt;
+    &lt;p&gt;Red (Stop/Error).&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;state-info&quot; className=&quot;bg-state-info&quot; /&gt;
+  &lt;ColorBox colorName=&quot;state-info-dark&quot; className=&quot;bg-state-info-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Info&lt;/h3&gt;
+    &lt;p&gt;Neutral informative messages, information banners.&lt;/p&gt;
+    &lt;p&gt;Light Blue/Cyan (Information).&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;grid grid-cols-6 pb-2 gap-4&quot;&gt;
+  &lt;ColorBox colorName=&quot;state-focus&quot; className=&quot;bg-state-focus&quot; /&gt;
+  &lt;ColorBox colorName=&quot;state-focus-dark&quot; className=&quot;bg-state-focus-dark&quot; /&gt;
+  &lt;div className=&quot;col-span-4&quot;&gt;
+    &lt;h3&gt;Focus&lt;/h3&gt;
+    &lt;p&gt;Focus rings for accessibility (a11y), active field outlines.&lt;/p&gt;
+    &lt;p&gt;Typically a brand color with high opacity.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+          </div>
+        </div>
+  </div>
+</article>
+<article
+  class="card is-doc no-doc-error"
+  role="listitem"
+  aria-label="Docs">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Feedback/ToastProvider</h2>
+      <div class="badges">
+        
+        <label for="doc-1-feedback-toastprovider-docs-content" class="badge ok as-toggle">view content</label>
+      </div>
+    </div>
+    <div class="meta" title="./src/Feedback/ToastProvider.mdx">feedback-toastprovider--docs · ./src/Feedback/ToastProvider.mdx</div>
+    
+  </div>
+
+  <!-- Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="doc-1-feedback-toastprovider-docs-content" class="tg tg-content" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-content">
+          <div class="mdx-content">
+            <pre><code>import { Meta, Story, ArgTypes } from &#39;@storybook/addon-docs/blocks&#39;;
+import { ToastProvider, useToast } from &#39;../../lib/Feedback&#39;;
+import * as ToastProviderStories from &#39;./ToastProvider.stories&#39;;
+
+&lt;Meta title=&quot;Feedback/ToastProvider&quot; component={ToastProvider} /&gt;
+
+# ToastProvider
+
+`ToastProvider` is a React context provider that enables global toast notifications in your app. Wrap your app with `ToastProvider` to allow any component to show toasts using the `useToast` hook.
+
+## Usage
+
+```tsx
+import { ToastProvider } from &#39;@soilhat/react-components/Feedback&#39;;
+
+function App() {
+  return &lt;ToastProvider&gt;{/* your app */}&lt;/ToastProvider&gt;;
+}
+```
+
+## Showing Toasts
+
+Use the `useToast` hook inside your components to show toasts:
+
+```tsx
+import { useToast } from &#39;@soilhat/react-components/Feedback&#39;;
+
+function Example() {
+  const toast = useToast();
+  return &lt;button onClick={() =&gt; toast.success(&#39;Saved!&#39;)}&gt;Show Toast&lt;/button&gt;;
+}
+```
+
+## Examples
+
+&lt;Story of={ToastProviderStories.BasicUsage} /&gt;
+&lt;Story of={ToastProviderStories.CustomDurationAndType} /&gt;
+
+## API
+
+### ToastProvider Props
+
+&lt;ArgTypes of={ToastProvider} /&gt;
+
+### useToast API
+
+- `showToast(message, options?)`: Show a toast with custom message and options.
+- `success(message, duration?)`: Show a success toast.
+- `error(message, duration?)`: Show an error toast.
+- `info(message, duration?)`: Show an info toast.
+- `dismiss(id?)`: Dismiss a toast by id or all toasts.
+
+## Best Practices
+
+- Place `ToastProvider` at the root of your app.
+- Use concise, actionable messages.
+- Use the correct toast type for the context.
+- Avoid overusing toasts to prevent user fatigue.
+</code></pre>
+          </div>
+        </div>
+  </div>
+</article>
+<article
+  class="card is-doc no-doc-error"
+  role="listitem"
+  aria-label="Docs">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Navigation/Navbar</h2>
+      <div class="badges">
+        
+        <label for="doc-2-navigation-navbar-docs-content" class="badge ok as-toggle">view content</label>
+      </div>
+    </div>
+    <div class="meta" title="./src/Navigation/Navbar.mdx">navigation-navbar--docs · ./src/Navigation/Navbar.mdx</div>
+    
+  </div>
+
+  <!-- Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="doc-2-navigation-navbar-docs-content" class="tg tg-content" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-content">
+          <div class="mdx-content">
+            <pre><code>import { Meta, Story, ArgTypes } from &#39;@storybook/addon-docs/blocks&#39;;
+import { Navbar as NavbarEl } from &#39;../../lib/Navigation/Navbar&#39;;
+import * as NavbarStories from &#39;./Navbar.stories&#39;;
+
+&lt;Meta title=&quot;Navigation/Navbar&quot; component={NavbarEl} /&gt;
+
+# Navbar
+
+A responsive navigation bar component for React applications, supporting branding, navigation links, and custom actions. Designed for use with React Router.
+
+## Usage
+
+```tsx
+import { Navbar } from &#39;@soilhat/react-components/Navigation&#39;;
+
+&lt;Navbar
+  logoURl=&quot;https://soilhat.github.io/logo192.png&quot;
+  brandName=&quot;BrandName&quot;
+  links={[
+    { label: &#39;Home&#39;, href: &#39;/&#39; },
+    { label: &#39;About&#39;, href: &#39;/about&#39; },
+    { label: &#39;Contact&#39;, href: &#39;/contact&#39; },
+  ]}
+  actions={&lt;button className=&quot;px-4 py-2 bg-accent text-white rounded&quot;&gt;Action&lt;/button&gt;}
+/&gt;;
+```
+
+## Props
+
+&lt;ArgTypes of={NavbarEl} /&gt;
+
+## Example
+
+&lt;Story of={NavbarStories.Navbar} /&gt;
+
+## Accessibility
+
+- Uses semantic HTML elements (`&lt;header&gt;`, `&lt;nav&gt;`, `&lt;ul&gt;`, `&lt;li&gt;`)
+- All interactive elements have accessible labels
+- Mobile menu button uses `aria-label` and `aria-expanded`
+- Keyboard and screen reader friendly
+
+## Best Practices
+
+- Use with React Router for navigation (`NavLink` is used internally)
+- Provide descriptive `brandName` and `logoURl` for branding
+- Pass custom actions as React elements for flexibility
+</code></pre>
+          </div>
+        </div>
+  </div>
+</article>
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>  

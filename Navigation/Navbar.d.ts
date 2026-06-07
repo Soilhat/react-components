@@ -6,14 +6,12 @@ export type NavLink = {
 };
 type NavProps = {
     layout?: 'sidebar' | 'topbar';
-    logo?: ReactNode;
+    logoURl?: string;
     brandName?: string;
     links?: NavLink[];
     actions?: ReactNode;
-    userAvatarUrl?: string;
     mobileNavLinks?: NavLink[];
     children?: ReactNode;
-    menuName?: string;
 };
-export declare const Navbar: ({ layout, logo, brandName, links, actions, userAvatarUrl, mobileNavLinks, children, menuName, }: NavProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Navbar: ({ layout, logoURl, brandName, links, actions, mobileNavLinks, children, }: NavProps) => import("react/jsx-runtime").JSX.Element;
 export {};

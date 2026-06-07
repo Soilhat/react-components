@@ -1,14 +1,8 @@
 import { default as React } from '../../node_modules/react';
-export interface TreeItem {
+interface TreeItem {
     id: string;
     parent_id?: string | null;
     [key: string]: unknown;
-}
-interface SwipeAction<T extends TreeItem = TreeItem> {
-    icon: React.ReactNode;
-    label: string;
-    color?: string;
-    onClick: (item: T) => void;
 }
 interface CategoryTreeProps<T extends TreeItem> {
     items: T[];
@@ -19,8 +13,6 @@ interface CategoryTreeProps<T extends TreeItem> {
         toggle: () => void;
         hasChildren: boolean;
     }) => React.ReactNode;
-    leftSwipeActions?: SwipeAction<T>[];
-    rightSwipeActions?: SwipeAction<T>[];
 }
-export declare function CategoryTree<T extends TreeItem>({ items, parentId, level, renderItem, leftSwipeActions, rightSwipeActions, }: Readonly<CategoryTreeProps<T>>): import("react/jsx-runtime").JSX.Element | null;
+export declare function CategoryTree<T extends TreeItem>({ items, parentId, level, renderItem, }: Readonly<CategoryTreeProps<T>>): import("react/jsx-runtime").JSX.Element | null;
 export {};

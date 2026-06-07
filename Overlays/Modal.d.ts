@@ -6,8 +6,6 @@ interface ModalProps {
     open?: boolean;
     children?: ReactNode;
     onClose?: () => void;
-    stickyHeader?: boolean;
-    stickyFooter?: boolean;
 }
 interface ModalComponent extends React.FC<ModalProps> {
     Header: React.FC<SubComponentProps>;
