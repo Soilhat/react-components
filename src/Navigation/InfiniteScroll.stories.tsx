@@ -16,44 +16,46 @@ const meta: Meta<typeof InfiniteScroll> = {
 export default meta;
 type Story = StoryObj<typeof InfiniteScroll>;
 
-export const Default: Story = {
-  render: () => {
-    const [items, setItems] = useState<string[]>(generateItems(0, 20));
-    const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
+const DefaultStory = () => {
+  const [items, setItems] = useState<string[]>(generateItems(0, 20));
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-    const loadMore = useCallback(() => {
-      if (loading || !hasMore) return;
+  const loadMore = useCallback(() => {
+    if (loading || !hasMore) return;
 
-      setLoading(true);
+    setLoading(true);
 
-      // Simulate API latency
-      setTimeout(() => {
-        setItems((prev) => [...prev, ...generateItems(prev.length, 10)]);
-        setLoading(false);
+    // Simulate API latency
+    setTimeout(() => {
+      setItems((prev) => [...prev, ...generateItems(prev.length, 10)]);
+      setLoading(false);
 
-        // Stop after 30 items for demonstration
-        if (items.length >= 30) {
-          setHasMore(false);
-        }
-      }, 1500);
-    }, [loading, hasMore, items.length]);
+      // Stop after 30 items for demonstration
+      if (items.length >= 30) {
+        setHasMore(false);
+      }
+    }, 1500);
+  }, [loading, hasMore, items.length]);
 
-    return (
-      <div className="p-4 max-w-md mx-auto">
-        <h1 className="text-xl font-bold mb-4">Infinite Scroll Demo</h1>
-        <div className="space-y-2 mb-4">
-          {items.map((item, index) => (
-            <div key={index} className="p-4 bg-card border border-border rounded shadow-sm">
-              {item}
-            </div>
-          ))}
-        </div>
-
-        <InfiniteScroll onReachBottom={loadMore} hasMore={hasMore} loading={loading} />
-
-        {!hasMore && <p className="text-center text-muted-foreground text-sm mt-4">— You've reached the end —</p>}
+  return (
+    <div className="p-4 max-w-md mx-auto">
+      <h1 className="text-xl font-bold mb-4">Infinite Scroll Demo</h1>
+      <div className="space-y-2 mb-4">
+        {items.map((item) => (
+          <div key={item} className="p-4 bg-card border border-border rounded shadow-sm">
+            {item}
+          </div>
+        ))}
       </div>
-    );
-  },
+
+      <InfiniteScroll onReachBottom={loadMore} hasMore={hasMore} loading={loading} />
+
+      {!hasMore && <p className="text-center text-muted-foreground text-sm mt-4">— You've reached the end —</p>}
+    </div>
+  );
+};
+
+export const Default: Story = {
+  render: () => <DefaultStory />,
 };

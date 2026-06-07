@@ -45,26 +45,28 @@ export const WithIcon: Story = {
   },
 };
 
+const FilterBarStory = () => {
+  const [selected, setSelected] = React.useState('all');
+  const categories = ['all', 'shopping', 'health', 'travel', 'food'];
+
+  return (
+    <div className="flex items-center gap-2 bg-background p-4 rounded-xl">
+      {categories.map((cat) => (
+        <Pill
+          key={cat}
+          label={cat}
+          active={selected === cat}
+          onClick={() => setSelected(cat)}
+          icon={cat === 'all' ? <TagIcon /> : undefined}
+        />
+      ))}
+    </div>
+  );
+};
+
 /**
  * Common use case: A horizontal filter bar
  */
 export const FilterBar: Story = {
-  render: () => {
-    const [selected, setSelected] = React.useState('all');
-    const categories = ['all', 'shopping', 'health', 'travel', 'food'];
-
-    return (
-      <div className="flex items-center gap-2 bg-background p-4 rounded-xl">
-        {categories.map((cat) => (
-          <Pill
-            key={cat}
-            label={cat}
-            active={selected === cat}
-            onClick={() => setSelected(cat)}
-            icon={cat === 'all' ? <TagIcon /> : undefined}
-          />
-        ))}
-      </div>
-    );
-  },
+  render: () => <FilterBarStory />,
 };

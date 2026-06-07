@@ -85,16 +85,28 @@ export const Interactive: Story = {
   },
 };
 
+const FolderIconRender = ({ isExpanded, hasChildren }: { isExpanded: boolean; hasChildren: boolean }) => {
+  if (!hasChildren) {
+    return <div className="h-4 w-4 ml-1 border-b-2 border-l-2 border-border rounded-bl-sm" />;
+  }
+  return isExpanded ? (
+    <FolderOpenIcon className="h-4 w-4 text-primary" />
+  ) : (
+    <FolderIcon className="h-4 w-4 text-primary" />
+  );
+};
+
 export const Expandable: Story = {
   args: {
     items: mockCategories,
     renderItem: (item, level, { isExpanded, toggle, hasChildren }) => (
-      <div
+      <button
         onClick={hasChildren ? toggle : undefined}
         className={`
           flex items-center gap-2 p-2 rounded-lg transition-all cursor-pointer
           ${level === 0 ? 'bg-card font-bold' : 'hover:bg-background'}
         `}
+        onKeyDown={toggle}
       >
         {/* Chevron Icon */}
         {hasChildren && (
@@ -102,18 +114,10 @@ export const Expandable: Story = {
         )}
 
         {/* Folder Icon */}
-        {hasChildren ? (
-          isExpanded ? (
-            <FolderOpenIcon className="h-4 w-4 text-primary" />
-          ) : (
-            <FolderIcon className="h-4 w-4 text-primary" />
-          )
-        ) : (
-          <div className="h-4 w-4 ml-1 border-b-2 border-l-2 border-border rounded-bl-sm" />
-        )}
+        <FolderIconRender isExpanded={isExpanded} hasChildren={hasChildren} />
 
         <span className="text-sm text-muted-foreground">{item.name}</span>
-      </div>
+      </button>
     ),
   },
 };

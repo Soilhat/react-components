@@ -46,6 +46,49 @@ const initialEvents = {
   [iso(tomorrow)]: [],
 };
 
+const removeEventFromDates = (events: Record<string, { id: string; title: string }[]>, eventId: string) => {
+  const next = { ...events };
+  let foundItem: { id: string; title: string } | null = null;
+
+  for (const dateKey of Object.keys(next)) {
+    const index = next[dateKey].findIndex((e) => e.id === eventId);
+    if (index !== -1) {
+      [foundItem] = next[dateKey].splice(index, 1);
+      break;
+    }
+  }
+
+  return { next, foundItem };
+};
+
+const DragAndDropWrapper = () => {
+  const [events, setEvents] = useState<Record<string, { id: string; title: string }[]>>(initialEvents);
+
+  const handleEventDrop = (eventId: string, targetDate: Date) => {
+    const targetIso = iso(targetDate);
+    setEvents((prev) => {
+      const { next, foundItem } = removeEventFromDates(prev, eventId);
+
+      if (foundItem) {
+        next[targetIso] = [...(next[targetIso] || []), foundItem];
+      }
+      return next;
+    });
+  };
+
+  return (
+    <div className="p-8 bg-background min-h-screen">
+      <Calendar
+        year={today.getFullYear()}
+        month={today.getMonth()}
+        eventsByDate={events}
+        onEventDrop={handleEventDrop}
+        actionLabel="Plan"
+      />
+    </div>
+  );
+};
+
 /**
  * ## Drag and DropInteraction Test (Automated)
  * * This story demonstrates the "Real" interaction flow. It uses a `play` function to
@@ -55,45 +98,10 @@ const initialEvents = {
  * specifically targets the `.sm:contents` container to avoid "Multiple elements found" errors.
  */
 export const DragAndDropInteractionTest: Story = {
-  render: () => {
-    const [events, setEvents] = useState<Record<string, { id: string; title: string }[]>>(initialEvents);
-
-    const handleEventDrop = (eventId: string, targetDate: Date) => {
-      const targetIso = iso(targetDate);
-      setEvents((prev) => {
-        const next = { ...prev };
-        let foundItem: { id: string; title: string } | null = null;
-
-        // Logic to find and pluck the event from its original date
-        Object.keys(next).forEach((dateKey) => {
-          const index = next[dateKey].findIndex((e) => e.id === eventId);
-          if (index !== -1) [foundItem] = next[dateKey].splice(index, 1);
-        });
-
-        // Push the item into the new date array
-        if (foundItem) {
-          next[targetIso] = [...(next[targetIso] || []), foundItem];
-        }
-        return { ...next };
-      });
-    };
-
-    return (
-      <div className="p-8 bg-background min-h-screen">
-        <Calendar
-          year={today.getFullYear()}
-          month={today.getMonth()}
-          eventsByDate={events}
-          onEventDrop={handleEventDrop}
-          actionLabel="Plan"
-        />
-      </div>
-    );
-  },
+  render: () => <DragAndDropWrapper />,
   play: async ({ canvasElement }) => {
     // 1. Identify Desktop Scope
-    // We target .hidden.sm:contents to ignore the mobile-hidden DOM nodes
-    const desktopGrid = canvasElement.querySelector('.hidden.sm\\:contents');
+    const desktopGrid = canvasElement.querySelector(String.raw`.hidden.sm\:contents`);
     if (!desktopGrid) throw new Error('Desktop grid not found');
     const desktopCanvas = within(desktopGrid as HTMLElement);
 
@@ -102,7 +110,6 @@ export const DragAndDropInteractionTest: Story = {
     const sourceElement = draggableEvent.closest('[draggable="true"]');
 
     const tomorrowDateStr = iso(tomorrow);
-    // Specifically looking for the Desktop ID 'dt-YYYY-MM-DD'
     const targetDay = desktopGrid.querySelector(`[id="dt-${tomorrowDateStr}"]`);
 
     if (!sourceElement || !targetDay) {
@@ -110,10 +117,8 @@ export const DragAndDropInteractionTest: Story = {
     }
 
     // 3. Native Event Simulation
-    // DataTransfer is required for the HTML5 Drag/Drop API to function
     const dataTransfer = new DataTransfer();
 
-    // Sequence: Start -> Over -> Drop -> End
     sourceElement.dispatchEvent(
       new DragEvent('dragstart', {
         bubbles: true,
@@ -147,7 +152,6 @@ export const DragAndDropInteractionTest: Story = {
     );
 
     // 4. Assert Results
-    // We wait for the state update and re-render to reflect the item in the new cell
     await waitFor(
       () => {
         const eventInNewLocation = within(targetDay as HTMLElement).queryByText('Drag This Meal');
@@ -187,14 +191,14 @@ export const ClickInteractionTest: Story = {
     onEventClick: fn(),
   },
   play: async ({ canvasElement, args }) => {
-    const desktopGrid = canvasElement.querySelector('.hidden.sm\\:contents');
+    const desktopGrid = canvasElement.querySelector(String.raw`.hidden.sm\:contents`);
     if (!desktopGrid) throw new Error('Desktop grid not found');
 
     const mealButton = await within(desktopGrid as HTMLElement).findByRole('button', {
       name: /Clickable Recipe/i,
     });
 
-    const style = window.getComputedStyle(mealButton);
+    const style = globalThis.getComputedStyle(mealButton);
     if (style.pointerEvents === 'none') {
       throw new Error('Test failed: Button still has pointer-events: none');
     }

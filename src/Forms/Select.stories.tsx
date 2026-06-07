@@ -61,35 +61,37 @@ const collisionOptions: Option[] = [
   { value: '5', label: 'Option Last' },
 ];
 
+const InsideModalCollisionStory = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [val, setVal] = useState<string | number>('');
+
+  return (
+    <div className="p-10 text-center">
+      <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
+
+      <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+        <Modal.Header>Settings</Modal.Header>
+
+        <Modal.Body>
+          <div className="h-125 bg-muted/30 rounded-xl flex items-center justify-center text-muted-foreground italic border-2 border-dashed border-border mb-6">
+            Long Content Area (Scroll down)
+          </div>
+
+          <Select
+            label="Bottom Select"
+            placeholder="Choose an option..."
+            options={collisionOptions}
+            value={val}
+            onChange={setVal}
+          />
+        </Modal.Body>
+      </Modal>
+    </div>
+  );
+};
+
 export const InsideModalCollision: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [val, setVal] = useState<string | number>('');
-
-    return (
-      <div className="p-10 text-center">
-        <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
-
-        <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-          <Modal.Header>Settings</Modal.Header>
-
-          <Modal.Body>
-            <div className="h-125 bg-muted/30 rounded-xl flex items-center justify-center text-muted-foreground italic border-2 border-dashed border-border mb-6">
-              Long Content Area (Scroll down)
-            </div>
-
-            <Select
-              label="Bottom Select"
-              placeholder="Choose an option..."
-              options={collisionOptions}
-              value={val}
-              onChange={setVal}
-            />
-          </Modal.Body>
-        </Modal>
-      </div>
-    );
-  },
+  render: () => <InsideModalCollisionStory />,
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
