@@ -36,7 +36,7 @@ jobs:
           fi
 
       - name: Build Storybook
-        run: npx storybook build -o dist-storybook --subpath /${{ steps.target_dir.outputs.dir }}
+        run: VITE_APP_BASE_URL=/${{ steps.target_dir.outputs.dir }}/ npx storybook build -o dist-storybook
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
