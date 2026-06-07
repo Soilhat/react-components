@@ -46,8 +46,8 @@ const Crasher = ({ shouldCrash }: { shouldCrash: boolean }) => {
     throw new Error('🚀 Simulation: The component has crashed!');
   }
   return (
-    <div className="p-6 bg-state-success/10 dark:bg-state-success-dark/10 border border-state-success/20 dark:border-state-success-dark/20 rounded-xl text-center">
-      <Text className="text-state-success dark:text-state-success-dark font-bold">Everything is running smoothly.</Text>
+    <div className="p-6 bg-success/10 border border-success/20 rounded-xl text-center">
+      <Text className="text-success font-bold">Everything is running smoothly.</Text>
     </div>
   );
 };
@@ -66,7 +66,7 @@ export const FullPageCrash: StoryObj<typeof ErrorBoundary> = {
         <div className="p-10 flex flex-col items-center gap-6">
           <Heading title="Main Application Shell" />
           <Crasher shouldCrash={hasError} />
-          <Button color_name="danger" onClick={() => setHasError(true)}>
+          <Button variant="danger" onClick={() => setHasError(true)}>
             Trigger Fatal Error
           </Button>
         </div>
@@ -86,14 +86,14 @@ export const WidgetCrash: StoryObj<typeof ErrorBoundary> = {
     const [crashLeft, setCrashLeft] = useState(false);
     return (
       <div className="p-8 space-y-8">
-        <div className="bg-surface-panel dark:bg-surface-panel-dark p-4 rounded-lg border border-border dark:border-border-dark">
+        <div className="bg-card p-4 rounded-lg border border-border">
           <h2 className="font-bold">Global Navigation (Always Safe)</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
             <Text className="font-bold uppercase text-xs">Analytics Module</Text>
             <ErrorBoundary fullPage={false} onReset={() => setCrashLeft(false)}>
-              <div className="border-2 border-dashed border-border dark:border-border-dark p-4 rounded-2xl">
+              <div className="border-2 border-dashed border-border p-4 rounded-2xl">
                 <Crasher shouldCrash={crashLeft} />
                 {!crashLeft && (
                   <Button className="mt-4" onClick={() => setCrashLeft(true)}>
@@ -125,15 +125,15 @@ export const CustomFallback: StoryObj<typeof ErrorBoundary> = {
         <ErrorBoundary
           onReset={() => setIsCrashed(false)}
           fallback={(error, reset) => (
-            <div className="p-4 bg-state-danger text-text-on-danger dark:bg-state-danger-dark dark:text-text-on-danger-dark rounded-lg flex justify-between items-center shadow-lg animate-pulse">
+            <div className="p-4 bg-danger text-danger-foreground rounded-lg flex justify-between items-center shadow-lg animate-pulse">
               <span className="font-mono text-sm">Critical Error: {error.message}</span>
-              <Button onClick={reset} color_name="danger">
+              <Button onClick={reset} variant="danger">
                 RETRY
               </Button>
             </div>
           )}
         >
-          <div className="p-8 bg-surface-panel dark:bg-surface-panel-dark rounded-2xl shadow-xl border border-border dark:border-border-dark">
+          <div className="p-8 bg-card rounded-2xl shadow-xl border border-border">
             <h3 className="text-xl font-bold mb-4">Stock Ticker Widget</h3>
             <Crasher shouldCrash={isCrashed} />
             {!isCrashed && (

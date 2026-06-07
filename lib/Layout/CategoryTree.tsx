@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
+import { SwipeableRow } from '../Lists/SwipeableRow';
 
-interface TreeItem {
+export interface TreeItem {
   id: string;
   parent_id?: string | null;
   [key: string]: unknown;
+}
+
+interface SwipeAction<T extends TreeItem = TreeItem> {
+  icon: React.ReactNode;
+  label: string;
+  color?: string;
+  onClick: (item: T) => void;
 }
 
 interface CategoryTreeProps<T extends TreeItem> {
@@ -15,6 +23,8 @@ interface CategoryTreeProps<T extends TreeItem> {
     level: number,
     state: { isExpanded: boolean; toggle: () => void; hasChildren: boolean }
   ) => React.ReactNode;
+  leftSwipeActions?: SwipeAction<T>[];
+  rightSwipeActions?: SwipeAction<T>[];
 }
 
 export function CategoryTree<T extends TreeItem>({
@@ -22,6 +32,8 @@ export function CategoryTree<T extends TreeItem>({
   parentId = null,
   level = 0,
   renderItem,
+  leftSwipeActions = [],
+  rightSwipeActions = [],
 }: Readonly<CategoryTreeProps<T>>) {
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
 
@@ -41,20 +53,58 @@ export function CategoryTree<T extends TreeItem>({
   if (children.length === 0) return null;
 
   return (
-    <div className={level > 0 ? 'ml-6 border-l border-border dark:border-border-dark pl-4' : 'space-y-2'}>
+    <div
+      className={`
+        ${
+          level > 0
+            ? 'ml-2.5 pl-3 border-l border-border/60 sm:ml-6 sm:pl-4 transition-all'
+            : 'space-y-1.5 sm:space-y-2'
+        }
+      `}
+    >
       {children.map((item) => {
         const hasChildren = items.some((child) => child.parent_id === item.id);
         const isExpanded = !collapsedIds.has(item.id);
 
-        return (
-          <React.Fragment key={item.id}>
+        const renderedRow = (
+          <div className="w-full min-h-11 sm:min-h-12 flex items-center">
             {renderItem(item, level, {
               isExpanded,
               toggle: () => toggle(item.id),
               hasChildren,
             })}
+          </div>
+        );
 
-            {isExpanded && <CategoryTree items={items} parentId={item.id} level={level + 1} renderItem={renderItem} />}
+        return (
+          <React.Fragment key={item.id}>
+            {leftSwipeActions.length > 0 || rightSwipeActions.length > 0 ? (
+              <SwipeableRow
+                leftActions={leftSwipeActions.map((action) => ({
+                  ...action,
+                  onClick: () => action.onClick(item),
+                }))}
+                rightActions={rightSwipeActions.map((action) => ({
+                  ...action,
+                  onClick: () => action.onClick(item),
+                }))}
+              >
+                {renderedRow}
+              </SwipeableRow>
+            ) : (
+              renderedRow
+            )}
+
+            {isExpanded && (
+              <CategoryTree
+                items={items}
+                parentId={item.id}
+                level={level + 1}
+                renderItem={renderItem}
+                leftSwipeActions={leftSwipeActions}
+                rightSwipeActions={rightSwipeActions}
+              />
+            )}
           </React.Fragment>
         );
       })}

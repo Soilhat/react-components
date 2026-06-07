@@ -30,9 +30,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
 
   const panelClasses = `
     w-full rounded-lg border transition-all duration-200 p-3 text-base sm:text-sm
-    ${error ? 'border-state-danger dark:border-state-danger-dark' : 'border-border dark:border-border-dark'}
-    bg-surface-panel dark:bg-surface-panel-dark
-    text-text-primary dark:text-text-primary-dark
+    ${error ? 'border-danger' : 'border-border'}
+    bg-card text-foreground
   `;
 
   return (
@@ -45,15 +44,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         )}
 
         {markdown && (
-          <div
-            className="flex bg-surface-base dark:bg-surface-base-dark p-1 rounded-lg border border-border dark:border-border-dark"
-            role="tablist"
-          >
+          <div className="flex bg-background p-1 rounded-lg border border-border" role="tablist">
             <button
               type="button"
               onClick={(e) => togglePreview(e, false)}
               className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
-                isPreview ? 'text-text-secondary hover:text-text-primary' : 'bg-primary text-text-on-primary shadow-sm'
+                isPreview
+                  ? 'text-muted-foreground hover:text-foreground'
+                  : 'bg-primary text-primary-foreground shadow-sm'
               }`}
               role="tab"
               aria-selected={!isPreview}
@@ -64,7 +62,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
               type="button"
               onClick={(e) => togglePreview(e, true)}
               className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
-                isPreview ? 'bg-primary text-text-on-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
+                isPreview
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
               role="tab"
               aria-selected={isPreview}
@@ -87,8 +87,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
             value={text}
             className={`
               ${panelClasses} 
-              focus:ring-4 focus:ring-state-focus/20 focus:border-state-focus focus:outline-none
-              placeholder:text-text-secondary/50
+              focus:ring-4 focus:ring-ring/20 focus:border-ring focus:outline-none
+              placeholder:text-muted-foreground/50
               ${className}
             `}
             {...props}
@@ -101,7 +101,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
             className={`
               ${panelClasses} 
               markdown min-h-[calc(${rows}*1.5rem+1.5rem)]
-              overflow-y-auto bg-surface-base/10
+              overflow-y-auto bg-background/10
               ${className}
             `}
             role="tabpanel"
@@ -109,13 +109,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
             {text ? (
               <ReactMarkdown>{text}</ReactMarkdown>
             ) : (
-              <span className="text-text-secondary italic">Nothing to preview</span>
+              <span className="text-muted-foreground/50 italic">Nothing to preview</span>
             )}
           </div>
         )}
       </div>
 
-      {error && <p className="text-sm text-state-danger dark:text-state-danger-dark font-medium">{error}</p>}
+      {error && <p className="text-sm text-danger font-medium">{error}</p>}
     </div>
   );
 });

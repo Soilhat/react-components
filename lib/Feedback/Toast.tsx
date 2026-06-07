@@ -9,10 +9,9 @@ export interface ToastProps {
 }
 
 const typeStyles: Record<ToastType, string> = {
-  success: 'bg-surface-panel ring-border dark:bg-state-success-dark dark:ring-state-success-dark/100',
-  error:
-    'bg-state-danger text-text-on-danger ring-state-danger/100 dark:bg-state-danger-dark dark:text-text-on-danger-dark dark:ring-state-danger-dark/100',
-  info: 'bg-surface-panel ring-border dark:bg-state-info-dark dark:ring-state-info-dark/100',
+  success: 'bg-card ring-border',
+  error: 'bg-danger text-danger-foreground ring-danger/100',
+  info: 'bg-card ring-border',
 };
 
 const typeIcon: Record<ToastType, string> = {

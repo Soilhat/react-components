@@ -27,7 +27,7 @@ export function InfiniteScroll({
 
   return (
     <div ref={observerTarget} className="h-10 w-full flex items-center justify-center">
-      {loading && <span className="text-sm text-text-secondary animate-pulse">Loading more...</span>}
+      {loading && <span className="text-sm text-muted-foreground animate-pulse">Loading more...</span>}
     </div>
   );
 }

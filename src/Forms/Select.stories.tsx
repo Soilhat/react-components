@@ -25,19 +25,19 @@ const meta: Meta<typeof Select> = {
 export default meta;
 type Story = StoryObj<typeof Select>;
 
-const SelectTemplate = (args) => {
-  const [value, setValue] = useState<Option | undefined>(undefined);
+interface TemplateProps {
+  label?: string;
+  options: Option[];
+  placeholder?: string;
+  value?: string | number;
+}
+
+const SelectTemplate = (args: TemplateProps) => {
+  const [value, setValue] = useState<string | number | undefined>(args.value);
 
   return (
     <div className="w-72">
-      <Select
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e);
-          args.onChange?.(e);
-        }}
-      />
+      <Select {...args} value={value} onChange={(e) => setValue(e)} />
     </div>
   );
 };
@@ -48,12 +48,12 @@ export const Default: Story = {
 
 export const Preselected: Story = {
   args: {
-    value: { value: 2, label: 'Main Dish' },
+    value: 2,
   },
   render: (args) => <SelectTemplate {...args} />,
 };
 
-const options = [
+const collisionOptions: Option[] = [
   { value: '1', label: 'Option One' },
   { value: '2', label: 'Option Two' },
   { value: '3', label: 'Option Three' },
@@ -71,21 +71,21 @@ export const InsideModalCollision: Story = {
         <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
 
         <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-          <div className="p-6">
-            <h2 className="text-xl font-bold mb-4 text-text-primary">Settings</h2>
+          <Modal.Header>Settings</Modal.Header>
 
-            <div className="h-125 bg-surface-base/20 rounded flex items-center justify-center text-text-secondary italic border-2 border-dashed border-border mb-6">
+          <Modal.Body>
+            <div className="h-125 bg-muted/30 rounded-xl flex items-center justify-center text-muted-foreground italic border-2 border-dashed border-border mb-6">
               Long Content Area (Scroll down)
             </div>
 
             <Select
               label="Bottom Select"
               placeholder="Choose an option..."
-              options={options}
+              options={collisionOptions}
               value={val}
               onChange={setVal}
             />
-          </div>
+          </Modal.Body>
         </Modal>
       </div>
     );
@@ -104,8 +104,7 @@ export const InsideModalCollision: Story = {
       await body.findByText('Settings');
 
       const selectButton = await body.findByRole('button', { name: /Bottom Select/i });
-
-      selectButton.scrollIntoView();
+      selectButton.scrollIntoView({ block: 'center' });
 
       await expect(selectButton).toBeVisible();
       await userEvent.click(selectButton);

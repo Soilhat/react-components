@@ -17,7 +17,7 @@ const meta: Meta<typeof Dropdown> = {
   // Ensure the background is visible for light/dark testing
   decorators: [
     (Story) => (
-      <div className="p-20 bg-surface-base dark:bg-surface-base-dark min-h-75 rounded-lg">
+      <div className="p-20 bg-background min-h-75 rounded-lg">
         <Story />
       </div>
     ),

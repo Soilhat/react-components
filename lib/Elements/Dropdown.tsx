@@ -1,4 +1,4 @@
-import { Menu, Transition, MenuItem, MenuButton } from '@headlessui/react';
+import { Menu, Transition, MenuItem, MenuButton, MenuItems } from '@headlessui/react';
 import { Fragment, useMemo, type ReactNode } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { genId } from '../utils';
@@ -36,17 +36,17 @@ export function Dropdown({ label, sections, buttonVariant = 'primary' }: Readonl
   }, [sections]);
 
   const buttonStyles = {
-    primary: 'bg-primary text-text-on-primary hover:bg-primary-hover data-[active]:bg-primary-hover',
-    secondary: 'bg-secondary text-text-on-primary hover:bg-secondary-hover data-[active]:bg-secondary-hover',
-    light:
-      'bg-light text-primary border border-light-border hover:bg-light-hover data-[active]:bg-light-hover dark:bg-light-dark dark:text-primary-dark dark:border-light-border-dark',
+    primary: 'bg-primary text-primary-foreground hover:bg-primary-hover data-[active]:bg-primary-hover',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary-hover data-[active]:bg-secondary-hover',
+    light: 'bg-muted text-primary border border-border hover:bg-hover data-[active]:bg-muted-foreground',
   };
 
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <MenuButton
-          className={`inline-flex w-full justify-center items-center gap-x-1.5 rounded-md px-4 py-2 text-sm font-semibold shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-state-focus ${buttonStyles[buttonVariant]}`}
+          className={`inline-flex w-full justify-center items-center gap-x-1.5 rounded-md px-4 py-2 text-sm font-semibold shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${buttonStyles[buttonVariant]}`}
+          aria-invalid="false"
         >
           {label}
           <ChevronDownIcon
@@ -65,7 +65,7 @@ export function Dropdown({ label, sections, buttonVariant = 'primary' }: Readonl
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-border dark:divide-border-dark rounded-md bg-surface-panel dark:bg-surface-panel-dark shadow-lg ring-1 ring-black/5 focus:outline-none border border-border dark:border-border-dark">
+        <MenuItems className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-border rounded-md bg-card shadow-lg ring-1 ring-foreground/5 focus:outline-none border border-border">
           {processedSections.map((section) => (
             <div key={section.id} className="px-1 py-1">
               {section.items.map((item) => (
@@ -75,15 +75,13 @@ export function Dropdown({ label, sections, buttonVariant = 'primary' }: Readonl
                     onClick={item.onClick}
                     className={`
                       group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors
-                      text-text-primary dark:text-text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed
-                      data-focus:bg-light data-focus:text-primary dark:data-focus:bg-light-dark dark:data-focus:text-primary-dark
-                      ${item.isDanger ? 'text-state-danger dark:text-state-danger-dark data-focus:bg-state-danger data-focus:text-white' : ''}
+                      text-foreground disabled:opacity-50 disabled:cursor-not-allowed
+                      data-focus:bg-muted data-focus:text-primary
+                      ${item.isDanger ? 'text-danger data-focus:bg-danger data-focus:text-danger-foreground' : ''}
                     `}
                   >
                     {item.icon && (
-                      <span className="mr-2 h-5 w-5 text-text-secondary group-data-focus:text-current">
-                        {item.icon}
-                      </span>
+                      <span className="mr-2 h-5 w-5 text-muted group-data-focus:text-current">{item.icon}</span>
                     )}
                     <span className="flex-1 text-left">{item.label}</span>
                   </button>
@@ -91,7 +89,7 @@ export function Dropdown({ label, sections, buttonVariant = 'primary' }: Readonl
               ))}
             </div>
           ))}
-        </Menu.Items>
+        </MenuItems>
       </Transition>
     </Menu>
   );

@@ -25,21 +25,16 @@ export const Pill = ({
   const Component = isInteractive ? 'button' : 'div';
 
   const activeStyles: Record<PillVariant, string> = {
-    primary:
-      'bg-primary dark:bg-primary-dark text-text-on-primary dark:text-text-on-primary-dark border-primary dark:border-primary-dark shadow-lg shadow-primary/20 dark:shadow-primary-dark/40',
-    success:
-      'bg-state-success dark:bg-state-success-dark text-text-on-primary dark:text-text-on-primary-dark border-state-success dark:border-state-success-dark shadow-lg shadow-state-success/20 dark:shadow-state-success-dark/40',
-    danger:
-      'bg-state-danger dark:bg-state-danger-dark text-text-on-primary dark:text-text-on-primary-dark border-state-danger dark:border-state-danger-dark shadow-lg shadow-state-danger/20 dark:shadow-state-danger-dark/40',
-    warning:
-      'bg-state-warning dark:bg-state-warning-dark text-text-on-primary dark:text-text-on-primary-dark border-state-warning dark:border-state-warning-dark shadow-lg shadow-state-warning/20 dark:shadow-state-warning-dark/40',
-    ghost:
-      'bg-text-primary dark:bg-text-primary-dark text-text-on-primary dark:text-text-on-primary-dark border-text-primary dark:border-text-primary-dark',
+    primary: 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20',
+    success: 'bg-success text-success-foreground border-success shadow-lg shadow-success/20',
+    danger: 'bg-danger text-danger-foreground border-danger shadow-lg shadow-danger/20',
+    warning: 'bg-warning text-warning-foreground border-warning shadow-lg shadow-warning/20',
+    ghost: 'bg-muted text-muted-foreground border-muted hover:bg-muted/50 hover:text-muted-foreground/80',
   };
 
   const inactiveStyles = isInteractive
-    ? 'bg-surface-panel dark:bg-surface-panel-dark text-text-secondary border-border hover:border-primary/50 hover:text-primary cursor-pointer'
-    : 'bg-surface-panel dark:bg-surface-panel-dark text-text-secondary border-border cursor-default';
+    ? 'bg-card text-muted-foreground border-border hover:border-primary/50 hover:text-primary cursor-pointer'
+    : 'bg-card text-muted-foreground border-border cursor-default';
 
   return (
     <Component

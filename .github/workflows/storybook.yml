@@ -1,35 +1,48 @@
-name: Deploy Storybook to GitHub Pages
+name: Deploy Storybook
 
 on:
-  push:
+  workflow_run:
+    workflows: ['test']
+    types:
+      - completed
     branches:
       - main
+      - 'v[0-9]+.x'
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    if: |
+      github.event.workflow_run.conclusion == 'success' && 
+      github.event.workflow_run.event != 'pull_request'
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - run: npm ci
+
+      - name: Determine Target Directory
+        id: target_dir
+        run: |
+          HEAD_BRANCH="${{ github.event.workflow_run.head_branch }}"
+          if [ "$HEAD_BRANCH" = "main" ]; then
+            echo "dir=latest" >> $GITHUB_OUTPUT
+          else
+            echo "dir=$HEAD_BRANCH" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build Storybook
-        run: npm run build-storybook
-        env:
-          NODE_ENV: production
+        run: npx storybook build -o dist-storybook --subpath /${{ steps.target_dir.outputs.dir }}
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./storybook-static
+          publish_dir: ./dist-storybook
+          destination_dir: ${{ steps.target_dir.outputs.dir }}
+          keep_files: true

@@ -44,14 +44,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       <Card
         className={`
           group relative overflow-hidden transition-all duration-300
-          ${isUploading ? 'cursor-not-allowed' : 'cursor-pointer hover:border-primary dark:hover:border-primary-dark'}
-          /* Using border variable and adding a dashed effect for UX */
-          border-2 border-dashed border-border dark:border-border-dark
-          focus-within:ring-2 focus-within:ring-state-focus
+          ${isUploading ? 'cursor-not-allowed' : 'cursor-pointer hover:border-primary'}
+          border-2 border-dashed border-border
+          focus-within:ring-2 focus-within:ring-ring
         `}
         onClick={handleContainerClick}
       >
-        <Card.Body className="p-0 sm:p-0 flex flex-col items-center justify-center min-h-64 bg-surface-base/30 dark:bg-surface-base-dark/30">
+        <Card.Body className="p-0 sm:p-0 flex flex-col items-center justify-center min-h-64 bg-background/30">
           <img
             src={imageUrl}
             alt="Upload preview"
@@ -65,26 +64,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           <div
             className={`
             absolute inset-0 flex flex-col items-center justify-center transition-all duration-300
-            ${
-              isUploading
-                ? 'bg-surface-panel/40 dark:bg-surface-panel-dark/40 opacity-100'
-                : 'bg-primary/10 dark:bg-primary-dark/10 opacity-0 group-hover:opacity-100'
-            }
+            ${isUploading ? 'bg-card/40 opacity-100' : 'bg-primary/10 opacity-0 group-hover:opacity-100'}
           `}
           >
             {isUploading ? (
               <div className="flex flex-col items-center gap-2">
-                <ArrowPathIcon className="h-10 w-10 animate-spin text-primary dark:text-primary-dark" />
-                <span className="text-xs font-bold uppercase tracking-widest text-primary dark:text-primary-dark">
-                  Uploading...
-                </span>
+                <ArrowPathIcon className="h-10 w-10 animate-spin text-primary" />
+                <span className="text-xs font-bold uppercase tracking-widest text-primary">Uploading...</span>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-2 scale-90 group-hover:scale-100 transition-transform">
-                <div className="p-4 rounded-full bg-surface-panel dark:bg-surface-panel-dark shadow-xl text-primary dark:text-primary-dark">
+                <div className="p-4 rounded-full bg-card shadow-xl text-primary">
                   <ArrowUpTrayIcon className="h-6 w-6" />
                 </div>
-                <span className="bg-primary text-text-on-primary px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg">
                   Change Image
                 </span>
               </div>
@@ -103,9 +96,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         data-testid="inputImageUploader"
       />
 
-      <p className="mt-2 text-center text-xs text-text-secondary dark:text-text-secondary-dark">
-        JPG, PNG or GIF. Max 5MB.
-      </p>
+      <p className="mt-2 text-center text-xs text-muted-foreground">JPG, PNG or GIF. Max 5MB.</p>
     </div>
   );
 };

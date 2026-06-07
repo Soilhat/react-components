@@ -1,32 +1,90 @@
 name: Release
 
 on:
-  push:
+  workflow_run:
+    workflows: ['test']
+    types:
+      - completed
     branches:
       - main
+      - 'v[0-9]+.x'
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.conclusion == 'success' && 
+      github.event.workflow_run.event != 'pull_request'
+
     permissions:
       contents: write
       issues: write
       pull-requests: write
       id-token: write
       packages: write
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
+
       - run: npm ci
       - run: npm run build
-      - name: Release
+
+      - name: Run Semantic Release
+        id: semantic_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+      - name: Create Branch on Major Release
+        if: ${{ github.event.workflow_run.head_branch == 'main' }}
+        run: |
+          git fetch --tags
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
+          echo "Latest release tag detected: $LATEST_TAG"
+
+          if [[ "$LATEST_TAG" =~ ^v([0-9]+)\.0\.0$ ]]; then
+            MAJOR_VERSION="${BASH_REMATCH[1]}"
+            BRANCH_NAME="v${MAJOR_VERSION}.x"
+            
+            if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+              echo "Branch $BRANCH_NAME already exists."
+            else
+              git checkout -b "$BRANCH_NAME" "$LATEST_TAG"
+              git push origin "$BRANCH_NAME"
+              echo "Successfully initialized maintenance branch: $BRANCH_NAME"
+            fi
+          fi
+
+      - name: Sync Main Changes into Maintenance Branches
+        if: ${{ github.event.workflow_run.head_branch == 'main' }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          MAINTENANCE_BRANCHES=$(git branch -r | grep -E 'origin/v[0-9]+\.x' | sed 's/^[[:space:]]*origin\///')
+
+          for branch in $MAINTENANCE_BRANCHES; do
+            echo "Processing sync for maintenance track: $branch"
+            
+            git checkout "$branch"
+            git pull origin "$branch"
+            
+            if git merge origin/main --no-edit; then
+              git push origin "$branch"
+              echo "Successfully synced main updates into $branch"
+            else
+              echo "WARNING: Merge conflict detected while applying main updates to $branch!"
+              echo "Aborting merge. This must be resolved manually via a backport PR."
+              git merge --abort
+            fi
+          done

@@ -32,8 +32,8 @@ export const Default: Story = {
         setItems((prev) => [...prev, ...generateItems(prev.length, 10)]);
         setLoading(false);
 
-        // Stop after 50 items for demonstration
-        if (items.length >= 50) {
+        // Stop after 30 items for demonstration
+        if (items.length >= 30) {
           setHasMore(false);
         }
       }, 1500);
@@ -44,7 +44,7 @@ export const Default: Story = {
         <h1 className="text-xl font-bold mb-4">Infinite Scroll Demo</h1>
         <div className="space-y-2 mb-4">
           {items.map((item, index) => (
-            <div key={index} className="p-4 bg-white dark:bg-gray-800 border border-border rounded shadow-sm">
+            <div key={index} className="p-4 bg-card border border-border rounded shadow-sm">
               {item}
             </div>
           ))}
@@ -52,7 +52,7 @@ export const Default: Story = {
 
         <InfiniteScroll onReachBottom={loadMore} hasMore={hasMore} loading={loading} />
 
-        {!hasMore && <p className="text-center text-text-secondary text-sm mt-4">— You've reached the end —</p>}
+        {!hasMore && <p className="text-center text-muted-foreground text-sm mt-4">— You've reached the end —</p>}
       </div>
     );
   },

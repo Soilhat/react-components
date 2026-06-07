@@ -30,7 +30,7 @@ export default function Login({ onSubmit }: { onSubmit?: (login: loginInfo) => v
 
   return (
     <Card className="max-w-sm">
-      <h2 className="text-primary dark:text-primary-dark text-2xl font-bold text-center mb-6">Hello</h2>
+      <h2 className="text-primary text-2xl font-bold text-center mb-6">Hello</h2>
       <Form id="loginForm" onSubmit={handleSubmitEvent}>
         <Input
           name="username"
@@ -38,8 +38,6 @@ export default function Login({ onSubmit }: { onSubmit?: (login: loginInfo) => v
           label="Username"
           placeholder="Username"
           autoComplete="off"
-          size="md"
-          variant="outline"
           onChange={handleInput}
         />
         <Input
@@ -48,14 +46,12 @@ export default function Login({ onSubmit }: { onSubmit?: (login: loginInfo) => v
           name="password"
           placeholder="••••••••"
           label="Password"
-          size="md"
-          variant="outline"
           onChange={handleInput}
         />
         <Button type="submit">Login</Button>
       </Form>
       <p className="text-center text-sm">
-        <a className="text-primary dark:text-primary-dark hover:underline" href="/auth/register">
+        <a className="text-primary hover:underline" href="/auth/register">
           Create Account
         </a>
       </p>

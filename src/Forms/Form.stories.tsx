@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Form, Input, Textarea } from '../../lib/main';
+import { Button, Form, Input, Textarea } from '../../lib/main';
 
 const meta: Meta = {
   title: 'Forms/Form',
@@ -22,7 +22,7 @@ export const Default: Story = {
     >
       <Input label="Name" name="name" placeholder="Enter your name" />
       <Textarea label="Message" name="message" placeholder="Type your message..." />
-      <button type="submit">Submit</button>
+      <Button type="submit">Submit</Button>
     </Form>
   ),
 };

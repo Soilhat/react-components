@@ -38,8 +38,8 @@ const preview: Preview = {
 export const decorators = [
   withThemeByClassName({
     themes: {
-      light: 'light bg-surface-base text-text-primary',
-      dark: 'dark bg-surface-base-dark text-text-primary-dark',
+      light: 'light bg-background text-foreground',
+      dark: 'dark bg-background text-foreground',
     },
     defaultTheme: 'light',
   }),

@@ -15,7 +15,7 @@ export type HeadingProps = {
 export const Heading = ({ title, variant = 'page', meta, filters, children }: HeadingProps) => {
   const isCard = variant === 'card';
 
-  const containerClasses = isCard ? 'border-b border-border dark:border-border-dark py-3 px-0' : 'py-6';
+  const containerClasses = isCard ? 'border-b border-border py-3 px-0' : 'py-6';
 
   const innerClasses = isCard ? 'w-full px-4 sm:px-6 lg:px-8' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8';
 
@@ -27,7 +27,7 @@ export const Heading = ({ title, variant = 'page', meta, filters, children }: He
             <div className="flex items-baseline gap-4 flex-wrap">
               <h2
                 className={`
-                font-bold tracking-tight text-text-primary dark:text-text-primary-dark
+                font-bold tracking-tight text-foreground
                 ${isCard ? 'text-xl' : 'text-2xl sm:text-3xl'}
               `}
               >
@@ -35,10 +35,7 @@ export const Heading = ({ title, variant = 'page', meta, filters, children }: He
               </h2>
 
               {filters && (
-                <nav
-                  className="flex items-center gap-4 text-sm border-l border-border dark:border-border-dark pl-4 ml-2"
-                  aria-label="Filters"
-                >
+                <nav className="flex items-center gap-4 text-sm border-l border-border pl-4 ml-2" aria-label="Filters">
                   {filters.map((f) => (
                     <a
                       key={f.key}
@@ -47,8 +44,8 @@ export const Heading = ({ title, variant = 'page', meta, filters, children }: He
                         transition-colors font-medium
                         ${
                           f.active
-                            ? 'text-primary dark:text-primary-dark underline underline-offset-8 decoration-2'
-                            : 'text-text-secondary hover:text-primary dark:hover:text-primary-dark'
+                            ? 'text-primary underline underline-offset-8 decoration-2'
+                            : 'text-muted-foreground hover:text-primary'
                         }
                       `}
                     >
@@ -62,11 +59,8 @@ export const Heading = ({ title, variant = 'page', meta, filters, children }: He
             {meta && (
               <div className="mt-2 flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-6 gap-y-2">
                 {meta.map((m) => (
-                  <div
-                    key={m.key}
-                    className="flex items-center text-sm text-text-secondary dark:text-text-secondary-dark"
-                  >
-                    {m.svg && <span className="shrink-0 mr-1.5 text-text-secondary/70">{m.svg}</span>}
+                  <div key={m.key} className="flex items-center text-sm text-muted-foreground">
+                    {m.svg && <span className="shrink-0 mr-1.5 text-muted-foreground/70">{m.svg}</span>}
                     <span>{m.value}</span>
                   </div>
                 ))}

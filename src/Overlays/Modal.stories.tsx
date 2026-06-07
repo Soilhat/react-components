@@ -72,7 +72,7 @@ export const LongContent = () => {
         <ModalEl.Body>
           <div className="space-y-4">
             {[...Array(15)].map((_, i) => (
-              <p key={i} className="text-text-secondary dark:text-text-secondary-dark leading-relaxed">
+              <p key={i} className="text-muted-foreground leading-relaxed">
                 Paragraph {i + 1}: This is a demonstration of how the modal handles a significant amount of content. On
                 mobile, this will behave like a bottom sheet, allowing you to scroll through this text while the action
                 buttons below stay pinned to the bottom.
@@ -107,14 +107,14 @@ export const StandardModal = () => {
       <Button onClick={() => setOpen(true)}>Open Standard Modal</Button>
       <ModalEl open={open} onClose={() => setOpen(false)}>
         <div className="sm:flex sm:items-start p-2">
-          <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-state-danger/10 sm:mx-0 sm:size-10">
+          <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-danger/10 sm:mx-0 sm:size-10">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="size-6 text-state-danger dark:text-state-danger-dark"
+              className="size-6 text-danger"
             >
               <path
                 strokeLinecap="round"
@@ -126,7 +126,7 @@ export const StandardModal = () => {
           <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
             <h3 className="text-lg font-bold">Deactivate Account</h3>
             <div className="mt-2">
-              <p className="text-sm text-text-secondary dark:text-text-secondary-dark">
+              <p className="text-sm text-muted-foreground">
                 Are you sure you want to deactivate your account? All of your data will be permanently removed from our
                 servers.
               </p>
@@ -134,10 +134,7 @@ export const StandardModal = () => {
           </div>
         </div>
         <ModalEl.Footer>
-          <Button
-            onClick={() => setOpen(false)}
-            className="bg-state-danger text-white hover:bg-state-danger dark:bg-state-danger-dark dark:hover:bg-state-danger-dark/90"
-          >
+          <Button onClick={() => setOpen(false)} className="bg-danger text-danger-foreground hover:bg-danger">
             Deactivate
           </Button>
           <Button variant="ghost" onClick={() => setOpen(false)}>
@@ -178,7 +175,7 @@ export const MobileBottomSheetFlow = () => {
         <div className="max-w-2xl mx-auto space-y-6">
           <header>
             <h1 className="text-3xl uppercase italic">Dashboard Overview</h1>
-            <p className="text-text-secondary dark:text-text-secondary-dark mt-2">
+            <p className="text-muted-foreground mt-2">
               This dashboard uses a sidebar on desktop and a fixed bottom bar on mobile. The Modal is configured to sit
               above all navigation elements.
             </p>
@@ -186,10 +183,7 @@ export const MobileBottomSheetFlow = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="p-6 rounded-2xl border border-border dark:border-border-dark bg-surface-panel dark:bg-surface-panel-dark shadow-sm"
-              >
+              <div key={i} className="p-6 rounded-2xl border border-border bg-card shadow-sm">
                 <h4 className="font-bold mb-2">Feature Card {i}</h4>
                 <Text>Placeholder content to demonstrate page depth and scrolling context.</Text>
               </div>
@@ -202,9 +196,7 @@ export const MobileBottomSheetFlow = () => {
             <ModalEl.Body>
               <div className="space-y-6">
                 <section>
-                  <h4 className="font-bold mb-2 underline decoration-primary dark:decoration-primary-dark">
-                    1. Introduction
-                  </h4>
+                  <h4 className="font-bold mb-2 underline decoration-primary">1. Introduction</h4>
                   <Text>
                     Welcome to our platform. On mobile devices, notice how this modal slides from the bottom and
                     features a pull-handle. It respects the "Safe Area" of modern smartphones.
@@ -214,7 +206,7 @@ export const MobileBottomSheetFlow = () => {
                 {[...Array(5)].map((_, i) => (
                   <section key={i}>
                     <h4 className="font-bold mb-2 text-sm uppercase">Legal Section {i + 2}</h4>
-                    <p className="text-text-secondary dark:text-text-secondary-dark text-sm leading-relaxed italic">
+                    <p className="text-muted-foreground text-sm leading-relaxed italic">
                       Standard placeholder text for verifying the scroll container within the modal body. The header and
                       footer remain pinned during this scroll action.
                     </p>

@@ -1,188 +1,158 @@
-import { Meta } from '@storybook/addon-docs/blocks';
-import ColorBox from './ColorBox';
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
 
-<Meta title="Color Palette" component={ColorBox} />
+<Meta title="Design System/Colors" />
 
-# Color Palette
+# Color Palette Architecture
 
-Here are listed colors used. Refer only to colox box background colors.
-Feel free to override colors as per [Tailwind CSS theme set up](https://tailwindcss.com/docs/theme)
+{/* 🎯 WRAPPER FIX: This container div forces the background to update instantly using your tokens */}
 
-## 🎨 Semantic Color System (Light & Dark Mode)
+<div className="bg-background text-foreground p-6 rounded-xl border border-border transition-colors duration-200">
 
-This system is built around the role of the color, not its literal value (e.g., color-primary instead of color-blue-600).
+## Architectural Layout Surfaces
 
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <h3 className="text-center m-0">Light</h3>
-  <h3 className="text-center m-0">Dark</h3>
-  <div className="col-span-4"></div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="brand" className="bg-brand" />
-  <ColorBox colorName="brand-dark" className="bg-brand-dark" />
-  <div className="col-span-4">
-    <h3>Brand color</h3>
-    <p>Usually remains the same (unless the brand must be subtle in dark mode).</p>
-    <p>
-      <b>Branding</b>: Used for the logo and non-interactive brand elements.
-    </p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="primary" className="bg-primary" />
-  <ColorBox colorName="primary-dark" className="bg-primary-dark" />
-  <div className="col-span-4">
-    <h3>Primary</h3>
-    <p>Primary action buttons, active links, main icons.</p>
-    <p>
-      <b>Action/Focus</b>: The main focal point of the interface.
-    </p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="secondary" className="bg-secondary" />
-  <ColorBox colorName="secondary-dark" className="bg-secondary-dark" />
-  <div className="col-span-4">
-    <h3>Secondary</h3>
-    <p>Secondary action buttons, supporting navigation elements.</p>
-    <p>
-      <b>Support/Alternative</b>: Lower-priority actions.
-    </p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="tertiary" className="bg-tertiary" />
-  <ColorBox colorName="tertiary-dark" className="bg-tertiary-dark" />
-  <div className="col-span-4">
-    <h3>tertiary</h3>
-    <p>Divider lines, decorative icons, subtle hover states.</p>
-    <p>
-      <b>Decoration/Subtlety</b>: Background or structural elements.
-    </p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="light" className="bg-light" />
-  <ColorBox colorName="light-dark" className="bg-light-dark text-white" />
-  <div className="col-span-4">
-    <h3>Light (Tonal)</h3>
-    <p>
-      Low-emphasis buttons (e.g., "Cancel"), background highlights for active menu items, or ghost-style components.
-    </p>
-    <p>
-      <b>Tonal/Low Emphasis</b>: Used for tertiary actions that need to remain visible but should not distract from the
-      Primary or Secondary focal points.
-    </p>
-  </div>
+These tokens manage the layout structure blocks and global text content containers.
+
+<ColorPalette>
+  <ColorItem
+    title="Global Canvas"
+    subtitle="background & foreground"
+    colors={{
+      'bg-background': 'var(--color-background)',
+      'text-foreground': 'var(--color-foreground)',
+    }}
+  />
+  <ColorItem
+    title="Panel Surface Assets"
+    subtitle="card & popover structures"
+    colors={{
+      'bg-card': 'var(--color-card)',
+      'bg-popover': 'var(--color-popover)',
+    }}
+  />
+</ColorPalette>
+
+## Brand Layer Contexts
+
+These tokens define interactive states and actionable visual weights.
+
+<ColorPalette>
+  <ColorItem
+    title="Primary Branding"
+    subtitle="Deep Blue Accent Group"
+    colors={{
+      'bg-primary': 'var(--color-primary)',
+      hover: 'var(--color-primary-hover)',
+      text: 'var(--color-primary-foreground)',
+    }}
+  />
+</ColorPalette>
+
 </div>
 
-## 📝 Text and Surface Colors (Dynamic Theme)
+Our system uses a dual-layer theme structure mapped to semantic tokens via **HSL Channels**. This ensures consistent theme variations across personal and professional environments without modifying individual component style layers.
 
-These colors are critical for readability and must switch between light and dark modes.
+---
 
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="surface-base" className="bg-surface-base text-black" />
-  <ColorBox colorName="surface-base-dark" className="bg-surface-base-dark text-white" />
-  <div className="col-span-4">
-    <h3>Surface base</h3>
-    <p>Page or main section background.</p>
-    <p>
-      <b>Canvas</b>: The broadest background color.
-    </p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="surface-panel" className="bg-surface-panel text-black" />
-  <ColorBox colorName="surface-panel-dark" className="bg-surface-panel-dark text-white" />
-  <div className="col-span-4">
-    <h3>Surface panel</h3>
-    <p>Background for cards, modals, side panels.</p>
-    <p>
-      <b>Elevation</b>: Should be slightly darker than surface-base in light mode, and slightly lighter in dark mode to
-      create a "floating" effect.
-    </p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="text-primary" className="bg-text-primary text-white" />
-  <ColorBox colorName="text-primary-dark" className="bg-text-primary-dark" />
-  <div className="col-span-4">
-    <h3>Text primary</h3>
-    <p>Main body text, H1/H2 headings.</p>
-    <p>
-      <b>Readability</b>: The darkest/lightest text color.
-    </p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="text-secondary" className="bg-text-secondary" />
-  <ColorBox colorName="text-secondary-dark" className="bg-text-secondary-dark" />
-  <div className="col-span-4">
-    <h3>Text secondary</h3>
-    <p>Captions, helper text, form field placeholders.</p>
-    <p>
-      <b>Details/Subtlety</b>: Lower contrast than primary text.
-    </p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="text-on-primary" className="bg-text-on-primary" />
-  <ColorBox colorName="text-on-primary-dark" className="bg-text-on-primary-dark text-white" />
-  <div className="col-span-4">
-    <h3>Text on primary</h3>
-    <p>Text or icon placed on a primary background (color-primary)</p>
-    <p>
-      <b>Contrast</b>: Must ensure AA or AAA contrast ratio with color-primary. Often white or black.
-    </p>
-  </div>
-</div>
+### Core Architectural Layout Surfaces
 
-## 🚦 State Colors (Feedback and Validation)
+These tokens manage the layout structure blocks and global text content containers.
 
-These colors indicate status and should have dark mode equivalents to ensure they remain legible on dark backgrounds.
+<ColorPalette>
+  <ColorItem
+    title="Global Canvas"
+    subtitle="background & foreground"
+    colors={{
+      'bg-background': 'var(--color-background)',
+      'text-foreground': 'var(--color-foreground)',
+    }}
+  />
+  <ColorItem
+    title="Panel Surface Assets"
+    subtitle="card & popover structures"
+    colors={{
+      'bg-card': 'var(--color-card)',
+      'bg-popover': 'var(--color-popover)',
+    }}
+  />
+</ColorPalette>
 
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="state-success" className="bg-state-success" />
-  <ColorBox colorName="state-success-dark" className="bg-state-success-dark" />
-  <div className="col-span-4">
-    <h3>Success</h3>
-    <p>Successful notifications, OK status indicators.</p>
-    <p>Green (Good).</p>
-  </div>
+### Brand Layer Contexts
+
+These tokens define interactive states and actionable visual weights.
+
+<ColorPalette>
+  <ColorItem
+    title="Primary Branding"
+    subtitle="Deep Blue Accent Group"
+    colors={{
+      'bg-primary': 'var(--color-primary)',
+      hover: 'var(--color-primary-hover)',
+      text: 'var(--color-primary-foreground)',
+    }}
+  />
+  <ColorItem
+    title="Secondary Branding"
+    subtitle="Lime Green Accent Group"
+    colors={{
+      'bg-secondary': 'var(--color-secondary)',
+      hover: 'var(--color-secondary-hover)',
+      text: 'var(--color-secondary-foreground)',
+    }}
+  />
+</ColorPalette>
+
+### Structural Utility States
+
+Use these tokens for secondary content blocks, interactive tables, overlays, or selection contexts.
+
+<ColorPalette>
+  <ColorItem
+    title="Muted Actions"
+    subtitle="Subdued layouts and subtle context labels"
+    colors={{
+      'bg-muted': 'var(--color-muted)',
+      'text-muted': 'var(--color-muted-foreground)',
+    }}
+  />
+  <ColorItem
+    title="Accent Highlights"
+    subtitle="Dropdown row hovers and selection matrices"
+    colors={{
+      'bg-accent': 'var(--color-accent)',
+      'text-accent': 'var(--color-accent-foreground)',
+    }}
+  />
+</ColorPalette>
+
+### System Boundaries
+
+Feedback layout rules for error checking and confirmation states.
+
+<ColorPalette>
+  <ColorItem title="Success Feedback" subtitle="success" colors={{ 'state-success': 'var(--color-success)' }} />
+  <ColorItem title="Warning Flag" subtitle="warning" colors={{ 'state-warning': 'var(--color-warning)' }} />
+  <ColorItem title="Danger Action" subtitle="danger" colors={{ 'state-danger': 'var(--color-danger)' }} />
+</ColorPalette>
+
+## Developer Usage Guide
+
+When building or contributing a new component to `@soilhat/react-components`, **never write raw primitives or explicit `dark:` sub-variants** unless handling highly specialized custom visualizations.
+
+### ❌ What NOT to do
+
+```tsx
+// This creates technical debt and prevents automated variable swapping across environments
+<div className="bg-white dark:bg-[#161b22] border-gray-300 dark:border-gray-700">
+  <p className="text-[#0d1117] dark:text-[#f0f2f5]">Content Block</p>
 </div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="state-warning" className="bg-state-warning" />
-  <ColorBox colorName="state-warning-dark" className="bg-state-warning-dark" />
-  <div className="col-span-4">
-    <h3>Warning</h3>
-    <p>Non-blocking alerts, unstable status indicators.</p>
-    <p>Yellow/Orange (Caution).</p>
-  </div>
+```
+
+🎯 The Correct Approach
+
+```TypeScript
+// The semantic engine handles the dark mode variation transition seamlessly under the hood!
+<div className="bg-card border border-border p-4 rounded-xl">
+  <p className="text-foreground text-sm">Content Block</p>
+  <p className="text-muted-foreground text-xs">Secondary metadata context indicator</p>
 </div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="state-danger" className="bg-state-danger" />
-  <ColorBox colorName="state-danger-dark" className="bg-state-danger-dark" />
-  <div className="col-span-4">
-    <h3>Danger</h3>
-    <p>Error messages, deletion, critical status indicators.</p>
-    <p>Red (Stop/Error).</p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="state-info" className="bg-state-info" />
-  <ColorBox colorName="state-info-dark" className="bg-state-info-dark" />
-  <div className="col-span-4">
-    <h3>Info</h3>
-    <p>Neutral informative messages, information banners.</p>
-    <p>Light Blue/Cyan (Information).</p>
-  </div>
-</div>
-<div className="grid grid-cols-6 pb-2 gap-4">
-  <ColorBox colorName="state-focus" className="bg-state-focus" />
-  <ColorBox colorName="state-focus-dark" className="bg-state-focus-dark" />
-  <div className="col-span-4">
-    <h3>Focus</h3>
-    <p>Focus rings for accessibility (a11y), active field outlines.</p>
-    <p>Typically a brand color with high opacity.</p>
-  </div>
-</div>
+```

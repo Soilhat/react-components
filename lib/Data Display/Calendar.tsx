@@ -129,7 +129,7 @@ const EventList = ({ dayEvents, onEventClick }: { dayEvents: unknown[]; onEventC
               e.stopPropagation();
               if (entry.id) onEventClick?.(entry.id);
             }}
-            color_name="light"
+            variant="ghost"
             className="text-left text-xs p-1.5 w-full h-auto min-h-fit border-none bg-primary/10 hover:bg-primary/20"
           >
             <div className="line-clamp-2 pointer-events-none">{entry.title}</div>
@@ -180,35 +180,41 @@ const DayCard = ({
     }
   };
 
+  let dayTextClass = 'text-muted-foreground';
+  if (isToday) {
+    dayTextClass = 'text-primary';
+  } else if (isCurrentMonth) {
+    dayTextClass = 'text-foreground';
+  }
+
+  let cardStateClass = 'bg-background/50 opacity-60';
+  if (isOver) {
+    cardStateClass = 'ring-4 ring-primary/30 border-primary bg-primary/10 scale-[1.02]';
+  } else if (isToday) {
+    cardStateClass = 'ring-2 ring-primary border-primary bg-primary/5 shadow-md';
+  } else if (isCurrentMonth) {
+    cardStateClass = 'bg-card shadow-sm';
+  }
+
   return (
     <div
       id={id}
       onDragOver={handleDragOver}
       onDragLeave={() => setIsOver(false)}
       onDrop={handleDrop}
-      className={`${containerClass} border rounded-xl p-3 transition-all ${
-        isOver ? 'ring-4 ring-primary/30 border-primary bg-primary/10 scale-[1.02]' : ''
-      } ${
-        isToday
-          ? 'ring-2 ring-primary border-primary bg-primary/5 shadow-md'
-          : isCurrentMonth
-            ? 'bg-surface-panel dark:bg-surface-panel-dark shadow-sm'
-            : 'bg-surface-base/50 dark:bg-surface-base-dark/50 opacity-60'
-      } border-border dark:border-border-dark flex flex-col gap-2 relative z-0`}
+      className={`${containerClass} border rounded-xl p-3 transition-all ${cardStateClass} border-border flex flex-col gap-2 relative z-0`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-baseline gap-2">
-          <span
-            className={`text-lg font-bold ${isToday ? 'text-primary' : isCurrentMonth ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary'}`}
-          >
-            {d.getDate()}
+          <span className={`text-lg font-bold ${dayTextClass}`}>{d.getDate()}</span>
+          <span className="sm:hidden text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            {dayName}
           </span>
-          <span className="sm:hidden text-xs font-medium uppercase tracking-wider text-text-secondary">{dayName}</span>
         </div>
         <Button
           type="button"
           onClick={() => onAction?.(d)}
-          color_name="primary"
+          variant="primary"
           className="py-1 px-3 text-[10px] h-7 w-auto!"
         >
           {actionLabel}
@@ -324,20 +330,29 @@ export function Calendar({
   });
 
   const renderDays = (days: Date[], isMobile = false) =>
-    days.map((d) => (
-      <DayCard
-        id={isMobile ? `mob-${toISODate(d)}` : `dt-${toISODate(d)}`}
-        key={`${isMobile ? 'mob' : 'dt'}-${toISODate(d)}`}
-        d={d}
-        isCurrentMonth={d.getMonth() === currentDate.getMonth()}
-        dayEvents={eventsByDate[toISODate(d)] ?? []}
-        actionLabel={actionLabel}
-        onAction={onAction}
-        onEventClick={onEventClick}
-        onEventDrop={onEventDrop}
-        containerClass={isMobile ? 'min-h-[5rem]' : view === 'week' ? 'min-h-[12rem]' : 'min-h-[8rem]'}
-      />
-    ));
+    days.map((d) => {
+      let containerHeightClass = 'min-h-[8rem]';
+      if (isMobile) {
+        containerHeightClass = 'min-h-[5rem]';
+      } else if (view === 'week') {
+        containerHeightClass = 'min-h-[12rem]';
+      }
+
+      return (
+        <DayCard
+          id={isMobile ? `mob-${toISODate(d)}` : `dt-${toISODate(d)}`}
+          key={`${isMobile ? 'mob' : 'dt'}-${toISODate(d)}`}
+          d={d}
+          isCurrentMonth={d.getMonth() === currentDate.getMonth()}
+          dayEvents={eventsByDate[toISODate(d)] ?? []}
+          actionLabel={actionLabel}
+          onAction={onAction}
+          onEventClick={onEventClick}
+          onEventDrop={onEventDrop}
+          containerClass={containerHeightClass}
+        />
+      );
+    });
 
   const daysToDisplay = view === 'month' ? allDays : weekDays;
   const mobileDays =
@@ -354,7 +369,7 @@ export function Calendar({
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 sm:hidden">
           <Button
             onClick={goToToday}
-            color_name="primary"
+            variant="primary"
             className="shadow-2xl px-6 py-3 rounded-full font-bold animate-in fade-in slide-in-from-bottom-4"
           >
             Go to Today
@@ -369,7 +384,7 @@ export function Calendar({
           </h2>
           <Button
             onClick={goToToday}
-            color_name="light"
+            variant="ghost"
             className="hidden sm:flex text-[10px] px-2 h-7 py-0 uppercase font-bold tracking-wider"
           >
             Today
@@ -377,26 +392,42 @@ export function Calendar({
         </div>
 
         <div className="flex items-center justify-between sm:justify-end gap-2">
-          <div className="flex bg-surface-panel dark:bg-surface-panel-dark p-1 rounded-lg border border-border dark:border-border-dark">
+          <div
+            className="flex bg-card p-1 rounded-lg border border-border"
+            role="group"
+            aria-label="Calendar view switcher"
+          >
             <button
+              type="button"
               onClick={() => setView('month')}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${view === 'month' ? 'bg-primary text-white shadow-md' : 'text-text-secondary'}`}
+              aria-pressed={view === 'month'}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-primary ${
+                view === 'month'
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'text-muted-foreground hover:bg-muted/50'
+              }`}
             >
               Month
             </button>
             <button
+              type="button"
               onClick={() => setView('week')}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${view === 'week' ? 'bg-primary text-white shadow-md' : 'text-text-secondary'}`}
+              aria-pressed={view === 'week'}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-primary ${
+                view === 'week'
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'text-muted-foreground hover:bg-muted/50'
+              }`}
             >
               Week
             </button>
           </div>
 
           <div className="flex gap-1">
-            <Button onClick={goPrev} color_name="light" className="px-3">
+            <Button onClick={goPrev} variant="ghost" className="px-3">
               Prev
             </Button>
-            <Button onClick={goNext} color_name="light" className="px-3">
+            <Button onClick={goNext} variant="ghost" className="px-3">
               Next
             </Button>
           </div>
@@ -405,7 +436,7 @@ export function Calendar({
 
       <div className="hidden sm:grid sm:grid-cols-7 gap-3 mb-2 px-1 text-center">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-          <div key={d} className="text-xs font-bold uppercase tracking-widest text-text-secondary opacity-70">
+          <div key={d} className="text-xs font-bold uppercase tracking-widest text-muted-foreground opacity-70">
             {d}
           </div>
         ))}

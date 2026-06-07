@@ -16,14 +16,14 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
   const checkboxId = id || `checkbox-${Math.random().toString(36).slice(2, 9)}`;
 
   useEffect(() => {
-    if ('current' in resolvedRef && resolvedRef.current) {
+    if (resolvedRef && 'current' in resolvedRef && resolvedRef.current) {
       resolvedRef.current.indeterminate = !!indeterminate;
     }
   }, [resolvedRef, indeterminate]);
 
   return (
     <div
-      className={`relative flex items-start gap-3 p-3 rounded-xl transition-colors hover:bg-surface-base/50 dark:hover:bg-surface-base-dark/30 ${containerClassName}`}
+      className={`group relative flex items-start gap-3 p-3 rounded-xl transition-colors hover:bg-muted/50 cursor-pointer ${containerClassName}`}
     >
       <div className="flex h-6 items-center">
         <input
@@ -31,25 +31,44 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           ref={resolvedRef}
           type="checkbox"
           className={`
-            h-5 w-5 rounded border-border dark:border-border-dark
-            bg-surface-panel dark:bg-surface-panel-dark
-            text-primary focus:ring-primary/20 focus:ring-offset-0
-            transition-all cursor-pointer
+            /* 1. RESET CRITICAL: Strips native OS styling so rounded-md works 🎯 */
+            appearance-none shrink-0 
+            
+            /* 2. Layout & Shape Layouts */
+            h-5 w-5 rounded-md border border-border bg-card
+            
+            /* 3. Smooth Transitions & Interactive Cursors */
+            transition-all cursor-pointer relative
+            
+            /* 4. Automated Checkmark Layout via CSS Pseudo-elements */
+            checked:bg-primary checked:border-primary
+            checked:after:content-[''] checked:after:absolute checked:after:left-[6px] checked:after:top-[2px]
+            checked:after:w-[6px] checked:after:h-[10px] 
+            checked:after:border-r-2 checked:after:border-b-2 checked:after:border-primary-foreground
+            checked:after:rotate-45
+            
+            /* 5. Indeterminate States Layout Rules */
+            ${indeterminate ? "bg-primary border-primary after:content-[''] after:absolute after:left-[4px] after:top-[8px] after:w-[10px] after:h-[2px] after:bg-primary-foreground" : ''}
+            
+            /* 6. Interaction Ring Highlights */
+            focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none
+            group-hover:border-primary/50
             disabled:opacity-50 disabled:cursor-not-allowed
-            ${indeterminate ? 'bg-primary border-primary' : ''}
             ${className}
           `}
           {...props}
         />
       </div>
-      <div className="text-sm leading-6 flex-1 cursor-pointer">
-        <label
-          htmlFor={checkboxId}
-          className="font-bold text-text-primary dark:text-text-primary-dark cursor-pointer select-none"
-        >
+
+      <div className="text-sm leading-6 flex-1 select-none">
+        <label htmlFor={checkboxId} className="block font-bold text-foreground cursor-pointer">
           {label}
         </label>
-        {description && <div className="text-text-secondary dark:text-text-secondary-dark mt-0.5">{description}</div>}
+        {description && (
+          <label htmlFor={checkboxId} className="block text-muted-foreground mt-0.5 text-xs font-normal cursor-pointer">
+            {description}
+          </label>
+        )}
       </div>
     </div>
   );

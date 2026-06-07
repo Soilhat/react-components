@@ -1,8 +1,7 @@
 import { type ReactNode, useState } from 'react';
-import { useTheme } from '../Theme/useTheme';
-import { MoonIcon, SunIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { Bars3Icon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { Modal } from '../main';
+import { Modal, ThemeToggle, useTheme } from '../main';
 
 export type NavLink = {
   label: string;
@@ -12,182 +11,254 @@ export type NavLink = {
 
 type NavProps = {
   layout?: 'sidebar' | 'topbar';
-  logoURl?: string;
+  logo?: ReactNode;
   brandName?: string;
   links?: NavLink[];
   actions?: ReactNode;
+  userAvatarUrl?: string;
   mobileNavLinks?: NavLink[];
   children?: ReactNode;
+  menuName?: string;
 };
 
 export const Navbar = ({
   layout = 'sidebar',
-  logoURl,
+  logo,
   brandName,
   links,
   actions,
+  userAvatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100&auto=format&fit=crop',
   mobileNavLinks,
   children,
+  menuName = 'Menu',
 }: NavProps) => {
   const { toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-surface-base dark:bg-surface-base-dark transition-colors duration-300">
-      {/* --- TOPBAR VIEW --- */}
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 antialiased selection:bg-primary/20">
       {layout === 'topbar' && (
-        <header className="sticky top-0 z-40 w-full border-b border-border dark:border-border-dark bg-surface-panel/80 dark:bg-surface-panel-dark/80 backdrop-blur-md">
-          <div className="mx-auto max-w-[1600px] px-6 sm:px-10 h-16 flex items-center justify-between">
-            <Branding logo={logoURl} name={brandName} />
+        <header className="sticky top-0 z-40 w-full border-b border-border bg-card/80 backdrop-blur-md">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <Branding logo={logo} name={brandName} />
+
             <nav className="hidden md:flex items-center gap-1">
               <NavLinks links={links} direction="horizontal" />
             </nav>
-            <div className="flex items-center gap-2">
+
+            <div className="flex items-center gap-3">
               <ThemeToggle onToggle={toggleTheme} />
-              <div className="hidden md:block">{actions}</div>
+              {actions && <div className="hidden md:flex items-center gap-2">{actions}</div>}
+              <Avatar src={userAvatarUrl} />
             </div>
           </div>
         </header>
       )}
 
-      {/* --- SIDEBAR VIEW --- */}
       {layout === 'sidebar' && (
-        <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col border-r border-border dark:border-border-dark bg-surface-panel dark:bg-surface-panel-dark">
-          <div className="flex flex-col grow pt-5 pb-4 overflow-y-auto">
-            <Branding logo={logoURl} name={brandName} className="px-6 mb-2" />
-            <nav className="mt-8 flex-1 px-4">
-              <NavLinks links={links} direction="vertical" />
-            </nav>
-            <div className="px-4 py-4 border-t border-border dark:border-border-dark flex flex-col gap-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark uppercase">
-                  Theme
-                </span>
-                <ThemeToggle onToggle={toggleTheme} />
+        <>
+          {/* Universal Mobile/Tablet Top Utility Header */}
+          <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-card/80 px-4 backdrop-blur-md lg:hidden">
+            <Branding logo={logo} name={brandName} isMobileHeader />
+
+            <div className="flex items-center gap-2 ml-auto">
+              <ThemeToggle onToggle={toggleTheme} />
+              <Avatar src={userAvatarUrl} />
+            </div>
+          </header>
+
+          {/* Desktop Left Fixed/Collapsible Panel */}
+          <aside
+            className={`
+              hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:flex-col p-4 bg-background
+              transition-all duration-300 ease-in-out
+              ${isCollapsed ? 'lg:w-24' : 'lg:w-72'}
+            `}
+          >
+            <div className="relative flex flex-col grow h-full rounded-2xl border border-border bg-card shadow-xs overflow-x-hidden">
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="absolute top-5 -right-1 z-50 transform translate-x-1/2 p-1.5 rounded-full border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground shadow-xs transition-transform active:scale-90 cursor-pointer"
+                aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              >
+                {isCollapsed ? <ChevronRightIcon className="size-3.5" /> : <ChevronLeftIcon className="size-3.5" />}
+              </button>
+
+              <div className="pt-6 pb-2 shrink-0">
+                <Branding logo={logo} name={brandName} isCollapsed={isCollapsed} className="px-5" />
               </div>
+
+              <nav className="mt-6 flex-1 px-3">
+                <NavLinks links={links} direction="vertical" isCollapsed={isCollapsed} />
+              </nav>
+
+              {actions && !isCollapsed && (
+                <div className="p-4 border-t border-border/60 flex flex-col gap-2 animate-in fade-in duration-200">
+                  {actions}
+                </div>
+              )}
+            </div>
+          </aside>
+        </>
+      )}
+
+      <main
+        className={`
+          transition-all duration-300 ease-in-out pb-24 md:pb-8
+          ${layout === 'sidebar' ? (isCollapsed ? 'lg:pl-24' : 'lg:pl-72') : ''}
+        `}
+      >
+        <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6">{children}</div>
+      </main>
+
+      <div className="lg:hidden">
+        {actions && (
+          <div className="fixed bottom-20 right-4 z-40 flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="shadow-xl rounded-xl bg-primary text-primary-foreground [&_button]:bg-primary [&_button]:text-primary-foreground [&_button]:shadow-none [&_a]:bg-primary [&_a]:text-primary-foreground">
               {actions}
             </div>
           </div>
-        </aside>
-      )}
+        )}
 
-      {/* --- MAIN CONTENT --- */}
-      <main className={`${layout === 'sidebar' ? 'lg:pl-72' : ''} transition-all pb-24 md:pb-8`}>
-        <div className="mx-auto max-w-[1600px] w-full px-4 sm:px-10 lg:px-12 2xl:px-16 py-8">{children}</div>
-      </main>
-
-      {/* --- MOBILE NAV & ACTIONS MODAL --- */}
-      <div className="lg:hidden">
         <StandardizedBottomBar
           links={mobileNavLinks?.slice(0, 4) ?? links?.slice(0, 4)}
           onOpenMenu={() => setIsMenuOpen(true)}
+          menuName={menuName}
         />
 
         <Modal open={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
-          <Modal.Header>Menu</Modal.Header>
+          <Modal.Header>{menuName}</Modal.Header>
           <Modal.Body>
             <div className="space-y-6">
               <nav>
-                <p className="text-xs font-bold text-text-secondary uppercase mb-3 px-3">Navigation</p>
+                <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase mb-3 px-3">
+                  Navigation
+                </p>
                 <NavLinks links={links} direction="vertical" onLinkClick={() => setIsMenuOpen(false)} />
               </nav>
-
-              <div className="pt-4 border-t border-border dark:border-border-dark">
-                <div
-                  className="flex items-center justify-between p-4 rounded-2xl bg-surface-base/50 dark:bg-surface-base-dark/50 cursor-pointer"
-                  onClick={toggleTheme}
-                >
-                  <span className="text-sm font-bold">Switch Theme</span>
-                  <ThemeToggle onToggle={toggleTheme} />
-                </div>
-              </div>
             </div>
           </Modal.Body>
-          <Modal.Footer>
-            <div className="w-full flex flex-col gap-2">{actions}</div>
-          </Modal.Footer>
+
+          {actions && (
+            <Modal.Footer>
+              <div className="w-full flex flex-col gap-2 pt-2">{actions}</div>
+            </Modal.Footer>
+          )}
         </Modal>
       </div>
     </div>
   );
 };
 
-// --- INTERNAL HELPERS ---
+const Branding = ({
+  logo,
+  name,
+  className = '',
+  isMobileHeader = false,
+  isCollapsed = false,
+}: {
+  logo?: ReactNode;
+  name?: string;
+  className?: string;
+  isMobileHeader?: boolean;
+  isCollapsed?: boolean;
+}) => {
+  const renderLogo = () => {
+    if (!logo) return null;
+    if (typeof logo === 'string')
+      return <img src={logo} alt="Logo" className="h-8 w-8 rounded-xl object-cover shrink-0" />;
+    return (
+      <div className="h-8 w-8 rounded-xl border border-border/60 bg-muted/30 flex items-center justify-center text-sm font-black text-primary overflow-hidden shrink-0">
+        {logo}
+      </div>
+    );
+  };
+  return (
+    <div
+      className={`flex items-center gap-3 h-9 transition-all duration-300 ${className} ${isMobileHeader ? 'lg:hidden' : ''} ${isCollapsed ? 'justify-center' : 'justify-start'}`}
+    >
+      {renderLogo()}
+      {name && (
+        <span
+          className={`text-base font-black tracking-tight text-foreground uppercase italic select-none truncate transition-all duration-200 origin-left ${isCollapsed ? 'w-0 opacity-0 pointer-events-none ml-0' : 'w-auto opacity-100'}`}
+        >
+          {name}
+        </span>
+      )}
+    </div>
+  );
+};
 
-const Branding = ({ logo, name, className = '' }: { logo?: string; name?: string; className?: string }) => (
-  <div className={`flex items-center gap-3 ${className}`}>
-    {logo && <img src={logo} alt="" className="h-9 w-9 rounded-xl shadow-sm border border-border/50 object-cover" />}
-    {name && (
-      <span className="text-xl font-black tracking-tight text-text-primary dark:text-text-primary-dark uppercase italic">
-        {name}
-      </span>
-    )}
+const Avatar = ({ src }: { src: string }) => (
+  <div className="relative shrink-0 cursor-pointer group active:scale-95 transition-transform">
+    <img src={src} alt="User Profile" className="h-8 w-8 rounded-full ring-2 ring-border object-cover" />
+    <span className="absolute bottom-0 right-0 block h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-card" />
   </div>
-);
-
-const ThemeToggle = ({ onToggle }: { onToggle: () => void }) => (
-  <button
-    onClick={onToggle}
-    className="p-2 rounded-lg text-text-secondary dark:text-text-secondary-dark hover:bg-surface-base dark:hover:bg-surface-base-dark transition-all cursor-pointer"
-  >
-    <SunIcon className="size-5 hidden dark:block" />
-    <MoonIcon className="size-5 block dark:hidden" />
-  </button>
 );
 
 const NavLinks = ({
   links,
   direction,
   onLinkClick,
+  isCollapsed = false,
 }: {
   links?: NavLink[];
   direction: 'vertical' | 'horizontal';
   onLinkClick?: () => void;
+  isCollapsed?: boolean;
 }) => (
-  <ul className={`flex ${direction === 'vertical' ? 'flex-col gap-2' : 'flex-row gap-1'}`}>
+  <ul className={`flex ${direction === 'vertical' ? 'flex-col gap-1' : 'flex-row gap-1'}`}>
     {links?.map((l) => (
       <li key={l.label}>
         <RouterLink
           to={l.to}
           onClick={onLinkClick}
-          className={({ isActive }) => `
-            group flex items-center gap-3 px-3 py-2.5 text-sm font-bold transition-all rounded-xl
-            ${
-              isActive
-                ? 'bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark'
-                : 'text-text-secondary dark:text-text-secondary-dark hover:bg-surface-base dark:hover:bg-surface-base-dark'
-            }
-          `}
+          title={isCollapsed ? l.label : undefined}
+          className={({ isActive }) =>
+            `group flex items-center px-3.5 py-2.5 text-sm font-semibold transition-all rounded-xl focus-visible:outline-2 focus-visible:outline-primary ${direction === 'vertical' ? 'w-full' : ''} ${isCollapsed ? 'justify-center gap-0 px-2' : 'gap-3'} ${isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'}`
+          }
         >
-          {l.icon && <span className="size-5 shrink-0">{l.icon}</span>}
-          <span>{l.label}</span>
+          {l.icon && <span className="size-5 shrink-0 transition-transform group-hover:scale-105">{l.icon}</span>}
+          <span
+            className={`truncate transition-all duration-200 origin-left ${isCollapsed ? 'w-0 opacity-0 ml-0 overflow-hidden pointer-events-none' : 'w-auto opacity-100'}`}
+          >
+            {l.label}
+          </span>
         </RouterLink>
       </li>
     ))}
   </ul>
 );
 
-const StandardizedBottomBar = ({ links, onOpenMenu }: { links?: NavLink[]; onOpenMenu: () => void }) => (
-  <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 pb-safe border-t border-border dark:border-border-dark bg-surface-panel/90 dark:bg-surface-panel-dark/90 backdrop-blur-xl flex items-center justify-around lg:hidden">
+const StandardizedBottomBar = ({
+  links,
+  onOpenMenu,
+  menuName,
+}: {
+  links?: NavLink[];
+  onOpenMenu: () => void;
+  menuName: string;
+}) => (
+  <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 pb-safe border-t border-border bg-card/80 backdrop-blur-xl flex items-center justify-around">
     {links?.map((link) => (
       <RouterLink
         key={link.to}
         to={link.to}
-        className={({ isActive }) => `
-          flex flex-col items-center gap-1 transition-all duration-300 min-w-[64px]
-          ${isActive ? 'text-primary dark:text-primary-dark' : 'text-text-secondary dark:text-text-secondary-dark'}
-        `}
+        className={({ isActive }) =>
+          `flex flex-col items-center gap-1 transition-all duration-200 min-w-16 py-1 rounded-xl focus-visible:outline-2 focus-visible:outline-primary ${isActive ? 'text-primary scale-105 font-bold' : 'text-muted-foreground hover:text-foreground'}`
+        }
       >
         {link.icon && <span className="size-5">{link.icon}</span>}
-        <span className="text-[10px] font-bold uppercase tracking-tighter">{link.label}</span>
+        <span className="text-[10px] tracking-tight font-medium">{link.label}</span>
       </RouterLink>
     ))}
     <button
       onClick={onOpenMenu}
-      className="flex flex-col items-center gap-1 text-text-secondary dark:text-text-secondary-dark min-w-[64px] cursor-pointer"
+      className="flex flex-col items-center gap-1 text-muted-foreground min-w-16 cursor-pointer hover:text-foreground transition-colors py-1 focus-visible:outline-2 focus-visible:outline-primary"
     >
       <Bars3Icon className="size-5" />
-      <span className="text-[10px] font-bold uppercase tracking-tighter">Menu</span>
+      <span className="text-[10px] tracking-tight font-medium">{menuName}</span>
     </button>
   </nav>
 );

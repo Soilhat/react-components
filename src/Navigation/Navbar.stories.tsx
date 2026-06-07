@@ -28,11 +28,19 @@ const demoLinks = [
   { label: 'Account', to: '/account', icon: <UserIcon className="size-5" /> },
 ];
 
+const logo = (
+  <img
+    src="https://soilhat.github.io/react-components/assets/soilhat-logo.png"
+    alt="Logo"
+    className="size-6 rounded-full"
+  />
+);
+
 export const SidebarLayout: Story = {
   args: {
     layout: 'sidebar',
     brandName: 'Components',
-    logoURl: 'https://soilhat.github.io/react-components/assets/soilhat-logo.png',
+    logo: logo,
     links: demoLinks,
     actions: <Button className="w-full">Sign Out</Button>,
     children: (
@@ -40,10 +48,7 @@ export const SidebarLayout: Story = {
         <Text variant="h1">Dashboard</Text>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-32 bg-surface-panel dark:bg-surface-panel-dark border border-border dark:border-border-dark rounded-xl"
-            />
+            <div key={i} className="h-32 bg-card border border-border rounded-xl" />
           ))}
         </div>
       </div>
@@ -55,5 +60,6 @@ export const TopbarLayout: Story = {
   args: {
     ...SidebarLayout.args,
     layout: 'topbar',
+    actions: <Button variant="secondary">Sign Out</Button>,
   },
 };

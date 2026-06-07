@@ -10,7 +10,7 @@ const meta: Meta = {
   },
   decorators: [
     (Story) => (
-      <div className="p-10 max-w-md mx-auto min-h-100 bg-surface-base dark:bg-surface-base-dark rounded-3xl">
+      <div className="p-10 max-w-md mx-auto min-h-100 bg-background rounded-3xl">
         <Story />
       </div>
     ),

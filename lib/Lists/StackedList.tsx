@@ -1,61 +1,56 @@
-import type { ReactNode } from 'react';
 import React from 'react';
-import { PlusIcon } from '@heroicons/react/24/outline';
 
-interface StackedListProps {
-  children?: ReactNode;
-  onEmptyClick?: () => void;
-  emptyMessage?: string;
-  gridCols?: string;
+interface StackedListProps<T> {
+  items: T[];
+  renderItem: (item: T, index: number) => React.ReactNode;
+  emptyState?: React.ReactNode;
+  className?: string;
+  headerActions?: React.ReactNode;
+  title?: string;
 }
 
-export const StackedList = ({
-  children,
-  onEmptyClick,
-  emptyMessage = 'Add a new item',
-  gridCols,
-}: StackedListProps) => {
-  if (!children || React.Children.count(children) === 0) {
-    return (
-      <div className="px-4 py-12">
-        <div className="mx-auto max-w-lg">
-          <button
-            type="button"
-            onClick={onEmptyClick}
-            className={`
-              relative block w-full rounded-xl p-12 text-center transition-all duration-200
-              border-2 border-dashed border-border dark:border-border-dark
-              hover:border-primary dark:hover:border-primary-dark
-              hover:bg-surface-panel/50 dark:hover:bg-surface-panel-dark/50
-              focus:outline-none focus:ring-2 focus:ring-state-focus focus:ring-offset-2
-              group
-            `}
-          >
-            <PlusIcon className="mx-auto h-12 w-12 text-text-secondary group-hover:text-primary dark:group-hover:text-primary-dark transition-colors" />
-            <span className="mt-4 block text-sm font-semibold text-text-primary dark:text-text-primary-dark">
-              {emptyMessage}
-            </span>
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const childArray = React.Children.toArray(children);
+export function StackedList<T>({
+  items,
+  renderItem,
+  emptyState,
+  className = '',
+  headerActions,
+  title,
+}: Readonly<StackedListProps<T>>) {
+  const hasItems = items && items.length > 0;
 
   return (
-    /* Grille responsive utilisant tes variables d'espacement et de breakpoints */
-    <ul
-      className={`
-      list-none gap-6 grid 
-      ${gridCols || 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'}
-    `}
-    >
-      {childArray.map((child, index) => (
-        <li key={(child as React.ReactElement)?.key || index} className="flex flex-col h-full">
-          {child}
-        </li>
-      ))}
-    </ul>
+    <div className={`w-full rounded-2xl border border-border bg-card shadow-xs overflow-hidden ${className}`}>
+      {(title || headerActions) && (
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/10">
+          {title && <h4 className="text-sm font-bold text-foreground tracking-tight">{title}</h4>}
+          {headerActions && <div className="flex items-center gap-2">{headerActions}</div>}
+        </div>
+      )}
+
+      {hasItems ? (
+        <ul className="divide-y divide-border/60">
+          {items.map((item, index) => {
+            const hasId = typeof item === 'object' && item !== null && 'id' in item;
+            const itemKey = hasId ? String((item as { id: unknown }).id) : index;
+
+            return (
+              <li
+                key={itemKey}
+                className="px-5 py-3.5 hover:bg-muted/30 transition-colors duration-150 flex items-center justify-between gap-4"
+              >
+                {renderItem(item, index)}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        (emptyState ?? (
+          <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-60">No items found</span>
+          </div>
+        ))
+      )}
+    </div>
   );
-};
+}

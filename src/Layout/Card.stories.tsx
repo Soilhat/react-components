@@ -16,8 +16,13 @@ export const CardWithHeaderContentFooter: Story = {
     <Container>
       <Heading title="Card with header, content, and footer" />
       <Card>
-        <Card.Header title="Card Title" />
-        <div>This is the card content.</div>
+        <Card.Header>
+          <Card.Title>Card Title</Card.Title>
+          <Card.Description>This is a description for the card.</Card.Description>
+        </Card.Header>
+        <Card.Body>
+          <div>This is the card content.</div>
+        </Card.Body>
         <Card.Footer>Footer Content</Card.Footer>
       </Card>
     </Container>
@@ -29,7 +34,9 @@ export const CardWithOnlyContent: Story = {
     <Container>
       <Heading title="Card with only content" />
       <Card>
-        <div>Card without header or footer.</div>
+        <Card.Body>
+          <div>Card without header or footer.</div>
+        </Card.Body>
       </Card>
     </Container>
   ),
@@ -40,8 +47,12 @@ export const CardWithHeaderOnly: Story = {
     <Container>
       <Heading title="Card with header only" />
       <Card>
-        <Card.Header title="Card Title" />
-        <div>Content goes here.</div>
+        <Card.Header>
+          <Card.Title>Card Title</Card.Title>
+        </Card.Header>
+        <Card.Body>
+          <div>Content goes here.</div>
+        </Card.Body>
       </Card>
     </Container>
   ),
@@ -53,7 +64,6 @@ export const CardWithFooterOnly: Story = {
       <Heading title="Card with footer only" />
       <Card>
         <Card.Footer>Footer Only</Card.Footer>
-        <div>Content goes here.</div>
       </Card>
     </Container>
   ),

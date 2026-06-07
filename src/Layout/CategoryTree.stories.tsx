@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, CategoryTree } from '../../lib/main';
+import { Button, CategoryTree, type TreeItem } from '../../lib/main';
 import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 
 // Define a concrete type for our stories
-interface MockCategory {
+interface MockCategory extends TreeItem {
   id: string;
   name: string;
   parent_id?: string | null;
@@ -35,13 +35,9 @@ const mockCategories: MockCategory[] = [
 
 // 2. Base Template Logic
 const defaultRender = (item: MockCategory, level: number) => (
-  <div
-    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-surface-base dark:hover:bg-surface-base-dark transition-colors cursor-pointer`}
-  >
+  <div className={`flex items-center gap-3 p-2 rounded-lg hover:bg-background transition-colors cursor-pointer`}>
     <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
-    <span className={`${level === 0 ? 'font-bold' : 'text-text-secondary dark:text-text-secondary-dark'} text-sm`}>
-      {item.name}
-    </span>
+    <span className={`${level === 0 ? 'font-bold' : 'text-muted-foreground'} text-sm`}>{item.name}</span>
   </div>
 );
 
@@ -53,11 +49,7 @@ export const Default: Story = {
     items: mockCategories,
     renderItem: defaultRender,
   },
-  render: (args) => (
-    <div className="w-100 border p-4 rounded-xl bg-surface-panel dark:bg-surface-panel-dark shadow-sm">
-      <CategoryTree {...args} />
-    </div>
-  ),
+  render: (args) => <CategoryTree {...args} />,
 };
 
 /**
@@ -82,12 +74,12 @@ export const Interactive: Story = {
   args: {
     items: mockCategories,
     renderItem: (item, level) => (
-      <div className="flex items-center justify-between group p-2 hover:bg-surface-panel dark:hover:bg-surface-panel-dark rounded-md">
+      <div className="flex items-center justify-between group p-2 hover:bg-background rounded-md">
         <div className="flex items-center gap-2 text-sm font-medium">
-          {level > 0 && <span className="text-text-secondary dark:text-text-secondary-dark">↳</span>}
+          {level > 0 && <span className="text-muted-foreground">↳</span>}
           {item.name}
         </div>
-        <Button color_name="light">Edit</Button>
+        <Button variant="ghost">Edit</Button>
       </div>
     ),
   },
@@ -101,7 +93,7 @@ export const Expandable: Story = {
         onClick={hasChildren ? toggle : undefined}
         className={`
           flex items-center gap-2 p-2 rounded-lg transition-all cursor-pointer
-          ${level === 0 ? 'bg-surface-panel dark:bg-surface-panel-dark font-bold' : 'hover:bg-surface-base dark:hover:bg-surface-base-dark'}
+          ${level === 0 ? 'bg-card font-bold' : 'hover:bg-background'}
         `}
       >
         {/* Chevron Icon */}
@@ -112,15 +104,15 @@ export const Expandable: Story = {
         {/* Folder Icon */}
         {hasChildren ? (
           isExpanded ? (
-            <FolderOpenIcon className="h-4 w-4 text-primary dark:text-primary-dark" />
+            <FolderOpenIcon className="h-4 w-4 text-primary" />
           ) : (
-            <FolderIcon className="h-4 w-4 text-primary dark:text-primary-dark" />
+            <FolderIcon className="h-4 w-4 text-primary" />
           )
         ) : (
-          <div className="h-4 w-4 ml-1 border-b-2 border-l-2 border-border dark:border-border-dark rounded-bl-sm" />
+          <div className="h-4 w-4 ml-1 border-b-2 border-l-2 border-border rounded-bl-sm" />
         )}
 
-        <span className="text-sm text-text-secondary dark:text-text-secondary-dark">{item.name}</span>
+        <span className="text-sm text-muted-foreground">{item.name}</span>
       </div>
     ),
   },

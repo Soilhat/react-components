@@ -37,7 +37,7 @@ export const Text = <T extends React.ElementType = 'p'>({
         ${className}
       `
         .trim()
-        .replace(/\s+/g, ' ')} // Cleans up double spaces
+        .replaceAll(/\s+/g, ' ')}
       {...props}
     >
       {children}

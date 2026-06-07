@@ -1,11 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { StackedList, Card } from '../../lib/main';
+import { GridList, Card } from '../../lib/main';
 
 const meta: Meta = {
-  title: 'Lists/StackedList',
-  component: StackedList,
+  title: 'Lists/GridList',
+  component: GridList,
   parameters: {
     layout: 'fullscreen',
+  },
+  argTypes: {
+    items: { control: 'object' },
+    columns: { control: 'number' },
+    gap: { control: 'select', options: ['sm', 'md', 'lg', 'xl'] },
   },
 };
 export default meta;
@@ -32,9 +37,19 @@ const renderItem = (item: (typeof items)[0]) => (
 );
 
 export const Default: Story = {
-  render: () => <StackedList items={items} renderItem={renderItem} />,
+  args: {
+    items,
+    renderItem,
+    columns: 3,
+    gap: 'md',
+  },
 };
 
 export const Empty: Story = {
-  render: () => <StackedList items={[]} renderItem={renderItem} />,
+  args: {
+    items: [],
+    renderItem,
+    columns: 3,
+    gap: 'md',
+  },
 };

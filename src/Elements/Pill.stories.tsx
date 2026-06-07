@@ -54,7 +54,7 @@ export const FilterBar: Story = {
     const categories = ['all', 'shopping', 'health', 'travel', 'food'];
 
     return (
-      <div className="flex items-center gap-2 bg-surface-panel dark:bg-surface-panel-dark p-4 rounded-xl">
+      <div className="flex items-center gap-2 bg-background p-4 rounded-xl">
         {categories.map((cat) => (
           <Pill
             key={cat}

@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - develop
+      - 'v[0-9]+.x'
   pull_request:
     branches:
       - main
       - develop
+      - 'v[0-9]+.x'
 
 jobs:
   lint:

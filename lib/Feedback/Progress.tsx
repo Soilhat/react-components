@@ -30,37 +30,38 @@ export const Progress = ({
     lg: 'h-4',
   };
 
+  // Maps target properties directly into cross-browser engine pseudo classes
   const variants = {
-    primary: 'bg-primary dark:bg-primary-dark',
-    success: 'bg-state-success dark:bg-state-success-dark',
-    info: 'bg-state-info dark:bg-state-info-dark',
+    primary: '[&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary',
+    success: '[&::-webkit-progress-value]:bg-success [&::-moz-progress-bar]:bg-success',
+    info: '[&::-webkit-progress-value]:bg-info [&::-moz-progress-bar]:bg-info',
   };
 
   return (
     <div className={`w-full ${className}`}>
       {(label || showValue) && (
         <div className="flex justify-between items-end mb-1.5 px-1">
-          {label && <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</span>}
-          {showValue && (
-            <span className="text-xs font-mono font-bold text-text-primary">{Math.round(percentage)}%</span>
-          )}
+          {label && <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{label}</span>}
+          {showValue && <span className="text-xs font-mono font-bold text-foreground">{Math.round(percentage)}%</span>}
         </div>
       )}
 
       {/* Track */}
-      <div
-        className={`w-full ${heights[size]} bg-surface-base dark:bg-surface-base-dark rounded-full overflow-hidden border border-border/50 dark:border-border-dark/50`}
-      >
-        {/* Indicator */}
-        <div
-          className={`h-full ${variants[variant]} transition-all duration-500 ease-out rounded-full`}
-          style={{ width: `${percentage}%` }}
-          role="progressbar"
+      <div className={`w-full ${heights[size]} flex items-center`}>
+        <progress
+          className={`
+            w-full h-full appearance-none rounded-full overflow-hidden border border-border/50
+            bg-muted text-primary
+            [&::-webkit-progress-bar]:bg-muted
+            ${variants[variant]}
+            transition-all duration-500 ease-out
+          `}
           aria-label={label}
-          aria-valuenow={value}
-          aria-valuemin={0}
-          aria-valuemax={max}
-        />
+          value={value}
+          max={max}
+        >
+          {Math.round(percentage)}%
+        </progress>
       </div>
     </div>
   );

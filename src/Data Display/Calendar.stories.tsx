@@ -56,13 +56,13 @@ const initialEvents = {
  */
 export const DragAndDropInteractionTest: Story = {
   render: () => {
-    const [events, setEvents] = useState<Record<string, unknown[]>>(initialEvents);
+    const [events, setEvents] = useState<Record<string, { id: string; title: string }[]>>(initialEvents);
 
     const handleEventDrop = (eventId: string, targetDate: Date) => {
       const targetIso = iso(targetDate);
       setEvents((prev) => {
         const next = { ...prev };
-        let foundItem: unknown = null;
+        let foundItem: { id: string; title: string } | null = null;
 
         // Logic to find and pluck the event from its original date
         Object.keys(next).forEach((dateKey) => {
@@ -79,7 +79,7 @@ export const DragAndDropInteractionTest: Story = {
     };
 
     return (
-      <div className="p-8 bg-surface-base dark:bg-surface-base-dark min-h-screen">
+      <div className="p-8 bg-background min-h-screen">
         <Calendar
           year={today.getFullYear()}
           month={today.getMonth()}

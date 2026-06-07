@@ -1,12 +1,12 @@
 export { Calendar } from './Data Display';
 export { Button, Dropdown, Text, Pill } from './Elements';
-export { Card, Container, Heading, Divider, CategoryTree } from './Layout';
+export { Card, Container, Heading, Divider, CategoryTree, type TreeItem } from './Layout';
 export { Form, Input, Textarea, ImageUploader, Select, Checkbox, TagInput, SearchableCombobox } from './Forms';
 export type { Option } from './Forms';
 export { Toast, type ToastType, ToastProvider, useToast, Progress, ErrorBoundary } from './Feedback';
 export { Navbar, type NavLink, InfiniteScroll } from './Navigation';
-export { useTheme } from './Theme';
-export { StackedList } from './Lists';
+export { useTheme, ThemeToggle } from './Theme';
+export { StackedList, GridList, SwipeableRow } from './Lists';
 export { Modal } from './Overlays';
 export { genId } from './utils';
 
