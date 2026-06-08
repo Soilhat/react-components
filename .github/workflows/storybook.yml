@@ -14,10 +14,13 @@ jobs:
       github.event.workflow_run.event != 'pull_request' &&
       (github.event.workflow_run.head_branch == 'main' || (startsWith(github.event.workflow_run.head_branch, 'v') && endsWith(github.event.workflow_run.head_branch, '.x')))
 
-    steps:
-      - uses: actions/checkout@v4
+    permissions:
+      contents: write
 
-      - uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
