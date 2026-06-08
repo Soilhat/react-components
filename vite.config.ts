@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
+import { playwright } from '@vitest/browser-playwright';
 
 import path, { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -71,7 +72,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [
               {
                 browser: 'chromium',
