@@ -1,5 +1,5 @@
 import { useState, useMemo, type KeyboardEvent, useRef, useEffect } from 'react';
-import { XMarkIcon } from '@heroicons/react/20/solid';
+import { X } from 'lucide-react';
 import { genId } from '../utils';
 
 interface TagInputProps {
@@ -85,7 +85,7 @@ export const TagInput = ({ label, placeholder, tags, suggestions = [], onChange,
           >
             {tag}
             <button type="button" onClick={() => removeTag(tag)} className="hover:text-popover/80 transition-colors">
-              <XMarkIcon className="h-3.5 w-3.5" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </span>
         ))}

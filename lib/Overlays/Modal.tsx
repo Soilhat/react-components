@@ -1,5 +1,5 @@
 import React, { type ReactNode, useEffect, useRef } from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { X } from 'lucide-react';
 
 interface SubComponentProps {
   children: ReactNode;
@@ -132,7 +132,7 @@ export const Modal: ModalComponent = ({ open, children, onClose, stickyHeader = 
           className="absolute top-4 right-4 z-1010 p-2 rounded-full hover:bg-muted transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           aria-label="Close modal"
         >
-          <XMarkIcon className="h-5 w-5" />
+          <X className="h-5 w-5" />
         </button>
 
         {header && React.isValidElement(header)

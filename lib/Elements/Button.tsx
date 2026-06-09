@@ -1,11 +1,13 @@
 import React from 'react';
+import { Loader } from 'lucide-react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   children: React.ReactNode;
+  isLoading?: boolean;
 }
 
-export const Button = ({ variant = 'primary', children, className = '', ...props }: ButtonProps) => {
+export const Button = ({ variant = 'primary', children, className = '', isLoading, ...props }: ButtonProps) => {
   const baseStyles =
     'px-4 py-2 rounded-lg font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50';
 
@@ -17,8 +19,12 @@ export const Button = ({ variant = 'primary', children, className = '', ...props
   };
 
   return (
-    <button className={`${baseStyles} ${variants[variant]} ${className}`} {...props}>
-      {children}
+    <button
+      className={`${baseStyles} ${variants[variant]} ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+      {...props}
+      disabled={isLoading || props.disabled}
+    >
+      {isLoading ? <Loader className="animate-spin" /> : children}
     </button>
   );
 };

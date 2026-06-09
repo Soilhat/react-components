@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Pill } from '../../lib/main';
-import { FireIcon, TagIcon } from '@heroicons/react/24/outline';
+import { Flame, Tag } from 'lucide-react';
 
 const meta: Meta<typeof Pill> = {
   title: 'Elements/Pill',
@@ -41,7 +41,7 @@ export const WithIcon: Story = {
     label: 'Critical',
     active: true,
     variant: 'danger',
-    icon: <FireIcon />,
+    icon: <Flame />,
   },
 };
 
@@ -57,7 +57,7 @@ const FilterBarStory = () => {
           label={cat}
           active={selected === cat}
           onClick={() => setSelected(cat)}
-          icon={cat === 'all' ? <TagIcon /> : undefined}
+          icon={cat === 'all' ? <Tag /> : undefined}
         />
       ))}
     </div>

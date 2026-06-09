@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { SwipeableRow } from '../../lib/main';
-import { TrashIcon, ArchiveBoxIcon, CheckIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { Trash2, Archive, Check, Mail } from 'lucide-react';
 import { expect, fn, within, fireEvent } from 'storybook/test';
 
 const meta: Meta<typeof SwipeableRow> = {
@@ -33,7 +33,7 @@ const RowMockupTemplate = ({ title, description }: { title: string; description:
   <div className="flex items-center justify-between p-4 border-b border-border select-none w-full">
     <div className="flex gap-3 items-center min-w-0">
       <div className="size-10 rounded-full bg-muted flex items-center justify-center shrink-0">
-        <EnvelopeIcon className="size-5 text-foreground" />
+        <Mail className="size-5 text-foreground" />
       </div>
       <div className="min-w-0">
         <p className="text-sm font-bold text-foreground truncate">{title}</p>
@@ -53,7 +53,7 @@ export const Default: Story = {
     leftActions: [
       {
         label: 'Archive',
-        icon: <ArchiveBoxIcon className="size-5 text-primary-foreground" />,
+        icon: <Archive className="size-5 text-primary-foreground" />,
         color: 'var(--color-primary)',
         onClick: fn(),
       },
@@ -61,7 +61,7 @@ export const Default: Story = {
     rightActions: [
       {
         label: 'Delete',
-        icon: <TrashIcon className="size-5 text-danger-foreground" />,
+        icon: <Trash2 className="size-5 text-danger-foreground" />,
         color: 'var(--color-danger)',
         onClick: fn(),
       },
@@ -117,7 +117,7 @@ export const SuccessAction: Story = {
     leftActions: [
       {
         label: 'Complete',
-        icon: <CheckIcon className="size-5 text-success-foreground" />,
+        icon: <Check className="size-5 text-success-foreground" />,
         color: 'var(--color-success)',
         onClick: fn(),
       },

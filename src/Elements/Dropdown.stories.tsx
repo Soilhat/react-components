@@ -1,12 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Dropdown } from '../../lib/main';
-import {
-  UserIcon,
-  PencilSquareIcon,
-  TrashIcon,
-  ArchiveBoxIcon,
-  ArrowRightStartOnRectangleIcon,
-} from '@heroicons/react/20/solid';
+import { User, Edit, Trash2, Archive, LogOut } from 'lucide-react';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'Elements/Dropdown',
@@ -37,12 +31,12 @@ export const Default: Story = {
         items: [
           {
             label: 'View Profile',
-            icon: <UserIcon className="h-5 w-5" />,
+            icon: <User className="h-5 w-5" />,
             onClick: () => console.log('Profile clicked'),
           },
           {
             label: 'Edit Recipe',
-            icon: <PencilSquareIcon className="h-5 w-5" />,
+            icon: <Edit className="h-5 w-5" />,
             onClick: () => console.log('Edit clicked'),
           },
         ],
@@ -51,7 +45,7 @@ export const Default: Story = {
         items: [
           {
             label: 'Delete',
-            icon: <TrashIcon className="h-5 w-5" />,
+            icon: <Trash2 className="h-5 w-5" />,
             isDanger: true,
             onClick: () => alert('Delete action triggered'),
           },
@@ -76,12 +70,12 @@ export const ComplexMenu: Story = {
     sections: [
       {
         items: [
-          { label: 'Archive', icon: <ArchiveBoxIcon className="h-5 w-5" /> },
+          { label: 'Archive', icon: <Archive className="h-5 w-5" /> },
           { label: 'Move to Folder', disabled: true },
         ],
       },
       {
-        items: [{ label: 'Logout', icon: <ArrowRightStartOnRectangleIcon className="h-5 w-5" />, isDanger: true }],
+        items: [{ label: 'Logout', icon: <LogOut className="h-5 w-5" />, isDanger: true }],
       },
     ],
   },

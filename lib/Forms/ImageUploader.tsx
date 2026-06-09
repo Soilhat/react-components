@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect, type ChangeEvent } from 'react';
 import { Card } from '../Layout/Card';
-import { ArrowUpTrayIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Upload, RotateCw } from 'lucide-react';
 
 interface ImageUploaderProps {
   initialImageUrl?: string;
@@ -69,13 +69,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           >
             {isUploading ? (
               <div className="flex flex-col items-center gap-2">
-                <ArrowPathIcon className="h-10 w-10 animate-spin text-primary" />
+                <RotateCw className="h-10 w-10 animate-spin text-primary" />
                 <span className="text-xs font-bold uppercase tracking-widest text-primary">Uploading...</span>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-2 scale-90 group-hover:scale-100 transition-transform">
                 <div className="p-4 rounded-full bg-card shadow-xl text-primary">
-                  <ArrowUpTrayIcon className="h-6 w-6" />
+                  <Upload className="h-6 w-6" />
                 </div>
                 <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg">
                   Change Image

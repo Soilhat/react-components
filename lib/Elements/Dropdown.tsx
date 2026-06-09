@@ -1,6 +1,6 @@
 import { Menu, Transition, MenuItem, MenuButton, MenuItems } from '@headlessui/react';
 import { Fragment, useMemo, type ReactNode } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { ChevronDown } from 'lucide-react';
 import { genId } from '../utils';
 
 export interface DropdownItem {
@@ -49,7 +49,7 @@ export function Dropdown({ label, sections, buttonVariant = 'primary' }: Readonl
           aria-invalid="false"
         >
           {label}
-          <ChevronDownIcon
+          <ChevronDown
             className="-mr-1 h-5 w-5 transition-transform duration-200 data-active:rotate-180"
             aria-hidden="true"
           />

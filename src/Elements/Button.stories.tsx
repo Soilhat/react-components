@@ -12,6 +12,14 @@ const meta = {
   },
   args: {
     onClick: fn(),
+    isLoading: false,
+    variant: 'primary',
+  },
+  argTypes: {
+    variant: {
+      control: { type: 'select' },
+      options: ['primary', 'secondary', 'danger', 'ghost'],
+    },
   },
 } satisfies Meta<typeof ButtonEl>;
 
@@ -26,5 +34,12 @@ export const Button: Story = {
     await userEvent.click(canvas.getByRole('button'));
 
     await expect(args.onClick).toHaveBeenCalled();
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    children: 'Button',
+    isLoading: true,
   },
 };

@@ -1,7 +1,7 @@
 import type { Meta } from '@storybook/react-vite';
 import { Modal as ModalEl, Navbar, Button, Text } from '../../lib/main';
 import { useState } from 'react';
-import { HomeIcon, UserIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
+import { Home, User, MessageCircle } from 'lucide-react';
 import { BrowserRouter } from 'react-router-dom';
 
 /**
@@ -155,9 +155,9 @@ export const MobileBottomSheetFlow = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Home', to: '/', icon: <HomeIcon /> },
-    { label: 'Messages', to: '/messages', icon: <ChatBubbleLeftRightIcon /> },
-    { label: 'Profile', to: '/profile', icon: <UserIcon /> },
+    { label: 'Home', to: '/', icon: <Home /> },
+    { label: 'Messages', to: '/messages', icon: <MessageCircle /> },
+    { label: 'Profile', to: '/profile', icon: <User /> },
   ];
 
   return (

@@ -7,7 +7,7 @@ import {
   ComboboxOptions,
   Transition,
 } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { Check, ChevronsUpDown, Search } from 'lucide-react';
 
 export interface ComboOption {
   value: string | number;
@@ -72,7 +72,7 @@ export function SearchableCombobox({
             ${error ? 'border-danger ' : 'border-border focus-within:ring-4 focus-within:ring-primary/10 focus-within:border-primary'}
           `}
           >
-            <MagnifyingGlassIcon className="ml-4 h-4 w-4 text-muted-foreground/50" />
+            <Search className="ml-4 h-4 w-4 text-muted-foreground/50" />
 
             <ComboboxInput
               className="w-full border-none bg-transparent py-3 pl-2 pr-10 text-sm text-foreground focus:ring-0 outline-none"
@@ -82,7 +82,7 @@ export function SearchableCombobox({
             />
 
             <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronUpDownIcon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+              <ChevronsUpDown className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
             </ComboboxButton>
           </div>
 
@@ -120,7 +120,7 @@ export function SearchableCombobox({
                         </div>
                         {selected && (
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
-                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                            <Check className="h-5 w-5" aria-hidden="true" />
                           </span>
                         )}
                       </>

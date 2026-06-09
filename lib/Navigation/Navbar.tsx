@@ -1,5 +1,5 @@
 import { type ReactNode, useState } from 'react';
-import { Bars3Icon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { Menu, ChevronLeft, ChevronRight } from 'lucide-react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { Modal, ThemeToggle, useTheme } from '../main';
 
@@ -82,7 +82,7 @@ export const Navbar = ({
                 className="absolute top-5 -right-1 z-50 transform translate-x-1/2 p-1.5 rounded-full border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground shadow-xs transition-transform active:scale-90 cursor-pointer"
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               >
-                {isCollapsed ? <ChevronRightIcon className="size-3.5" /> : <ChevronLeftIcon className="size-3.5" />}
+                {isCollapsed ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
               </button>
 
               <div className="pt-6 pb-2 shrink-0">
@@ -257,7 +257,7 @@ const StandardizedBottomBar = ({
       onClick={onOpenMenu}
       className="flex flex-col items-center gap-1 text-muted-foreground min-w-16 cursor-pointer hover:text-foreground transition-colors py-1 focus-visible:outline-2 focus-visible:outline-primary"
     >
-      <Bars3Icon className="size-5" />
+      <Menu className="size-5" />
       <span className="text-[10px] tracking-tight font-medium">{menuName}</span>
     </button>
   </nav>

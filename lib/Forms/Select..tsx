@@ -1,6 +1,6 @@
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from '@headlessui/react';
 import { Fragment, useMemo } from 'react';
-import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/20/solid';
+import { ChevronsUpDown, Check } from 'lucide-react';
 import { genId } from '../utils';
 
 export interface Option {
@@ -63,7 +63,7 @@ export function Select({
               {selectedOption ? selectedOption.label : placeholder}
             </span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-              <ChevronUpDownIcon className="h-5 w-5 text-muted-foreground/50" aria-hidden="true" />
+              <ChevronsUpDown className="h-5 w-5 text-muted-foreground/50" aria-hidden="true" />
             </span>
           </ListboxButton>
 
@@ -97,7 +97,7 @@ export function Select({
 
                       {selected && (
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
-                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          <Check className="h-5 w-5" aria-hidden="true" />
                         </span>
                       )}
                     </>

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, Text, Navbar } from '../../lib/main';
-import { HomeIcon, ArrowsRightLeftIcon, UserIcon } from '@heroicons/react/24/outline';
+import { Home, ArrowLeftRight, User } from 'lucide-react';
 import { MemoryRouter } from 'react-router-dom';
 
 const meta: Meta<typeof Navbar> = {
@@ -23,9 +23,9 @@ export default meta;
 type Story = StoryObj<typeof Navbar>;
 
 const demoLinks = [
-  { label: 'Dashboard', to: '/', icon: <HomeIcon className="size-5" /> },
-  { label: 'Transactions', to: '/transactions', icon: <ArrowsRightLeftIcon className="size-5" /> },
-  { label: 'Account', to: '/account', icon: <UserIcon className="size-5" /> },
+  { label: 'Dashboard', to: '/', icon: <Home className="size-5" /> },
+  { label: 'Transactions', to: '/transactions', icon: <ArrowLeftRight className="size-5" /> },
+  { label: 'Account', to: '/account', icon: <User className="size-5" /> },
 ];
 
 const logo = (

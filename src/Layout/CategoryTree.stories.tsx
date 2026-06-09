@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, CategoryTree, type TreeItem } from '../../lib/main';
-import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
+import { ChevronRight, Folder, FolderOpen } from 'lucide-react';
 
 // Define a concrete type for our stories
 interface MockCategory extends TreeItem {
@@ -89,11 +89,7 @@ const FolderIconRender = ({ isExpanded, hasChildren }: { isExpanded: boolean; ha
   if (!hasChildren) {
     return <div className="h-4 w-4 ml-1 border-b-2 border-l-2 border-border rounded-bl-sm" />;
   }
-  return isExpanded ? (
-    <FolderOpenIcon className="h-4 w-4 text-primary" />
-  ) : (
-    <FolderIcon className="h-4 w-4 text-primary" />
-  );
+  return isExpanded ? <FolderOpen className="h-4 w-4 text-primary" /> : <Folder className="h-4 w-4 text-primary" />;
 };
 
 export const Expandable: Story = {
@@ -110,7 +106,7 @@ export const Expandable: Story = {
       >
         {/* Chevron Icon */}
         {hasChildren && (
-          <ChevronRightIcon className={`h-4 w-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
+          <ChevronRight className={`h-4 w-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
         )}
 
         {/* Folder Icon */}
