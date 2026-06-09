@@ -7,5 +7,5 @@ interface ProgressProps {
     className?: string;
     variant?: 'primary' | 'success' | 'info';
 }
-export declare const Progress: ({ value, max, label, showValue, size, className, variant, }: ProgressProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Progress: ({ value, max, label, showValue, size, className, variant, }: ProgressProps) => import("react").JSX.Element;
 export {};

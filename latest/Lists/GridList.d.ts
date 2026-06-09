@@ -7,5 +7,5 @@ interface GridListProps<T> {
     columns?: 1 | 2 | 3 | 4 | 5 | 6;
     gap?: 'sm' | 'md' | 'lg' | 'xl';
 }
-export declare function GridList<T>({ items, renderItem, emptyState, className, columns, gap, }: Readonly<GridListProps<T>>): string | number | bigint | boolean | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | import("react/jsx-runtime").JSX.Element;
+export declare function GridList<T>({ items, renderItem, emptyState, className, columns, gap, }: Readonly<GridListProps<T>>): string | number | bigint | boolean | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | React.JSX.Element;
 export {};

@@ -6,4 +6,4 @@ export interface ShowOptions {
 }
 export declare function ToastProvider({ children }: Readonly<{
     children: React.ReactNode;
-}>): import("react/jsx-runtime").JSX.Element;
+}>): React.JSX.Element;

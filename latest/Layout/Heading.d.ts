@@ -18,5 +18,5 @@ export type HeadingProps = {
     meta?: meta[];
     filters?: filters[];
 };
-export declare const Heading: ({ title, variant, meta, filters, children }: HeadingProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Heading: ({ title, variant, meta, filters, children }: HeadingProps) => import("react").JSX.Element;
 export {};

@@ -5,4 +5,4 @@ export interface ToastProps {
     type?: ToastType;
     onClose: () => void;
 }
-export declare function Toast({ message, type, onClose }: Readonly<ToastProps>): import("react/jsx-runtime").JSX.Element;
+export declare function Toast({ message, type, onClose }: Readonly<ToastProps>): React.JSX.Element;

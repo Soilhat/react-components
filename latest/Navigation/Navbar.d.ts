@@ -15,5 +15,5 @@ type NavProps = {
     children?: ReactNode;
     menuName?: string;
 };
-export declare const Navbar: ({ layout, logo, brandName, links, actions, userAvatarUrl, mobileNavLinks, children, menuName, }: NavProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Navbar: ({ layout, logo, brandName, links, actions, userAvatarUrl, mobileNavLinks, children, menuName, }: NavProps) => import("react").JSX.Element;
 export {};

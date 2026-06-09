@@ -7,5 +7,5 @@ interface StackedListProps<T> {
     headerActions?: React.ReactNode;
     title?: string;
 }
-export declare function StackedList<T>({ items, renderItem, emptyState, className, headerActions, title, }: Readonly<StackedListProps<T>>): import("react/jsx-runtime").JSX.Element;
+export declare function StackedList<T>({ items, renderItem, emptyState, className, headerActions, title, }: Readonly<StackedListProps<T>>): React.JSX.Element;
 export {};

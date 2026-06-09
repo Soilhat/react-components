@@ -18,5 +18,5 @@ export type EventObject = {
     items?: unknown[];
     events?: unknown[];
 };
-export declare function Calendar({ year, month, title, onPrev, onNext, onAction, onEventDrop, onEventClick, eventsByDate, actionLabel, initialView, }: Readonly<CalendarProps>): import("react/jsx-runtime").JSX.Element;
+export declare function Calendar({ year, month, title, onPrev, onNext, onAction, onEventDrop, onEventClick, eventsByDate, actionLabel, initialView, }: Readonly<CalendarProps>): import("react").JSX.Element;
 export {};

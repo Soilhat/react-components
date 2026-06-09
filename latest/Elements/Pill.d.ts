@@ -9,5 +9,5 @@ interface PillProps {
     className?: string;
     disabled?: boolean;
 }
-export declare const Pill: ({ label, active, onClick, icon, variant, className, disabled, }: PillProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Pill: ({ label, active, onClick, icon, variant, className, disabled, }: PillProps) => React.JSX.Element;
 export {};

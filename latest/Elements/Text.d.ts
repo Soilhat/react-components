@@ -7,5 +7,5 @@ interface TextProps<T extends React.ElementType> {
     className?: string;
     children: React.ReactNode;
 }
-export declare const Text: <T extends React.ElementType = "p">({ as, variant, bold, className, children, ...props }: TextProps<T> & React.ComponentPropsWithoutRef<T>) => import("react/jsx-runtime").JSX.Element;
+export declare const Text: <T extends React.ElementType = "p">({ as, variant, bold, className, children, ...props }: TextProps<T> & React.ComponentPropsWithoutRef<T>) => React.JSX.Element;
 export {};

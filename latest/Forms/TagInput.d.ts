@@ -6,5 +6,5 @@ interface TagInputProps {
     onChange: (tags: string[]) => void;
     className?: string;
 }
-export declare const TagInput: ({ label, placeholder, tags, suggestions, onChange, className }: TagInputProps) => import("react/jsx-runtime").JSX.Element;
+export declare const TagInput: ({ label, placeholder, tags, suggestions, onChange, className }: TagInputProps) => import("react").JSX.Element;
 export {};

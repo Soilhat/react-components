@@ -22,5 +22,5 @@ interface CategoryTreeProps<T extends TreeItem> {
     leftSwipeActions?: SwipeAction<T>[];
     rightSwipeActions?: SwipeAction<T>[];
 }
-export declare function CategoryTree<T extends TreeItem>({ items, parentId, level, renderItem, leftSwipeActions, rightSwipeActions, }: Readonly<CategoryTreeProps<T>>): import("react/jsx-runtime").JSX.Element | null;
+export declare function CategoryTree<T extends TreeItem>({ items, parentId, level, renderItem, leftSwipeActions, rightSwipeActions, }: Readonly<CategoryTreeProps<T>>): React.JSX.Element | null;
 export {};

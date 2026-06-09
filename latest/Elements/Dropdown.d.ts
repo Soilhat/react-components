@@ -16,5 +16,5 @@ interface DropdownProps {
     sections: DropdownSection[];
     buttonVariant?: 'primary' | 'secondary' | 'light';
 }
-export declare function Dropdown({ label, sections, buttonVariant }: Readonly<DropdownProps>): import("react/jsx-runtime").JSX.Element;
+export declare function Dropdown({ label, sections, buttonVariant }: Readonly<DropdownProps>): import("react").JSX.Element;
 export {};

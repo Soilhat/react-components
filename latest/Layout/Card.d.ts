@@ -3,26 +3,26 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
 }
 export declare const Card: {
-    ({ children, className, ...props }: CardProps): import("react/jsx-runtime").JSX.Element;
+    ({ children, className, ...props }: CardProps): React.JSX.Element;
     Header({ children, className }: {
         children: React.ReactNode;
         className?: string;
-    }): import("react/jsx-runtime").JSX.Element;
+    }): React.JSX.Element;
     Title({ children, className }: {
         children: React.ReactNode;
         className?: string;
-    }): import("react/jsx-runtime").JSX.Element;
+    }): React.JSX.Element;
     Description({ children, className }: {
         children: React.ReactNode;
         className?: string;
-    }): import("react/jsx-runtime").JSX.Element;
+    }): React.JSX.Element;
     Body({ children, className }: {
         children: React.ReactNode;
         className?: string;
-    }): import("react/jsx-runtime").JSX.Element;
+    }): React.JSX.Element;
     Footer({ children, className }: {
         children: React.ReactNode;
         className?: string;
-    }): import("react/jsx-runtime").JSX.Element;
+    }): React.JSX.Element;
 };
 export default Card;

@@ -3,5 +3,5 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
     children: React.ReactNode;
 }
-export declare const Button: ({ variant, children, className, ...props }: ButtonProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Button: ({ variant, children, className, ...props }: ButtonProps) => React.JSX.Element;
 export {};
