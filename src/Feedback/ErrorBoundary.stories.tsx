@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ErrorBoundary, Button, Text, Heading } from '../../lib/main';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 /**
  * ### ErrorBoundary Component
@@ -47,7 +48,9 @@ const Crasher = ({ shouldCrash }: { shouldCrash: boolean }) => {
   }
   return (
     <div className="p-6 bg-success/10 border border-success/20 rounded-xl text-center">
-      <Text className="text-success font-bold">Everything is running smoothly.</Text>
+      <Text className="text-success font-bold" data-testid="healthy-status">
+        Everything is running smoothly.
+      </Text>
     </div>
   );
 };
@@ -75,6 +78,21 @@ const FullPageCrashStory = () => {
 
 export const FullPageCrash: StoryObj<typeof ErrorBoundary> = {
   render: () => <FullPageCrashStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByTestId('healthy-status')).toBeInTheDocument();
+
+    const triggerBtn = canvas.getByRole('button', { name: /trigger fatal error/i });
+    await userEvent.click(triggerBtn);
+
+    await expect(canvas.getByText('⚠️ Something Went Wrong')).toBeInTheDocument();
+
+    const tryAgainBtn = canvas.getByRole('button', { name: /try again/i });
+    await userEvent.click(tryAgainBtn);
+
+    await expect(canvas.getByTestId('healthy-status')).toBeInTheDocument();
+  },
 };
 
 /**
@@ -105,7 +123,9 @@ const WidgetCrashStory = () => {
           </ErrorBoundary>
         </div>
         <div className="p-4 rounded-2xl">
-          <Text>Secondary content remains interactive even if the primary module crashes.</Text>
+          <Text data-testid="isolated-sibling">
+            Secondary content remains interactive even if the primary module crashes.
+          </Text>
         </div>
       </div>
     </div>
@@ -114,6 +134,16 @@ const WidgetCrashStory = () => {
 
 export const WidgetLevelCrash: StoryObj<typeof ErrorBoundary> = {
   render: () => <WidgetCrashStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const crashBtn = canvas.getByRole('button', { name: /crash module/i });
+    await userEvent.click(crashBtn);
+
+    await expect(canvas.getByText('⚠️ Something Went Wrong')).toBeInTheDocument();
+
+    await expect(canvas.getByTestId('isolated-sibling')).toBeInTheDocument();
+  },
 };
 
 /**
@@ -128,7 +158,10 @@ const CustomFallbackStory = () => {
       <ErrorBoundary
         onReset={() => setIsCrashed(false)}
         fallback={(error, reset) => (
-          <div className="p-4 bg-danger text-danger-foreground rounded-lg flex justify-between items-center shadow-lg animate-pulse">
+          <div
+            className="p-4 bg-danger text-danger-foreground rounded-lg flex justify-between items-center shadow-lg"
+            data-testid="custom-banner"
+          >
             <span className="font-mono text-sm">Critical Error: {error.message}</span>
             <Button onClick={reset} variant="danger">
               RETRY
@@ -152,4 +185,18 @@ const CustomFallbackStory = () => {
 
 export const CustomFallback: StoryObj<typeof ErrorBoundary> = {
   render: () => <CustomFallbackStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const triggerBtn = canvas.getByRole('button', { name: /simulate api failure/i });
+    await userEvent.click(triggerBtn);
+
+    await expect(canvas.getByTestId('custom-banner')).toBeInTheDocument();
+    await expect(canvas.getByText(/Critical Error:/)).toBeInTheDocument();
+
+    const retryBtn = canvas.getByRole('button', { name: /retry/i });
+    await userEvent.click(retryBtn);
+
+    await expect(canvas.getByText('Stock Ticker Widget')).toBeInTheDocument();
+  },
 };
