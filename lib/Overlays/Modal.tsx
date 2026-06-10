@@ -24,7 +24,7 @@ interface ModalComponent extends React.FC<ModalProps> {
 }
 
 export const Modal: ModalComponent = ({ open, children, onClose, stickyHeader = false, stickyFooter = false }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDialogElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
 
   const childrenArray = React.Children.toArray(children);
@@ -74,18 +74,16 @@ export const Modal: ModalComponent = ({ open, children, onClose, stickyHeader = 
             e.preventDefault();
           }
         } else {
-          if (document.activeElement === lastElement) {
-            firstElement.focus();
-            e.preventDefault();
-          }
+          firstElement.focus();
+          e.preventDefault();
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    globalThis.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      globalThis.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = originalOverflow;
       if (previousActiveElement.current) {
         previousActiveElement.current.focus();
@@ -96,15 +94,13 @@ export const Modal: ModalComponent = ({ open, children, onClose, stickyHeader = 
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-1000 flex items-end sm:items-center justify-center"
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      className="fixed inset-0 z-1000 flex items-end sm:items-center justify-center bg-transparent p-0 backdrop:bg-black/60 backdrop:backdrop-blur-sm open:animate-in open:fade-in open:duration-300"
       ref={modalRef}
-      tabIndex={-1}
+      open
     >
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-300"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -147,7 +143,7 @@ export const Modal: ModalComponent = ({ open, children, onClose, stickyHeader = 
           ? React.cloneElement(footer as React.ReactElement<StickyActionProps>, { sticky: stickyFooter })
           : null}
       </div>
-    </div>
+    </dialog>
   );
 };
 

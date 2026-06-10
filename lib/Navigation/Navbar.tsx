@@ -36,6 +36,11 @@ export const Navbar = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const getPaddingClass = (layout: string, isCollapsed: boolean): string => {
+    if (layout !== 'sidebar') return '';
+    return isCollapsed ? 'lg:pl-24' : 'lg:pl-72';
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 antialiased selection:bg-primary/20">
       {layout === 'topbar' && (
@@ -106,7 +111,7 @@ export const Navbar = ({
       <main
         className={`
           transition-all duration-300 ease-in-out pb-24 md:pb-8
-          ${layout === 'sidebar' ? (isCollapsed ? 'lg:pl-24' : 'lg:pl-72') : ''}
+          ${getPaddingClass(layout, isCollapsed)}
         `}
       >
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6">{children}</div>

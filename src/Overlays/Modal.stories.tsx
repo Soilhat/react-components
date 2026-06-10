@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react-vite';
 import { Modal as ModalEl, Navbar, Button, Text } from '../../lib/main';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Home, User, MessageCircle } from 'lucide-react';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -8,21 +8,6 @@ import { BrowserRouter } from 'react-router-dom';
  * ### Modal Component
  * A versatile overlay that functions as a **Centered Dialog** on desktop and
  * automatically transforms into a **Responsive Bottom Sheet** on mobile devices.
- * * #### Key Features
- * - **Compound Component Pattern**: Use `Modal.Header`, `Modal.Body`, and `Modal.Footer` for structured layouts.
- * - **Adaptive UI**: Rounded-top "drawer" style on mobile; centered card on desktop.
- * - **Focus & Scroll Management**: Automatically locks body scroll when open and handles 'Escape' key to close.
- * - **Z-Index Layering**: Optimized with `z-[100]` to ensure visibility over fixed Navbars and Bottom Bars.
- * * #### Basic Implementation
- * ```tsx
- * <Modal open={isOpen} onClose={() => setIsOpen(false)}>
- * <Modal.Header>Title</Modal.Header>
- * <Modal.Body>Content goes here...</Modal.Body>
- * <Modal.Footer>
- * <Button onClick={onClose}>Close</Button>
- * </Modal.Footer>
- * </Modal>
- * ```
  */
 const meta: Meta<typeof ModalEl> = {
   title: 'Overlays/Modal',
@@ -40,8 +25,6 @@ export default meta;
 
 /**
  * **Simple Usage**
- * * Use this for quick alerts or short messages. If you don't use the sub-components (`Header`, `Body`),
- * the Modal will wrap your children in a default padding container.
  */
 export const Simple = () => {
   const [open, setOpen] = useState(false);
@@ -57,11 +40,18 @@ export const Simple = () => {
 
 /**
  * **Structured Content (Sticky Actions)**
- * * Using `Modal.Header`, `Modal.Body`, and `Modal.Footer` ensures that the header and footer
- * stay visible while the body area becomes scrollable if the content is too long.
  */
 export const LongContent = () => {
   const [open, setOpen] = useState(false);
+
+  // Generate an array of objects containing a static, unique identifier string
+  const paragraphs = useMemo(() => {
+    return Array.from({ length: 15 }, (_, i) => ({
+      id: `paragraph-id-${i + 1}`,
+      number: i + 1,
+    }));
+  }, []);
+
   return (
     <div className="p-8">
       <Button onClick={() => setOpen(true)}>Open Long Content Modal</Button>
@@ -71,11 +61,11 @@ export const LongContent = () => {
         </ModalEl.Header>
         <ModalEl.Body>
           <div className="space-y-4">
-            {[...Array(15)].map((_, i) => (
-              <p key={i} className="text-muted-foreground leading-relaxed">
-                Paragraph {i + 1}: This is a demonstration of how the modal handles a significant amount of content. On
-                mobile, this will behave like a bottom sheet, allowing you to scroll through this text while the action
-                buttons below stay pinned to the bottom.
+            {paragraphs.map((para) => (
+              <p key={para.id} className="text-muted-foreground leading-relaxed">
+                Paragraph {para.number}: This is a demonstration of how the modal handles a significant amount of
+                content. On mobile, this will behave like a bottom sheet, allowing you to scroll through this text while
+                the action buttons below stay pinned to the bottom.
               </p>
             ))}
           </div>
@@ -97,8 +87,6 @@ export const LongContent = () => {
 
 /**
  * **Complex Layout / Destructive Actions**
- * * You can combine standard HTML/Tailwind structures inside the Modal for more complex
- * designs like account deactivation confirmations.
  */
 export const StandardModal = () => {
   const [open, setOpen] = useState(false);
@@ -148,8 +136,6 @@ export const StandardModal = () => {
 
 /**
  * **Full Mobile Interaction Flow**
- * * This story demonstrates how the Modal interacts with the `Navbar` and `BottomBar`.
- * **Switch to Mobile View** to see how the Modal appears as a bottom sheet over the navigation.
  */
 export const MobileBottomSheetFlow = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -159,6 +145,14 @@ export const MobileBottomSheetFlow = () => {
     { label: 'Messages', to: '/messages', icon: <MessageCircle /> },
     { label: 'Profile', to: '/profile', icon: <User /> },
   ];
+
+  // Map numbers to distinct layout section data entities containing unique, non-index key strings
+  const legalSections = useMemo(() => {
+    return Array.from({ length: 5 }, (_, i) => ({
+      key: `legal-section-key-${i + 2}`,
+      sectionNumber: i + 2,
+    }));
+  }, []);
 
   return (
     <BrowserRouter>
@@ -182,9 +176,10 @@ export const MobileBottomSheetFlow = () => {
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="p-6 rounded-2xl border border-border bg-card shadow-sm">
-                <h4 className="font-bold mb-2">Feature Card {i}</h4>
+            {/* Swapped numerical loop keys for semantic feature identifiers */}
+            {['analytics', 'reports', 'settings', 'logs'].map((feature, index) => (
+              <div key={`feature-${feature}`} className="p-6 rounded-2xl border border-border bg-card shadow-sm">
+                <h4 className="font-bold mb-2">Feature Card {index + 1}</h4>
                 <Text>Placeholder content to demonstrate page depth and scrolling context.</Text>
               </div>
             ))}
@@ -203,11 +198,11 @@ export const MobileBottomSheetFlow = () => {
                   </Text>
                 </section>
 
-                {[...Array(5)].map((_, i) => (
-                  <section key={i}>
-                    <h4 className="font-bold mb-2 text-sm uppercase">Legal Section {i + 2}</h4>
+                {legalSections.map((section) => (
+                  <section key={section.key}>
+                    <h4 className="font-bold mb-2 text-sm uppercase">Legal Section {section.sectionNumber}</h4>
                     <p className="text-muted-foreground text-sm leading-relaxed italic">
-                      Standard placeholder text for verifying the scroll container within the modal body. The header and
+                      Standard placeholder text to verify the scroll container within the modal body. The header and
                       footer remain pinned during this scroll action.
                     </p>
                   </section>

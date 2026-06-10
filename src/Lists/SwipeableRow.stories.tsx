@@ -93,16 +93,20 @@ export const Default: Story = {
     }
 
     // --- Test Case 1: Swipe Right below threshold (Should NOT trigger action) ---
-    fireEvent.mouseDown(swipeableElement!, { clientX: 100 });
-    fireEvent.mouseMove(swipeableElement!, { clientX: 150 });
-    fireEvent.mouseUp(swipeableElement!);
+    if (swipeableElement) {
+      fireEvent.mouseDown(swipeableElement, { clientX: 100 });
+      fireEvent.mouseMove(swipeableElement, { clientX: 150 });
+      fireEvent.mouseUp(swipeableElement);
+    }
 
     expect(leftAction.onClick).not.toHaveBeenCalled();
 
     // --- Test Case 2: Swipe Right past threshold (Triggers Left Action) ---
-    fireEvent.mouseDown(swipeableElement!, { clientX: 100 });
-    fireEvent.mouseMove(swipeableElement!, { clientX: 220 });
-    fireEvent.mouseUp(swipeableElement!);
+    if (swipeableElement) {
+      fireEvent.mouseDown(swipeableElement, { clientX: 100 });
+      fireEvent.mouseMove(swipeableElement, { clientX: 220 });
+      fireEvent.mouseUp(swipeableElement);
+    }
 
     expect(leftAction.onClick).toHaveBeenCalledTimes(1);
   },
@@ -140,9 +144,11 @@ export const SuccessAction: Story = {
     const canvas = within(canvasElement);
     const row = canvas.getByText('Montessori Activity Plan').closest('.relative');
 
-    fireEvent.mouseDown(row!, { clientX: 100 });
-    fireEvent.mouseMove(row!, { clientX: 170 });
-    fireEvent.mouseUp(row!);
+    if (row) {
+      fireEvent.mouseDown(row, { clientX: 100 });
+      fireEvent.mouseMove(row, { clientX: 170 });
+      fireEvent.mouseUp(row);
+    }
 
     const leftAction = args.leftActions?.[0];
     if (!leftAction) {

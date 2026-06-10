@@ -55,7 +55,7 @@ export const TagInput = ({ label, placeholder, tags, suggestions = [], onChange,
     } else if (e.key === 'Escape') {
       setIsOpen(false);
     } else if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
-      removeTag(tags[tags.length - 1]);
+      removeTag(tags.at(-1)!);
     }
   };
 
