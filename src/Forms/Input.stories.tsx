@@ -41,6 +41,14 @@ export const Checkbox: Story = {
   },
 };
 
+export const Disabled: Story = {
+  args: {
+    label: 'Disabled Input',
+    placeholder: 'This input is disabled',
+    disabled: true,
+  },
+};
+
 export const WithLeadingIcon: Story = {
   args: {
     label: 'Search',
