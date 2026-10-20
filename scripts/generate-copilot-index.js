@@ -3,7 +3,6 @@ import path from 'path';
 import { globSync } from 'glob';
 import { parse } from 'react-docgen-typescript';
 
-// Path to component source files
 const componentFiles = globSync('lib/**/*.{ts,tsx}', {
   ignore: ['**/*.test.*', '**/*.stories.*'],
 });
@@ -14,16 +13,27 @@ const docgenParser = parse(componentFiles, {
   shouldRemoveUndefinedFromOptional: true,
 });
 
-let output = `/**\n * Auto-generated interface reference index for @soilhat/react-components.\n * Used by AI assistants (GitHub Copilot) for strict autocomplete and type lookup.\n */\n\n`;
+let output = `/**\n * Auto-generated interface reference index for @soilhat/react-components.\n */\n\nimport type * as React from 'react';\n\n`;
 
 docgenParser.forEach((doc) => {
-  output += `/**\n * ${doc.description || doc.displayName}\n */\n`;
+  if (!doc.displayName) return;
+
+  output += `/** ${doc.description || doc.displayName} */\n`;
   output += `export interface ${doc.displayName}Props {\n`;
 
-  Object.values(doc.props).forEach((prop) => {
+  Object.values(doc.props || {}).forEach((prop) => {
+    // Sanitize prop name (e.g. handle aria-* or data-* props safely)
+    const safePropName = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(prop.name) ? prop.name : `'${prop.name}'`;
+
     const optional = prop.required ? '' : '?';
-    const description = prop.description ? `  /** ${prop.description} */\n` : '';
-    output += `${description}  ${prop.name}${optional}: ${prop.type.name};\n`;
+
+    // Fallback to 'unknown' if type name is empty or invalid
+    let rawTypeName = prop.type?.name?.trim();
+    if (!rawTypeName || rawTypeName === 'enum') {
+      rawTypeName = 'unknown';
+    }
+
+    output += `  ${safePropName}${optional}: ${rawTypeName};\n`;
   });
 
   output += `}\n`;
@@ -34,4 +44,4 @@ const outputPath = path.join(process.cwd(), 'dist', 'copilot-reference.d.ts');
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, output);
 
-console.log(`✅ Successfully generated Copilot interface index at ${outputPath}`);
+console.log(`✅ Cleanly generated Copilot interface index at ${outputPath}`);
