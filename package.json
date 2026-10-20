@@ -3,15 +3,24 @@
   "version": "0.0.0",
   "type": "module",
   "description": "A collection of reusable React components built with TypeScript and Tailwind CSS",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.js"
+    },
+    "./copilot-index": {
+      "types": "./dist/copilot-reference.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
   "author": {
     "name": "Soilhat M"
   },
-  "exports": "./dist/main.js",
-  "module": "./dist/main.js",
-  "types": "./dist/main.d.ts",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
@@ -29,7 +38,7 @@
     "tailwind"
   ],
   "scripts": {
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && npm run generate:copilot",
     "lint": "eslint . --ext ts,tsx",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write .",
@@ -40,7 +49,8 @@
     "test:coverage": "vitest --project=storybook --coverage",
     "prepare": "husky",
     "prepublishOnly": "npm run build",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "generate:copilot": "node scripts/generate-copilot-index.js"
   },
   "peerDependencies": {
     "@headlessui/react": "^2.2.9",
@@ -73,10 +83,12 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "eslint-plugin-storybook": "^10.4.1",
+    "glob": "^13.0.6",
     "globals": "^16.3.0",
     "husky": "^9.1.7",
     "playwright": "^1.55.0",
     "prettier": "^3.3.3",
+    "react-docgen-typescript": "^2.4.0",
     "semantic-release": "^25.0.3",
     "storybook": "^10.4.1",
     "typescript": "~5.8.3",
