@@ -13,5 +13,5 @@ interface SelectProps {
     className?: string;
     disabled?: boolean;
 }
-export declare function Select({ label, options, value, defaultValue, onChange, placeholder, className, disabled, }: Readonly<SelectProps>): import("react").JSX.Element;
+export declare function Select({ label, options, value, defaultValue, onChange, placeholder, className, disabled, }: Readonly<SelectProps>): import('../../node_modules/react').JSX.Element;
 export {};

@@ -1,4 +1,4 @@
 export declare const ThemeToggle: ({ onToggle }: {
     onToggle: () => void;
-}) => import("react").JSX.Element;
+}) => import('../../node_modules/react').JSX.Element;
 export default ThemeToggle;

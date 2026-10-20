@@ -13,5 +13,5 @@ interface ComboboxProps {
     error?: string;
     className?: string;
 }
-export declare function SearchableCombobox({ label, options, value, defaultValue, onChange, placeholder, error, className, }: Readonly<ComboboxProps>): import("react").JSX.Element;
+export declare function SearchableCombobox({ label, options, value, defaultValue, onChange, placeholder, error, className, }: Readonly<ComboboxProps>): import('../../node_modules/react').JSX.Element;
 export {};

@@ -1,3 +1,3 @@
 export declare const Container: ({ children }: {
     children: React.ReactNode;
-}) => import("react").JSX.Element;
+}) => import('../../node_modules/react').JSX.Element;
