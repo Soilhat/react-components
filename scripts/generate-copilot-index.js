@@ -15,29 +15,45 @@ const docgenParser = parse(componentFiles, {
 
 let output = `/**\n * Auto-generated interface reference index for @soilhat/react-components.\n */\n\nimport type * as React from 'react';\n\n`;
 
+const sanitize = (str) => str.replace(/[^a-zA-Z0-9_$]/g, '');
+
 docgenParser.forEach((doc) => {
   if (!doc.displayName) return;
 
-  output += `/** ${doc.description || doc.displayName} */\n`;
-  output += `export interface ${doc.displayName}Props {\n`;
+  const rawName = doc.displayName;
 
-  Object.values(doc.props || {}).forEach((prop) => {
-    // Sanitize prop name (e.g. handle aria-* or data-* props safely)
-    const safePropName = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(prop.name) ? prop.name : `'${prop.name}'`;
+  // Handle namespaced components (e.g. Card.Header -> namespace Card { export const Header: ... })
+  if (rawName.includes('.')) {
+    const parts = rawName.split('.');
+    const parent = sanitize(parts[0]);
+    const child = sanitize(parts[1]);
+    const interfaceName = `${parent}${child}Props`;
 
-    const optional = prop.required ? '' : '?';
+    output += `export interface ${interfaceName} {\n`;
+    Object.values(doc.props || {}).forEach((prop) => {
+      const optional = prop.required ? '' : '?';
+      const propName = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(prop.name) ? prop.name : `'${prop.name}'`;
+      const typeName = prop.type?.name?.trim() || 'unknown';
+      output += `  ${propName}${optional}: ${typeName};\n`;
+    });
+    output += `}\n`;
+    output += `export namespace ${parent} {\n`;
+    output += `  export const ${child}: React.FC<${interfaceName}>;\n`;
+    output += `}\n\n`;
+  } else {
+    const safeName = sanitize(rawName);
+    const interfaceName = `${safeName}Props`;
 
-    // Fallback to 'unknown' if type name is empty or invalid
-    let rawTypeName = prop.type?.name?.trim();
-    if (!rawTypeName || rawTypeName === 'enum') {
-      rawTypeName = 'unknown';
-    }
-
-    output += `  ${safePropName}${optional}: ${rawTypeName};\n`;
-  });
-
-  output += `}\n`;
-  output += `export const ${doc.displayName}: React.FC<${doc.displayName}Props>;\n\n`;
+    output += `export interface ${interfaceName} {\n`;
+    Object.values(doc.props || {}).forEach((prop) => {
+      const optional = prop.required ? '' : '?';
+      const propName = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(prop.name) ? prop.name : `'${prop.name}'`;
+      const typeName = prop.type?.name?.trim() || 'unknown';
+      output += `  ${propName}${optional}: ${typeName};\n`;
+    });
+    output += `}\n`;
+    output += `export const ${safeName}: React.FC<${interfaceName}>;\n\n`;
+  }
 });
 
 const outputPath = path.join(process.cwd(), 'dist', 'copilot-reference.d.ts');

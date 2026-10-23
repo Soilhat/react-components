@@ -95,7 +95,7 @@ export const Modal: ModalComponent = ({ open, children, onClose, stickyHeader = 
 
   return (
     <dialog
-      className="fixed inset-0 z-1000 flex items-end sm:items-center justify-center bg-transparent p-0 backdrop:bg-black/60 backdrop:backdrop-blur-sm open:animate-in open:fade-in open:duration-300"
+      className="fixed inset-0 z-1000 flex h-full w-full max-h-none max-w-none items-end justify-center m-0 border-0 bg-transparent p-0 sm:items-center backdrop:bg-black/60 backdrop:backdrop-blur-sm open:animate-in open:fade-in open:duration-300"
       ref={modalRef}
       open
     >

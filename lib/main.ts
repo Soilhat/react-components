@@ -7,7 +7,7 @@ export { Toast, type ToastType, ToastProvider, useToast, Progress, ErrorBoundary
 export { Navbar, type NavLink, InfiniteScroll } from './Navigation';
 export { useTheme, ThemeToggle } from './Theme';
 export { StackedList, GridList, SwipeableRow } from './Lists';
-export { Modal } from './Overlays';
+export { Modal, Aside } from './Overlays';
 export { genId } from './utils';
 
 import './style.css';
