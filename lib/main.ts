@@ -1,5 +1,5 @@
 export { Calendar } from './Data Display';
-export { Button, Dropdown, Text, Pill } from './Elements';
+export { Button, Dropdown, Text, Pill, Badge } from './Elements';
 export { Card, Container, Heading, Divider, CategoryTree, type TreeItem } from './Layout';
 export { Form, Input, Textarea, ImageUploader, Select, Checkbox, TagInput, SearchableCombobox } from './Forms';
 export type { Option } from './Forms';
