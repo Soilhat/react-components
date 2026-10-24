@@ -12,7 +12,7 @@ const meta: Meta<typeof Badge> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'secondary', 'outline', 'destructive', 'warning', 'success'],
+      options: ['default', 'secondary', 'outline', 'danger', 'warning', 'success'],
     },
   },
 };
@@ -41,10 +41,10 @@ export const Outline: Story = {
   },
 };
 
-export const Destructive: Story = {
+export const Danger: Story = {
   args: {
     children: 'Archived',
-    variant: 'destructive',
+    variant: 'danger',
   },
 };
 
@@ -66,7 +66,7 @@ export const VariantShowcase: Story = {
         Active
       </Badge>
       <Badge variant="warning">Pending</Badge>
-      <Badge variant="destructive" icon={<AlertCircle className="h-3 w-3" />}>
+      <Badge variant="danger" icon={<AlertCircle className="h-3 w-3" />}>
         Error
       </Badge>
     </div>

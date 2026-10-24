@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type BadgeVariant = 'default' | 'secondary' | 'outline' | 'destructive' | 'warning' | 'success';
+export type BadgeVariant = 'default' | 'secondary' | 'outline' | 'danger' | 'warning' | 'success';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: BadgeVariant;
@@ -13,7 +13,7 @@ export const Badge: React.FC<BadgeProps> = ({ variant = 'default', icon, childre
     default: 'bg-primary text-primary-foreground border-transparent hover:bg-primary/80',
     secondary: 'bg-secondary text-secondary-foreground border-transparent hover:bg-secondary/80',
     outline: 'text-foreground border-border bg-transparent',
-    destructive: 'bg-destructive text-destructive-foreground border-transparent hover:bg-destructive/80',
+    danger: 'bg-danger text-danger-foreground border-transparent hover:bg-danger/80',
     warning: 'bg-warning text-warning-foreground border-transparent hover:bg-warning/80',
     success: 'bg-success text-success-foreground border-transparent hover:bg-success/80',
   };
